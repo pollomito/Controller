@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openremote xmlns="http://www.openremote.org" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openremote.org http://www.openremote.org/schemas/controller.xsd">
+  <components>
+  </components>
+  <sensors>
+  </sensors>
+  <commands>
+  </commands>
+  <config>
+    <property name="controller.roundrobin.tcpserver.port" value="20000" />
+    <property name="multicast.address" value="224.0.1.100" />
+    <property name="controller.roundrobin.multicast.port" value="10000" />
+    <property name="multicast.port" value="3333" />
+    <property name="controller.groupname" value="floor20" />
+    <property name="Macro.IR.Execution.Delay" value="500" />
+    <property name="controller.roundrobin.multicast.address" value="224.0.1.200" />
+    <property name="lutron_homeworks.password" value="openremote" />
+    <property name="lircd.conf.path" value="/etc/lircd.conf" />
+    <property name="controller.groupmember.autodetect.on" value="true" />
+    <property name="lutron_homeworks.port" value="23" />
+    <property name="lutron_homeworks.address" value="192.168.1.1" />
+    <property name="lutron_homeworks.username" value="openremote" />
+    <property name="webapp.port" value="8080" />
+    <property name="copy.lircd.conf.on" value="true" />
+    <property name="irsend.path" value="/usr/local/bin/irsend" />
+    <property name="resource.upload.enable" value="true" />
+    <property name="controller.applicationname" value="controller" />
+    
+    <property name="vera.address" value="127.0.0.1" />
+<!--     <property name="protocol.vera.classname" value="org.openremote.controller.protocol.vera.VeraCommandBuilder"/>  -->
+  </config>
+</openremote>

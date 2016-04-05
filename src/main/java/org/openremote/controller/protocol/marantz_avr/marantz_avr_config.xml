@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<commands>
+  <command name="MAIN_POWER" class="org.openremote.controller.protocol.marantz_avr.commands.BooleanCommand" value="PW">
+    <parameters>
+      <parameter name="ON">ON</parameter>
+      <parameter name="OFF">STANDBY</parameter>
+      <parameter name="STATUS">?</parameter>
+    </parameters>
+  </command>
+  <command name="POWER" class="org.openremote.controller.protocol.marantz_avr.commands.BooleanCommand">
+    <values>
+      <value zone="MAIN">ZM</value>
+      <value zone="ZONE2">Z2</value>
+      <value zone="ZONE3">Z3</value>
+    </values>
+    <parameters>
+      <parameter name="ON">ON</parameter>
+      <parameter name="OFF">OFF</parameter>
+      <parameter name="STATUS">?</parameter>
+    </parameters>
+  </command>
+  <command name="MUTE" class="org.openremote.controller.protocol.marantz_avr.commands.BooleanCommand">
+    <values>
+      <value zone="MAIN">MU</value>
+      <value zone="ZONE2">Z2MU</value>
+      <value zone="ZONE3">Z3MU</value>
+    </values>
+    <parameters>
+      <parameter name="ON">ON</parameter>
+      <parameter name="OFF">OFF</parameter>
+      <parameter name="STATUS">?</parameter>
+    </parameters>
+  </command>
+
+  <command name="INPUT" class="org.openremote.controller.protocol.marantz_avr.commands.MultipleOptionsCommand">
+    <values>
+      <value zone="MAIN">SI</value>
+      <value zone="ZONE2">Z2</value>
+      <value zone="ZONE3">Z3</value>
+    </values>
+    <parameters>
+      <parameter name="PHONO">PHONO</parameter>
+      <parameter name="CD">CD</parameter>
+      <parameter name="DVD">DVD</parameter>
+      <parameter name="BD">BD</parameter>
+      <parameter name="TV">TV</parameter>
+      <parameter name="SAT/CBL">SAT/CBL</parameter>
+      <parameter name="VCR">VCR</parameter>
+      <parameter name="GAME">GAME</parameter>
+      <parameter name="V.AUX">V.AUX</parameter>
+      <parameter name="AUX1">AUX1</parameter>
+      <parameter name="AUX2">AUX2</parameter>
+      <parameter name="IRADIO">IRADIO</parameter>
+      <parameter name="TUNER">TUNER</parameter>
+      <parameter name="MEDIAPLAYER">MPLAY</parameter>
+      <parameter name="LASTFM">LASTFM</parameter>
+      <parameter name="FAVORITES">FAVORITES</parameter>
+      <parameter name="SERVER">SERVER</parameter>
+      <parameter name="USB/IPOD">USB/IPOD</parameter>
+      <parameter name="USB">USB</parameter>
+      <parameter name="IPOD">IPD</parameter> <!-- iPod DIRECT start playback -->
+      <parameter name="IRP">IRP</parameter> <!--  Internet Radio Recent Play -->
+      <parameter name="FVP">FVP</parameter> <!--  Network Favorites Play -->
+	  <parameter name="NETWORK">NET</parameter>
+      <parameter name="STATUS">?</parameter>
+    </parameters>
+  </command>
+  
+  <command name="TUNER_FREQUENCY" class="org.openremote.controller.protocol.marantz_avr.commands.TunerFrequencyCommand" value="TF"/>
+
+  <command name="TUNER_PRESET" class="org.openremote.controller.protocol.marantz_avr.commands.TunerPresetCommand" value="TP"/>
+  
+  <command name="OSD_LINE_TEXT" class="org.openremote.controller.protocol.marantz_avr.commands.OnScreenDisplayInfoCommand" value="NSE"/>
+  <command name="OSD_LINE_SELECTED" class="org.openremote.controller.protocol.marantz_avr.commands.OnScreenDisplayInfoCommand" value="NSE"/>
+  
+  <command name="SURROUND_MODE" class="org.openremote.controller.protocol.marantz_avr.commands.MultipleOptionsCommand" value="MS">
+    <parameters>
+      <parameter name="MOVIE">MOVIE</parameter>
+      <parameter name="MUSIC">MUSIC</parameter>
+      <parameter name="GAME">GAME</parameter>
+      <parameter name="DIRECT">DIRECT</parameter>
+      <parameter name="PURE DIRECT">PURE DIRECT</parameter>
+      <parameter name="STEREO">STEREO</parameter>
+      <parameter name="AUTO">AUTO</parameter>
+      <parameter name="NEURAL">NEURAL</parameter>
+      <parameter name="STANDARD">STANDARD</parameter>
+      <parameter name="DOLBY">DOLBY DIGITAL</parameter>
+      <parameter name="DTS">DTS SURROUND</parameter>
+      <parameter name="MCH STEREO">MCH STEREO</parameter>
+      <parameter name="MATRIX">MATRIX</parameter>
+      <parameter name="VIRTUAL">VIRTUAL</parameter>
+      <parameter name="LEFT">LEFT</parameter>
+      <parameter name="RIGHT">RIGHT</parameter>
+      <parameter name="STATUS">?</parameter>
+    </parameters>
+  </command>
+
+  <command name="VOLUME" class="org.openremote.controller.protocol.marantz_avr.commands.VolumeCommand">
+    <values>
+      <value zone="MAIN">MV</value>
+      <value zone="ZONE2">Z2</value>
+      <value zone="ZONE3">Z3</value>
+    </values>
+  </command>
+
+
+  <command name="MAIN_CONTROL" class="org.openremote.controller.protocol.marantz_avr.commands.NoFeedbackCommand" value="MN">
+    <parameters>
+      <parameter name="CURSOR UP">CUP</parameter>
+      <parameter name="CURSOR DOWN">CDN</parameter>
+      <parameter name="CURSOR LEFT">CLT</parameter>
+      <parameter name="CURSOR RIGHT">CRT</parameter>
+      <parameter name="ENTER">ENT</parameter>
+      <parameter name="RETURN">RTN</parameter>
+      <parameter name="OPTION">OPT</parameter>
+      <parameter name="INFO">INF</parameter>
+      <parameter name="SETUP MENU ON">MEN ON</parameter>
+      <parameter name="SETUP MENU OFF">MEN OFF</parameter>
+    </parameters>
+  </command>
+  
+  <command name="NETWORK_CONTROL" class="org.openremote.controller.protocol.marantz_avr.commands.NoFeedbackCommand" value="NS">
+    <parameters>
+      <parameter name="CURSOR UP">90</parameter>
+      <parameter name="CURSOR DOWN">91</parameter>
+      <parameter name="CURSOR LEFT">92</parameter>
+      <parameter name="CURSOR RIGHT">93</parameter>
+      <parameter name="ENTER">94</parameter>
+      <parameter name="PLAY">9A</parameter>
+      <parameter name="PAUSE">9B</parameter>
+      <parameter name="STOP">9C</parameter>
+      <parameter name="SKIP PLUS">9D</parameter>
+      <parameter name="SKIP MINUS">9E</parameter>
+      <parameter name="REPEAT ONE">9H</parameter>
+      <parameter name="REPEAT ALL">9I</parameter>
+      <parameter name="REPEAT OFF">9J</parameter>
+      <parameter name="RANDOM ON">9K</parameter>
+      <parameter name="RANDOM OFF">9M</parameter>
+      <parameter name="TOGGLE BROWSE REMOTE">9W</parameter>
+      <parameter name="PAGE NEXT">9X</parameter>
+      <parameter name="PAGE PREVIOUS">9Y</parameter>
+      <parameter name="TOGGLE PARTY MODE">PT</parameter>
+    </parameters>
+  </command>
+
+</commands>

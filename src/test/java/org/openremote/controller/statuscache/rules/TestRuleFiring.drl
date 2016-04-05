@@ -1,0 +1,12 @@
+//created on: Sep 23, 2013
+package org.openremote.controller.statuscache.rules
+import org.openremote.controller.protocol.*;
+import org.openremote.controller.statuscache.rules.RuleListenerTest;
+
+rule "TestRuleFiring"
+when
+	$e: Event(source == RuleListenerTest.TEST_SENSOR_NAME)
+then
+System.out.println( "Test drool fired" );
+end
+

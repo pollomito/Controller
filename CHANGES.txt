@@ -1,0 +1,313 @@
+ORCJAVA-511
+===========
+
+  - Convert build system to Gradle
+
+Controller Pro 1.5.0
+====================
+
+New Features:
+
+  - Controller API extension (ORCJAVA-455)
+  - Controller API extension - v2 (ORCJAVA-492)
+  - Added Alarm Protocol (ORCJAVA-508)
+
+Bug Fixes:
+
+  - Fixed: Test fixtures are bundle with controller distribution (ORCJAVA-431)
+
+Controller Pro 1.4.1
+====================
+
+  - Fixed: openremote.sh launch script fails on certain environments (ORCJAVA-509)
+
+Controller Pro 1.4.0
+====================
+
+New Features:
+  - Upgrade flexjson library to version 3.2 (ORCJAVA-498)
+  - Support remote command to trigger online sync (ORCJAVA-501)
+  - Start the BeehiveCommandCheckService thread even if no configuration is loaded (ORCJAVA-504)
+  - Add Domintell protocol support (ORCJAVA-253)
+  - Parameterize common Beehive connection parameters in config.properties (ORCJAVA-443)
+
+Bug Fixes:
+
+  - Fixed: Multiple issues in BeehiveCommandCheckServiceTest (ORCJAVA-497)
+  - Do not encode password in communication with CCS/DDS (ORCJAVA-495)
+  - Never send md5 encoded password to backend (ORCJAVA-503)
+  - Remove warnings when compiling under JDK7/8 (ORCJAVA-499)
+  - Fixed: Re-connection issues with AMX protocol (ORCJAVA-456)
+  - Fixed: Potential NPE in BeehiveCommandCheckService (ORCJAVA-505)
+
+Controller Pro 1.3.0
+====================
+
+New Features:
+  - Add TCPSocketPort for protocols that use TCP (Richard Turner, ORCJAVA-482)
+  - Have an option to store password in plain text file instead of keystore (ORCJAVA-493)
+  - Add VelbusConfiguration support (ORCJAVA-494)
+
+Controller Pro 1.2.0
+====================
+
+New Features:
+  - Implement Z-Wave command classes that are needed for configuring
+	  Z-Wave nodes (Rainer Hitz, ORCJAVA-440)
+  - Add ability to reset RRD4J graph time axis (Richard Turner, ORCJAVA-452)
+  - Improvements to the Russound protocol implementation (Torbjorn Osterdahl, ORCJAVA-461)
+  - Add possibility of ReadCommand implementations to define
+	  their polling interval (Marcus Redeker, ORCJAVA-464)
+  - Update HTTP protocol to extend ReadCommand instead of
+	  implementing EventListener (Marcus Redeker, ORCJAVA-465)
+  - More lenient CORS headers (Christian Bauer, ORCJAVA-472)
+  - Improve 1-wire implementation (Eric Bariaux, ORCJAVA-475)
+  - Add log messages to Rules Engine (Isaac Martin, Michal Rutka, ORCJAVA-481)
+  - Add X10 logging category (ORCJAVA-370)
+	- Implement the Z-Wave security layer (COMMAND_CLASS_SECURITY) (Rainer Hitz, ORCJAVA-480)
+
+Bug Fixes:
+
+  - Update Vera implementation to use locale independent string case conversions (ORCJAVA-341)
+  - Update X10 implementation to use locale independent string case conversions (ORCJAVA-342)
+  - Update Russound implementation to use locale independent string case conversions (ORCJAVA-343)
+  - Update DSCIT100 implementation to use locale independent string case conversions (ORCJAVA-344)
+  - Fixed: Weird URL in example of security constraint in web.xml (ORCJAVA-322)
+  - Fixed: False warning in X10 implementation (ORCJAVA-350)
+  - Fixed: False warning in KNX implementation (ORCJAVA-351)
+  - Fixed: False warning with in-memory virtual commands (ORCJAVA-352)
+  - Fixed: False warning in ISY-99 protocol implementation (ORCJAVA-491)
+
+Controller Pro 1.1.1
+====================
+
+Bug Fixes:
+
+  - Fixed: RRD4J Protocol commands that change the start or end time of a graph also
+	  cause the end or start time respectively to be fixed (Richard Turner, ORCJAVA-451)
+  - Fixed: Drools exception when executing rules after controller xml has been reloaded (ORCJAVA-407)
+  - Decode request path segments (Christian Bauer, ORCJAVA-471)
+  - Update version of Restlet library used (fixed bug in Restlet thread management, ORCJAVA-476)
+  - Add more logging information on connection failure
+    when retrieving controller identity (ORCJAVA-459)
+  - Fixed: Issue parsing empty strings in status values by Vera protocol (ORCJAVA-489)
+
+Controller Pro 1.1.0
+====================
+
+New Features:
+
+  - Manage User Credentials in Controller. (Juha Lindfors, ORCJAVA-422)
+  - Convert Beehive remote proxy service to blocking I/O (Marcus Redeker, ORCJAVA-411)
+  - Clean up and consume input streams from HTTP connections
+    in error cases to return connections to HTTP keep-alive
+    pool (Juha Lindfors, ORCJAVA-454)
+
+Bug Fixes:
+
+  - Fix broken changes introduced to test suite in 
+    mredeker/Controller_2_0_1_Beehive_Proxy branch, as 
+    part of ORCJAVA-424  (Juha Lindfors, ORCJAVA-425)
+  - Fix an issue with ORCJAVA-411 that used HTTP GET instead
+    of HTTP POST for controller MAC address announcement -- 
+    used when retrieving controller ID from a remote service
+    (Juha Lindfors, ORCJAVA-450)
+
+Controller Pro 1.0.14
+=====================
+
+Bug Fixes:
+
+  - Fixed: Shell Execution Protocol does not destroy the spawned process (ORCJAVA-420)
+  - Fixed: RRD4J URL Protocol generates incorrect URLs (ORCJAVA-441)
+
+Controller Pro 1.0.13
+=====================
+	  
+New Features:
+
+  - Updated DSC Security System  to support EnvisaLink and improved current IT100 support
+    (Greg Rapp, Phil Taylor, ORCJAVA-302)
+  - Update logo to current version (ORCJAVA-429)
+  - Update copyright date on home page (ORCJAVA-430)
+  - Extend UDP listener to accept event values from a regexp group (ORCJAVA-392)
+
+Controller 2.1.0 (2014-XX-XX Twin Galaxies)
+===========================================
+
+Bug Fixes:
+
+  - Clean-up testApplicationContext.xml file (ORCJAVA-428)
+  - Fixed : NPE while executing a gesture with a command linked to it (ORCJAVA-421)
+  - Fixed: RRD4JServlet doesn't set the content-type heading to 'image/png' (ORCJAVA-423)
+  - Patch drools for Java 7 support (ORCJAVA-258)
+
+Controller Pro 1.0.12
+=====================
+
+Bug Fixes:
+
+  - Update AMX implementation to use locale independent
+    string case conversions (ORCJAVA-338)
+  - Update Lutron implementation to use locale independent
+    string case conversions (ORCJAVA-339)
+  - Fixed Marantz protocol does not always re-connect to AVR (ORCJAVA-410)
+  - Fix HTTPCommand to avoid Expect_Continue header for POST and PUT requests (ORCJAVA-415)
+  - Fixed invalid XML generated for sensor values (ORCJAVA-416)
+  - Fixed Marantz protocol takes a long time to connect to receiver (ORCJAVA-418)
+  - Fix for timezone setting in date fields (ORCJAVA-401, Juha Lindfors)
+
+Controller Pro 1.0.11
+=====================
+
+New Features:
+
+  - Direct HTTP related logging into its own file in /logs/http/http.log
+    (Juha Lindfors) (ORCJAVA-368)
+  - Have Samsung protocol as separate jar for Pro release (ORCJAVA-381)
+  - Add a polling interval on the DateTime protocol (ORCJAVA-396)
+  - Marantz AVR protocol improvements: multiple-zone support and additional commands (ORCJAVA-395)
+  - Create unit tests for Marantz protocol implementation (ORCJAVA-408)
+
+Bug Fixes:
+
+  - Reliability updates to Russound integration (Torbjorn Osterdahl) (ORCJAVA-376)
+  - Guard against null pointer exception in RRD logger lifecycle
+    (Juha Lindfors) (ORCJAVA-356)
+  - Fix lagarto configuration to read its settings from controller.xml
+    in addition to the config.properties file (Juha Lindfors) (ORCJAVA-264)
+  - X10: patch for potential race condition between thread deallocating 
+    gateway and thread processing serial port input (Juha Lindfors, ORCJAVA-359)
+  - Fix ISY-99 connection error messages at regular interval (ORCJAVA-372)
+  - Vera protocol implementation exception at startup (ORCJAVA-403)
+  - Update Marantz implementation to use locale independent string case conversions (ORCJAVA-340)
+
+Controller Pro 1.0.10
+=====================
+
+New Features:
+
+  - Add Port Abstraction Daemon (PAD) source files to project (ORCJAVA-314 + ORCJAVA-375)
+  - EnOcean Implementation (Rainer Hitz) (ORCJAVA-348)
+  - Rewrite TCP for EventListener interface (Marcus Redeker) (ORCJAVA-298)
+
+Bug Fixes:
+
+  - Fix an NPE in lagarto command caused by undetermined
+    initialization order between ExecutableCommand and
+    EventListener implementations (Juha Lindfors) (ORCJAVA-346)
+
+Controller Pro 1.0.9
+====================
+
+New Features:
+
+  - Include Web Console 2.1.0, r7746 (ORCJAVA-333)
+  
+Bug Fixes:
+
+  - ISY-99 implementation does not scale to high number of
+    sensors (Kevin Purney) (ORCJAVA-325)
+  - Telnet status read for switch sensors appears broken. A returned
+    'on' string is never correctly parsed to Java boolean value true
+    due to the extra linefeed '\n' character being added to all response
+    values in readString() implementation (ORCJAVA-326)
+  - Telnet log configuration (ORCJAVA-328)
+  - The controller build script does not mandate an explicit character
+    encoding for all Java compiler tasks. This causes issues on some
+    systems with incompatible default character set/locale. This patch
+    enforces UTF-8 encoding on all compiled source files. (ORCJAVA-329)
+  - Updates the core controller classes (excluding protocol 
+    implementations, these are updated in separate tasks) to use 
+    locale independent string conversions (ORCJAVA-332)
+  - Restlet ClientResource was released too soon (before resource
+    content was consumed), causing a NPE.
+    Fixed by moving release call in finally block after processing. (ORCJAVA-295)
+
+Controller Pro 1.0.8
+====================
+
+New Features:
+
+  - Marantz AVR protocol improvements (ORCJAVA-310)
+  - Create protocol support for Vera (ORCJAVA-300)
+
+Bug Fixes:
+
+  - openremote.sh script must write correct pid to file if CATALINA_PID is specified (ORCJAVA-311)
+  - Change controller to connect to local lagarto-max through port 5002 (ORCJAVA-321)
+
+Controller Pro 1.0.7
+====================
+
+New Features:
+
+  - Support Marantz receivers / pre-pro IP control (ORCJAVA-244)
+
+Controller Pro 1.0.6
+====================
+
+New Features:
+
+  - Introduce unit tests for Version20ModelBuilder class and regression tests for issue ORCJAVA-263 (ORCJAVA-286)
+
+Bug Fixes:
+
+  - KNX does not return scene numbers sent by a physical push button, SCENE and LEARN_SCENE seem to vica versa (ORCJAVA-282)
+  - The ColorPickerBuilder from ORCJAVA-235 is using the wrong attribute name for the dynamic attribute (ORCJAVA-290)
+  - openremote.sh start creates an unbound catalina.out file (ORCJAVA-273)
+  - Fix openremote.sh to work with paths that contain spaces (ORCJAVA-280)
+  - Controller Error occurs when there are spaces in the path (ORCJAVA-263)
+  - NPE when controller checking for commands from remote proxy (ORCJAVA-288)
+  - Ensure that Restlet ClientResource is not released too soon (ORCJAVA-295)
+	  
+Controller 2.1.0 (2013-XX-XX Twin Galaxies)
+===========================================
+
+New Features:
+
+  - EnOcean Implementation (Rainer Hitz, ORCJAVA-348)
+  - Mi Casa Verde Vera Integration (Marcus Redeker, ORCJAVA-330, ORCJAVA-331)
+  - Round robind database (RRD) integration for storing sensor
+    data (Marcus Redeker, ORCJAVA-343)
+  - WebConsole upgraded to version 2.1.1, fixes issues with stuck
+    loading screen (Richard Turner, ORCJAVA-345)
+  - Added DSC-IT 100 Security System integration - IP to serial (Greg Rapp)
+  - Lagarto server (panStamps) integration (Daniel Berenguer)
+  - Support 'custom' sensor types with virtual commands (ORCJAVA-217)
+  - HTTP protocol: methods GET, POST, PUT and DELETE are now supported.
+    For HTTP/JSON return documents, a JSON Path expression is supported.
+    Internally, the implementation has been converted to use URIs instead 
+    of URLs which resolves an issue with lack of encoding of HTTP parameters 
+    which contain which contain white spaces or other special characters 
+    (Marcus Redeker)
+  - One Wire: Added possibility to specify temperature values in
+    either Celsius (default), Kelvin, Fahrenheit or Rankine scales.
+  - Shell Command Execution: polling interval and regular expression
+    filtering on return values supported
+  - Telnet: polling interval property added
+
+
+Bug Fixes:
+
+  - Performance fix to sensor state cache queries (Marcus Redeker)
+  - Runtime performance optimization to avoid unnecessary XML 
+    parsing/XPath use (ORCJAVA-190)
+  - Fix for JSON REST request return values (Richard Turner, ORCJAVA-254)
+  - Rework logout requests and added CORS headers (Richard Turner, ORCJAVA-255)
+  - Internal API : concurrency and call control on Deployer start 
+    controller calls (ORCJAVA-179)  
+  - 1-Wire does not recover when owserver is not available (ORCJAVA-267)  
+  - Issue with status cache if a command linked to a sensor
+    has issue (ORCJAVA-268)
+  - Fix a false warning in ISY-99 protocol implementation (ORCJAVA-308)
+
+Controller 2.0.1 (2012-11-21)
+=============================
+
+ - Update Web Console implementation to 2.0.0 FINAL
+ - Change Tomcat runtime default logging to file size
+   bound (10MB per file) instead of unlimited file
+   size logging
+
+

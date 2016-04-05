@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+<alarms>
+<alarm name="Alarm2">
+<cronExpression>0 32 19 ? * SUN,MON,TUE,WED,THU,FRI,SAT</cronExpression>
+<commands>
+<commandRef device="Device1" name="AlarmHeaterOff" delay="0" />
+</commands>
+<enabled>true</enabled>
+</alarm>
+<alarm name="Alarm1">
+<cronExpression>0 31 19 ? * SUN,MON,TUE,WED,THU,FRI,SAT</cronExpression>
+<commands>
+<commandRef device="Device1" name="AlarmHeaterOn" delay="0" />
+<commandRef device="Device1" name="ThermostatSet" parameter="20" delay="0" />
+</commands>
+<enabled>true</enabled>
+</alarm>
+</alarms> -->

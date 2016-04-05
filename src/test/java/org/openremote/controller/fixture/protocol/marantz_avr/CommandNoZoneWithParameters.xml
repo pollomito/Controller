@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<commands>
+  <command name="MAIN_POWER" class="org.openremote.controller.protocol.marantz_avr.commands.BooleanCommand" value="PW">
+    <parameters>
+      <parameter name="ON">ON</parameter>
+      <parameter name="OFF">STANDBY</parameter>
+      <parameter name="STATUS">?</parameter>
+    </parameters>
+  </command>
+</commands>

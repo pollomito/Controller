@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<commands>
+  <command name="TUNER_FREQUENCY" class="org.openremote.controller.protocol.marantz_avr.commands.TunerFrequencyCommand">
+    <values>
+      <value zone="MAIN">TF_MAIN</value>
+      <value zone="ZONE2">TF_Z2</value>
+    </values>
+  </command>
+</commands>

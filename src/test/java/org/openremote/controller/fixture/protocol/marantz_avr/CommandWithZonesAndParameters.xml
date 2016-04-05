@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<commands>
+  <command name="POWER" class="org.openremote.controller.protocol.marantz_avr.commands.BooleanCommand">
+    <values>
+      <value zone="MAIN">ZM</value>
+      <value zone="ZONE2">Z2</value>
+      <value zone="ZONE3">Z3</value>
+    </values>
+    <parameters>
+      <parameter name="ON">ON</parameter>
+      <parameter name="OFF">STANDBY</parameter>
+      <parameter name="STATUS">?</parameter>
+    </parameters>
+  </command>
+</commands>
