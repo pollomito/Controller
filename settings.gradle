@@ -1,1 +1,3 @@
-rootProject.name = 'OpenRemote-Controller'
+include 'controller'
+
+project(':controller').name = 'OpenRemote-Controller'

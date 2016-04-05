@@ -130,8 +130,9 @@ task startTestContainer(dependsOn: [prepareTestFolder, compileTestJava])
 
 startTestContainer.doFirst {
     description 'Start embedded Jetty container with test configuration'
+
     Properties props = new Properties()
-    props.load(new FileInputStream("$testWebApplicationFolder/WEB-INF/classes/config.properties"))
+    props.load(new FileInputStream(file("$testWebApplicationFolder/WEB-INF/classes/config.properties")))
 
     test.systemProperties = [
         /*
