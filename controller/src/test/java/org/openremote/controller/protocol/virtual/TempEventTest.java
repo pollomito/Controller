@@ -47,7 +47,7 @@ public class TempEventTest
     URL statusRequest = new URL(RESTTests.containerURL + FindPanelByIDTest.RESTAPI_STATUS_URI + "8880");
 
 
-    Thread.sleep(7000);
+    Thread.sleep(15000);
 
     HttpURLConnection connection = (HttpURLConnection)statusRequest.openConnection();
 
