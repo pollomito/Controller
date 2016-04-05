@@ -1,3 +1,4 @@
 include 'controller'
-
 project(':controller').name = 'OpenRemote-Controller'
+
+include 'samsungtv'
