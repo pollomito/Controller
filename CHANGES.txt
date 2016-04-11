@@ -11,6 +11,7 @@ New Features:
   - Controller API extension (ORCJAVA-455)
   - Controller API extension - v2 (ORCJAVA-492)
   - Added Alarm Protocol (ORCJAVA-508)
+  - Replace RXTX library with nrjavaserial library (ORCJAVA-449)
 
 Bug Fixes:
 
