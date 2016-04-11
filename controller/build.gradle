@@ -19,17 +19,14 @@ repositories {
 }
 
 dependencies {
-    staticLibraries "org.rxtx:rxtxSerial:2.2:pre2@dll"
-    staticLibraries "org.rxtx:librxtxSerial:2.2:pre2@so"
-    staticLibraries "org.rxtx:librxtxSerial:2.2:pre2@jnilib"
-
     compile "org.openremote:or-commons:0.1.0"
     compile "org.openremote:or-security:0.2.0"
     compile "org.openremote:or-logging:0.1.0"
     
-    compile "org.rxtx:rxtx:2.2:pre2"
     compile "org.cybergarage.upnp:cybergarage-upnp:1.7.0"
     
+    compile "org.bidib.com.neuronrobotics:nrjavaserial:$nrjavaserialVersion"
+		
     compile "antlr:antlr:$antlrVersion"
     compile "org.antlr:antlr-runtime:$antlrRuntimeVersion"
     compile "org.bouncycastle:bcprov-jdk15on:$bouncycastleVersion"
