@@ -1,5 +1,5 @@
 OpenRemote, the Home of the Digital Home.
-Copyright 2008-2014, OpenRemote Inc.
+Copyright 2008-2016, OpenRemote Inc.
 
 OpenRemote is trademark of OpenRemote, Inc.
 
@@ -693,10 +693,8 @@ OpenRemote Sub-components:
 
 * OpenRemote Logging and OpenRemote Security libraries are licensed under 
   GNU Affero General Public License (AGPL) Version 3.0 or any later version.
-* RXTX library is licensed under GNU Lesser General Public License (LGPL)
-  Version 2.1 or any later version. For the purpose of this distribution, RXTX
-  library is re-licensed under GNU Lesser General Public License (LGPL) Version
-  3.0.
+* nrjavaserial library is licensed under GNU Lesser General Public License (LGPL)
+  Version 3 or any later version.
 * ZeroMQ library is licensed under GNU Lesser General Public License (LGPL)
   Version 3.0 or any later version.
 * BouncyCastle 1.50 library is licensed under the terms included below.
