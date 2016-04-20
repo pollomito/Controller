@@ -13,6 +13,7 @@ New Features:
   - Added Alarm Protocol (ORCJAVA-508)
   - Replace RXTX library with nrjavaserial library (ORCJAVA-449)
   - Add support for dynamic command values to Alarm Protocol (ORCJAVA-512)
+  - Add Velbus logging config to log4j.properties (ORCJAVA-513)
 
 Bug Fixes:
 
