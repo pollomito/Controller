@@ -37,30 +37,35 @@ import org.openremote.controller.protocol.port.TcpSocketPort.PacketProcessor;
 
 public class TcpSocketPortTest {
 
-   @Test
-   public void testReadingFullMessage() throws IOException, PortException {
-      Port socketPort = PortFactory
-            .createPhysicalBus("org.openremote.controller.protocol.port.TcpSocketPort");
-
-      Socket mockedSocket = mock(Socket.class);
-      when(mockedSocket.getInputStream()).thenReturn(new ByteArrayInputStream("test_packet".getBytes()));
-
-      Map<String, Object> portConfiguration = new HashMap<String, Object>();
-      portConfiguration.put(TcpSocketPort.TCP_PORT_CONFIGURATION_SOCKET, mockedSocket);
-      socketPort.configure(portConfiguration);
-
-      Message message = socketPort.receive();
-      Assert.assertNotNull("A message should have been read", message);
-      Assert.assertNotNull("Read message should have content", message.getContent());
-      Assert.assertEquals("Read message content invalid", "test_packet", new String(message.getContent()));
-
-      // EBR : This is testing what the current implementation of TcpSocketPort does.
-      // According to documentation in Port interface, the call to receive() should have blocked.
-      message = socketPort.receive();
-      Assert.assertNotNull("A message should have been read", message);
-      Assert.assertNotNull("Read message should have content", message.getContent());
-      Assert.assertEquals("Read message content should be empty", "", new String(message.getContent()));
-   }
+   // RT: This test was removed because TcpSocketPort now only works with framed messages when end of input stream
+   // is encountered (unless it occurs after a complete frame has been received) an IOException is thrown to indicate
+   // this is the only way to provide feedback that the underlying Socket has been closed i.e. a disconnect has occurred
+   // socket isConnected() method is of no use - Seems like a flaw in the socket implementation
+   
+//   @Test
+//   public void testReadingFullMessage() throws IOException, PortException {
+//      Port socketPort = PortFactory
+//            .createPhysicalBus("org.openremote.controller.protocol.port.TcpSocketPort");
+//
+//      Socket mockedSocket = mock(Socket.class);
+//      when(mockedSocket.getInputStream()).thenReturn(new ByteArrayInputStream("test_packet".getBytes()));
+//
+//      Map<String, Object> portConfiguration = new HashMap<String, Object>();
+//      portConfiguration.put(TcpSocketPort.TCP_PORT_CONFIGURATION_SOCKET, mockedSocket);
+//      socketPort.configure(portConfiguration);
+//
+//      Message message = socketPort.receive();
+//      Assert.assertNotNull("A message should have been read", message);
+//      Assert.assertNotNull("Read message should have content", message.getContent());
+//      Assert.assertEquals("Read message content invalid", "test_packet", new String(message.getContent()));
+//
+//      // EBR : This is testing what the current implementation of TcpSocketPort does.
+//      // According to documentation in Port interface, the call to receive() should have blocked.
+//      message = socketPort.receive();
+//      Assert.assertNotNull("A message should have been read", message);
+//      Assert.assertNotNull("Read message should have content", message.getContent());
+//      Assert.assertEquals("Read message content should be empty", "", new String(message.getContent()));
+//   }
    
    @Test
    public void testReadingMessagesWithLength() throws IOException, PortException {
@@ -117,7 +122,7 @@ public class TcpSocketPortTest {
             .createPhysicalBus("org.openremote.controller.protocol.port.TcpSocketPort");
 
       Socket mockedSocket = mock(Socket.class);
-      when(mockedSocket.getInputStream()).thenReturn(new ByteArrayInputStream("1x234x56".getBytes()));
+      when(mockedSocket.getInputStream()).thenReturn(new ByteArrayInputStream("1x234x56x".getBytes()));
 
       Map<String, Object> portConfiguration = new HashMap<String, Object>();
       portConfiguration.put(TcpSocketPort.TCP_PORT_CONFIGURATION_SOCKET, mockedSocket);
@@ -139,10 +144,10 @@ public class TcpSocketPortTest {
       message = socketPort.receive();
       Assert.assertNotNull("A message should have been read", message);
       Assert.assertNotNull("Read message should have content", message.getContent());
-      Assert.assertEquals("Read message content invalid", "56", new String(message.getContent()));
+      Assert.assertEquals("Read message content invalid", "56x", new String(message.getContent()));
    }
 
-   @Test
+   @Test(expected=IOException.class)
    public void testReadingMessagesWithStartAndStopByte() throws IOException, PortException {
       Port socketPort = PortFactory
             .createPhysicalBus("org.openremote.controller.protocol.port.TcpSocketPort");
@@ -165,11 +170,9 @@ public class TcpSocketPortTest {
       Assert.assertNotNull("A message should have been read", message);
       Assert.assertNotNull("Read message should have content", message.getContent());
       Assert.assertEquals("Read message content invalid", "x5y", new String(message.getContent()));
-      
+
+      // Receive next packet which will never be fulfilled before end of stream so IOException will be thrown
       message = socketPort.receive();
-      Assert.assertNotNull("A message should have been read", message);
-      Assert.assertNotNull("Read message should have content", message.getContent());
-      Assert.assertEquals("Read message content should be empty", "", new String(message.getContent()));
    }
    
    @Test

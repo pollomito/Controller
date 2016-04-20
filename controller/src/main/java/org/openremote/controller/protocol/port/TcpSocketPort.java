@@ -131,6 +131,7 @@ public class TcpSocketPort implements Port
     InputStream is = socket.getInputStream();
     ByteArrayOutputStream baos = new ByteArrayOutputStream();
     byte[] buffer = new byte[1];
+    boolean packetValid = false;
     
     while (is.read(buffer, 0, 1)  != -1) {
       // If packet processor defined then delegate packet logic to it
@@ -142,6 +143,7 @@ public class TcpSocketPort implements Port
             baos.reset();
             log.info("Processor deemed packet as invalid");
           } else {
+            packetValid = true;
             break;
           }
         }
@@ -161,19 +163,25 @@ public class TcpSocketPort implements Port
       
       // If packet size defined check if that has been reached
       if (packetSize != null && baos.size() == packetSize.intValue()) {
-        break;
+         packetValid = true;
+         break;
       }
       
       // If end byte defined check if it has been found
       if (baos.size() > 0 && endByte != null) {
         if (buffer[0] == endByte.byteValue()) {
-          break;
+           packetValid = true;
+           break;
         }
       }
     }
     
-    byte[] packetBytes = baos.toByteArray();
-    return new Message(packetBytes);
+    if (packetValid) {
+       byte[] packetBytes = baos.toByteArray();
+       return new Message(packetBytes);
+    } else {
+       throw new IOException("TCP socket read error");
+    }
   }
   
 }

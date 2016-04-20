@@ -18,6 +18,7 @@ New Features:
 Bug Fixes:
 
   - Fixed: Test fixtures are bundle with controller distribution (ORCJAVA-431)
+  - Update TcpSocketPort to better handle socket close by throwing an IOException (ORCJAVA-514)
 
 Controller Pro 1.4.1
 ====================
