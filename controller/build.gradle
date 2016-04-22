@@ -59,6 +59,8 @@ dependencies {
     compile "com.jayway.jsonpath:json-path:$jsonpathVersion"
     compile "org.zeromq:jzmq:$jzmqVersion" // Not sure what version we're using, seems older
     compile "log4j:log4j:$log4jVersion"
+    compile "org.slf4j:slf4j-api:$slf4jVersion"
+    compile "org.slf4j:slf4j-log4j12:$slf4jVersion"
     compile "org.mvel:mvel2:$mvel2Version"
     compile "org.quartz-scheduler:quartz:$quartzVersion"
     compile "org.restlet.jse:org.restlet:$restletVersion"
