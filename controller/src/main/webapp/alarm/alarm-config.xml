@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--
 <alarms>
+<!--
 <alarm name="Alarm2">
 <cronExpression>0 32 19 ? * SUN,MON,TUE,WED,THU,FRI,SAT</cronExpression>
 <commands>
@@ -16,4 +16,5 @@
 </commands>
 <enabled>true</enabled>
 </alarm>
-</alarms> -->
+-->
+</alarms>
