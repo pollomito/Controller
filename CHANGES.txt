@@ -12,10 +12,14 @@ New Features:
   - Controller API extension - v2 (ORCJAVA-492)
   - Added Alarm Protocol (ORCJAVA-508)
   - Replace RXTX library with nrjavaserial library (ORCJAVA-449)
+  - Add support for dynamic command values to Alarm Protocol (ORCJAVA-512)
+  - Add Velbus logging config to log4j.properties (ORCJAVA-513)
 
 Bug Fixes:
 
   - Fixed: Test fixtures are bundle with controller distribution (ORCJAVA-431)
+  - Update TcpSocketPort to better handle socket close by throwing an IOException (ORCJAVA-514)
+  - Improve connection reliability of VELBUS protocol (ORCJAVA-515)
 
 Controller Pro 1.4.1
 ====================

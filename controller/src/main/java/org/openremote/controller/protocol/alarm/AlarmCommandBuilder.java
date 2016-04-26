@@ -126,6 +126,12 @@ public class AlarmCommandBuilder implements CommandBuilder {
          throw new CommandBuildException("Alarm command is not valid");
       }
       
+      // Check for dynamic command parameter
+      String paramValue = element.getAttributeValue(Command.DYNAMIC_VALUE_ATTR_NAME);
+      if (paramValue != null && !"".equals(paramValue)) {
+         commandValue = paramValue;
+      }
+      
       if (commandValue != null) {
          args = commandValue.split(":");
          
