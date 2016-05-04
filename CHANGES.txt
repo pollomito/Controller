@@ -20,6 +20,7 @@ Bug Fixes:
   - Fixed: Test fixtures are bundle with controller distribution (ORCJAVA-431)
   - Update TcpSocketPort to better handle socket close by throwing an IOException (ORCJAVA-514)
   - Improve connection reliability of VELBUS protocol (ORCJAVA-515)
+  - Fixed: Alarm config updates were removign device names from command refs (ORCJAVA-516)
 
 Controller Pro 1.4.1
 ====================

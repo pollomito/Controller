@@ -235,7 +235,7 @@ class Alarm {
       String commandStr = "";
       
       for (AlarmCommandRef command : commands) {
-         commandStr += "<commandRef name=\""+ command.commandName + "\" delay=\"" + command.commandDelay + "\" />\n";
+         commandStr += "<commandRef device=\"" + command.deviceName + "\" name=\""+ command.commandName + "\" delay=\"" + command.commandDelay + "\" />\n";
       }
       
       String str =   "<alarm name=\"" + name + "\">\n" +
