@@ -32,6 +32,8 @@ import org.kie.api.conf.EqualityBehaviorOption;
 import org.kie.api.io.Resource;
 import org.kie.api.runtime.KieContainer;
 import org.kie.api.runtime.KieSession;
+import org.kie.api.runtime.KieSessionConfiguration;
+import org.kie.api.runtime.conf.TimedRuleExectionOption;
 import org.kie.api.runtime.rule.FactHandle;
 import org.kie.internal.definition.KnowledgePackage;
 import org.openremote.controller.Constants;
@@ -305,7 +307,12 @@ public class RuleEngine extends EventProcessor
 
     KieContainer kieContainer = kieServices.newKieContainer(kieServices.getRepository().getDefaultReleaseId());
     kb = kieContainer.getKieBase();
-    knowledgeSession = kb.newKieSession();
+
+    KieSessionConfiguration kieSessionConfiguration = kieServices.newKieSessionConfiguration();
+    // Use this option to ensure timer rules are fired even in passive mode (triggered by fireAllRules.
+    // This ensures compatibility with the behaviour of previous controller using drools 5.1
+    kieSessionConfiguration.setOption(TimedRuleExectionOption.YES);
+    knowledgeSession = kb.newKieSession(kieSessionConfiguration, null);
 
     switchFacade = new SwitchFacade();
     rangeFacade = new RangeFacade();
