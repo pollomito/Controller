@@ -24,6 +24,7 @@ import org.kie.api.KieBase;
 import org.kie.api.KieServices;
 import org.kie.api.builder.KieBuilder;
 import org.kie.api.builder.KieFileSystem;
+import org.kie.api.builder.KieModule;
 import org.kie.api.builder.Message;
 import org.kie.api.builder.model.KieBaseModel;
 import org.kie.api.builder.model.KieModuleModel;
@@ -248,36 +249,47 @@ public class RuleEngine extends EventProcessor
     }
 
     KieServices kieServices = KieServices.Factory.get();
+    KieContainer kieContainer;
 
-    Map<Resource, File> ruleDefinitions = getRuleDefinitions(kieServices, rulesURI, ResourceFileType.DROOLS_RULE_LANGUAGE);
-    Map<Resource, File> csvDecisionTables = getRuleDefinitions(kieServices, rulesURI, ResourceFileType.CSV_DECISION_TABLE);
+    File kjarFile = new File(new File(rulesURI), "modeler_rules.kjar");
+    if (kjarFile.exists()) {
+      // If specific kjar exists, use it to build KieContainer
+      Resource kjarResource = kieServices.getResources().newFileSystemResource(kjarFile);
+      KieModule km = kieServices.getRepository().addKieModule(kjarResource);
+      kieContainer = kieServices.newKieContainer(km.getReleaseId());
+    } else {
+      // Otherwise use source rules / decision tables and compile locally
+      Map<Resource, File> ruleDefinitions = getRuleDefinitions(kieServices, rulesURI, ResourceFileType.DROOLS_RULE_LANGUAGE);
+      Map<Resource, File> csvDecisionTables = getRuleDefinitions(kieServices, rulesURI, ResourceFileType.CSV_DECISION_TABLE);
 
-    if (ruleDefinitions.isEmpty() && csvDecisionTables.isEmpty())
-    {
-      initLog.info("No rule definitions found in ''{0}''.", new File(rulesURI).getAbsolutePath());
+      if (ruleDefinitions.isEmpty() && csvDecisionTables.isEmpty())
+      {
+        initLog.info("No rule definitions found in ''{0}''.", new File(rulesURI).getAbsolutePath());
 
-      return;
+        return;
+      }
+
+      // Note, knowledgebuilder is not thread-safe...
+
+      KieModuleModel kieModuleModel = kieServices.newKieModuleModel();
+
+      KieBaseModel kieBaseModel = kieModuleModel.newKieBaseModel("OpenRemoteKBase")
+              .setDefault(true)
+              .setEqualsBehavior(EqualityBehaviorOption.EQUALITY);
+      KieSessionModel kieSessionModel = kieBaseModel.newKieSessionModel("OpenRemoteKSession")
+              .setDefault(true)
+              .setType(KieSessionModel.KieSessionType.STATEFUL);
+
+      KieFileSystem kfs = kieServices.newKieFileSystem();
+      kfs.writeKModuleXML(kieModuleModel.toXML());
+
+
+      addResources(kieServices, kfs, ruleDefinitions, ResourceFileType.DROOLS_RULE_LANGUAGE);
+      addResources(kieServices, kfs, csvDecisionTables, ResourceFileType.CSV_DECISION_TABLE);
+
+      kieContainer = kieServices.newKieContainer(kieServices.getRepository().getDefaultReleaseId());
     }
 
-    // Note, knowledgebuilder is not thread-safe...
-
-    KieModuleModel kieModuleModel = kieServices.newKieModuleModel();
-
-    KieBaseModel kieBaseModel = kieModuleModel.newKieBaseModel("OpenRemoteKBase")
-            .setDefault(true)
-            .setEqualsBehavior(EqualityBehaviorOption.EQUALITY);
-    KieSessionModel kieSessionModel = kieBaseModel.newKieSessionModel("OpenRemoteKSession")
-            .setDefault(true)
-            .setType(KieSessionModel.KieSessionType.STATEFUL);
-
-    KieFileSystem kfs = kieServices.newKieFileSystem();
-    kfs.writeKModuleXML(kieModuleModel.toXML());
-
-
-    addResources(kieServices, kfs, ruleDefinitions, ResourceFileType.DROOLS_RULE_LANGUAGE);
-    addResources(kieServices, kfs, csvDecisionTables, ResourceFileType.CSV_DECISION_TABLE);
-
-    KieContainer kieContainer = kieServices.newKieContainer(kieServices.getRepository().getDefaultReleaseId());
     kb = kieContainer.getKieBase();
 
     KieSessionConfiguration kieSessionConfiguration = kieServices.newKieSessionConfiguration();
