@@ -25,10 +25,10 @@ package org.openremote.controller;
 import java.util.List;
 import java.util.Map;
 
-import org.drools.definition.rule.Rule;
-import org.drools.event.rule.BeforeActivationFiredEvent;
-import org.drools.event.rule.DefaultAgendaEventListener;
-import org.drools.runtime.rule.Activation;
+import org.drools.core.event.BeforeActivationFiredEvent;
+import org.drools.core.spi.Activation;
+import org.kie.api.definition.rule.Rule;
+import org.kie.api.event.rule.DefaultAgendaEventListener;
 import org.openremote.controller.model.sensor.Sensor;
 import org.openremote.controller.protocol.Event;
 import org.openremote.controller.utils.Logger;
@@ -49,8 +49,8 @@ public class RuleListener extends DefaultAgendaEventListener
       super();
       log = Logger.getLogger(Constants.RUNTIME_EVENTPROCESSOR_LOG_CATEGORY + ".drools");
    }
-   
-   @Override
+
+//   @Override
    public void beforeActivationFired(BeforeActivationFiredEvent ruleEvent)
    {
       final Rule rule = ruleEvent.getActivation().getRule();
@@ -71,7 +71,7 @@ public class RuleListener extends DefaultAgendaEventListener
       ruleName = "\"" + ruleName + "\" // (package " + rulePackage + ")";
       
       Activation activationEvent = ruleEvent.getActivation();
-      List<String> declarationIDs = activationEvent.getDeclarationIDs();
+      List<String> declarationIDs = activationEvent.getDeclarationIds();
       List<Object> antecedents = activationEvent.getObjects();
       
       

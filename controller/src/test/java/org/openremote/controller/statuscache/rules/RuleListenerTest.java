@@ -30,42 +30,57 @@ import java.util.logging.LogRecord;
 import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
 
-import org.drools.KnowledgeBase;
-import org.drools.KnowledgeBaseFactory;
-import org.drools.builder.KnowledgeBuilder;
-import org.drools.builder.KnowledgeBuilderFactory;
-import org.drools.builder.ResourceType;
-import org.drools.io.ResourceFactory;
-import org.drools.runtime.StatefulKnowledgeSession;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+
+import org.kie.api.KieBase;
+import org.kie.api.KieServices;
+import org.kie.api.builder.KieBuilder;
+import org.kie.api.builder.KieFileSystem;
+import org.kie.api.builder.Message;
+import org.kie.api.builder.model.KieBaseModel;
+import org.kie.api.builder.model.KieModuleModel;
+import org.kie.api.builder.model.KieSessionModel;
+import org.kie.api.conf.EqualityBehaviorOption;
+import org.kie.api.runtime.KieContainer;
+import org.kie.api.runtime.KieSession;
+import org.kie.internal.io.ResourceFactory;
 import org.openremote.controller.RuleListener;
 import org.openremote.controller.model.event.CustomState;
 
 public class RuleListenerTest
 {
-   private StatefulKnowledgeSession ksession;
+   private KieSession ksession;
 
    public static String TEST_SENSOR_NAME = "SENSOR_NAME";
    
    @Before
    public void setUp() throws Exception
    {
-      KnowledgeBuilder kbuilder = KnowledgeBuilderFactory.newKnowledgeBuilder();
+     KieServices kieServices = KieServices.Factory.get();
 
-      kbuilder.add( ResourceFactory.newClassPathResource("org/openremote/controller/statuscache/rules/TestRuleFiring.drl"), ResourceType.DRL);
-      if (kbuilder.hasErrors())
-      {
-          System.out.println(kbuilder.getErrors());
-      }
-      assertFalse(kbuilder.hasErrors());
+     KieModuleModel kieModuleModel = kieServices.newKieModuleModel();
 
-      KnowledgeBase kbase = KnowledgeBaseFactory.newKnowledgeBase();
-      kbase.addKnowledgePackages(kbuilder.getKnowledgePackages());
-      
-      ksession = kbase.newStatefulKnowledgeSession();
+     KieBaseModel kieBaseModel = kieModuleModel.newKieBaseModel("OpenRemoteKBase")
+             .setDefault(true)
+             .setEqualsBehavior(EqualityBehaviorOption.EQUALITY);
+     KieSessionModel kieSessionModel = kieBaseModel.newKieSessionModel("OpenRemoteKSession")
+             .setDefault(true)
+             .setType(KieSessionModel.KieSessionType.STATEFUL);
+
+     KieFileSystem kfs = kieServices.newKieFileSystem();
+     kfs.writeKModuleXML(kieModuleModel.toXML());
+
+     kfs.write("src/main/resources/", ResourceFactory.newClassPathResource("org/openremote/controller/statuscache/rules/TestRuleFiring.drl"));
+     KieBuilder kieBuilder = kieServices.newKieBuilder(kfs).buildAll();
+
+     assertFalse (kieBuilder.getResults().hasMessages(Message.Level.ERROR));
+
+     KieContainer kieContainer = kieServices.newKieContainer(kieServices.getRepository().getDefaultReleaseId());
+     KieBase kb = kieContainer.getKieBase();
+     ksession = kb.newKieSession();
    }
 
    @After

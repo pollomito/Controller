@@ -20,31 +20,20 @@
  */
 package org.openremote.controller.statuscache.rules;
 
-import java.io.File;
-import java.io.FilenameFilter;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-
-import org.drools.KnowledgeBase;
-import org.drools.KnowledgeBaseConfiguration;
-import org.drools.KnowledgeBaseFactory;
-import org.drools.builder.DecisionTableConfiguration;
-import org.drools.builder.DecisionTableInputType;
-import org.drools.builder.KnowledgeBuilder;
-import org.drools.builder.KnowledgeBuilderError;
-import org.drools.builder.KnowledgeBuilderFactory;
-import org.drools.builder.ResourceType;
-import org.drools.conf.AssertBehaviorOption;
-import org.drools.definition.KnowledgePackage;
-import org.drools.io.Resource;
-import org.drools.io.ResourceFactory;
-import org.drools.runtime.StatefulKnowledgeSession;
-import org.drools.runtime.rule.FactHandle;
+import org.kie.api.KieBase;
+import org.kie.api.KieServices;
+import org.kie.api.builder.KieBuilder;
+import org.kie.api.builder.KieFileSystem;
+import org.kie.api.builder.Message;
+import org.kie.api.builder.model.KieBaseModel;
+import org.kie.api.builder.model.KieModuleModel;
+import org.kie.api.builder.model.KieSessionModel;
+import org.kie.api.conf.EqualityBehaviorOption;
+import org.kie.api.io.Resource;
+import org.kie.api.runtime.KieContainer;
+import org.kie.api.runtime.KieSession;
+import org.kie.api.runtime.rule.FactHandle;
+import org.kie.internal.definition.KnowledgePackage;
 import org.openremote.controller.Constants;
 import org.openremote.controller.ControllerConfiguration;
 import org.openremote.controller.RuleListener;
@@ -58,6 +47,16 @@ import org.openremote.controller.statuscache.LifeCycleEvent;
 import org.openremote.controller.statuscache.RangeFacade;
 import org.openremote.controller.statuscache.SwitchFacade;
 import org.openremote.controller.utils.Logger;
+
+import java.io.File;
+import java.io.FilenameFilter;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * TODO
@@ -111,8 +110,8 @@ public class RuleEngine extends EventProcessor
 
   // Private Instance Fields ----------------------------------------------------------------------
 
-  private KnowledgeBase kb;
-  private StatefulKnowledgeSession knowledgeSession;
+  private KieBase kb;
+  private KieSession knowledgeSession;
   private Map<Integer, FactHandle> eventSources = new HashMap<Integer, FactHandle>();
   private long factCount;
 
@@ -132,12 +131,10 @@ public class RuleEngine extends EventProcessor
   @Override public void push(EventContext ctx)
   {
     // if we got no rules, just push event back to next processor...
-
     if (kb == null)
     {
       return;
     }
-
 
     // TODO : add listener for logging
 
@@ -166,7 +163,7 @@ public class RuleEngine extends EventProcessor
         {
           try
           {
-            knowledgeSession.retract(eventSources.get(evt.getSourceID()));
+            knowledgeSession.delete(eventSources.get(evt.getSourceID()));
           }
           finally
           {
@@ -177,7 +174,6 @@ public class RuleEngine extends EventProcessor
         }
 
         FactHandle handle = knowledgeSession.insert(evt);
-
         eventSources.put(evt.getSourceID(), handle);
 
         log.trace("Inserted event {0}", evt);
@@ -195,7 +191,7 @@ public class RuleEngine extends EventProcessor
       }
       
       knowledgeSession.fireAllRules();
-      
+
       factNewCount = knowledgeSession.getFactCount();
       if(factNewCount >= 1000) // look for runaway insertion of facts
       if(factNewCount != factCount)
@@ -226,7 +222,6 @@ public class RuleEngine extends EventProcessor
    */
   @Override public void start(LifeCycleEvent event) throws InitializationException
   {
-
     ControllerConfiguration config = ServiceContext.getControllerConfiguration();
 
     URI resourceURI;
@@ -259,8 +254,10 @@ public class RuleEngine extends EventProcessor
       );
     }
 
-    Map<Resource, File> ruleDefinitions = getRuleDefinitions(rulesURI, ResourceFileType.DROOLS_RULE_LANGUAGE);
-    Map<Resource, File> csvDecisionTables = getRuleDefinitions(rulesURI, ResourceFileType.CSV_DECISION_TABLE);
+    KieServices kieServices = KieServices.Factory.get();
+
+    Map<Resource, File> ruleDefinitions = getRuleDefinitions(kieServices, rulesURI, ResourceFileType.DROOLS_RULE_LANGUAGE);
+    Map<Resource, File> csvDecisionTables = getRuleDefinitions(kieServices, rulesURI, ResourceFileType.CSV_DECISION_TABLE);
 
     if (ruleDefinitions.isEmpty() && csvDecisionTables.isEmpty())
     {
@@ -269,13 +266,25 @@ public class RuleEngine extends EventProcessor
       return;
     }
 
-
     // Note, knowledgebuilder is not thread-safe...
 
+    KieModuleModel kieModuleModel = kieServices.newKieModuleModel();
 
-    KnowledgeBaseConfiguration kbConfiguration = KnowledgeBaseFactory.newKnowledgeBaseConfiguration();
-    kbConfiguration.setOption(AssertBehaviorOption.EQUALITY);
+    KieBaseModel kieBaseModel = kieModuleModel.newKieBaseModel("OpenRemoteKBase")
+            .setDefault(true)
+            .setEqualsBehavior(EqualityBehaviorOption.EQUALITY);
+    KieSessionModel kieSessionModel = kieBaseModel.newKieSessionModel("OpenRemoteKSession")
+            .setDefault(true)
+            .setType(KieSessionModel.KieSessionType.STATEFUL);
 
+    KieFileSystem kfs = kieServices.newKieFileSystem();
+    kfs.writeKModuleXML(kieModuleModel.toXML());
+
+
+    addResources(kieServices, kfs, ruleDefinitions, ResourceFileType.DROOLS_RULE_LANGUAGE);
+    addResources(kieServices, kfs, csvDecisionTables, ResourceFileType.CSV_DECISION_TABLE);
+
+    /*
     kb = KnowledgeBaseFactory.newKnowledgeBase(kbConfiguration);
 
     Set<KnowledgePackage> packages1 = getValidKnowledgePackages(ruleDefinitions, ResourceFileType.DROOLS_RULE_LANGUAGE);
@@ -292,6 +301,11 @@ public class RuleEngine extends EventProcessor
 
 
     knowledgeSession = kb.newStatefulKnowledgeSession();
+    */
+
+    KieContainer kieContainer = kieServices.newKieContainer(kieServices.getRepository().getDefaultReleaseId());
+    kb = kieContainer.getKieBase();
+    knowledgeSession = kb.newKieSession();
 
     switchFacade = new SwitchFacade();
     rangeFacade = new RangeFacade();
@@ -431,7 +445,7 @@ public class RuleEngine extends EventProcessor
    * @return  a map containing a resource handle (that can be used by Drools) as key, and the file
    *          reference to the physical file that was used to create the resource reference
    */
-  private Map<Resource, File> getRuleDefinitions(URI uri, final ResourceFileType resourceFileType)
+  private Map<Resource, File> getRuleDefinitions(KieServices kieServices, URI uri, final ResourceFileType resourceFileType)
   {
     final File dir = new File(uri);
 
@@ -476,7 +490,7 @@ public class RuleEngine extends EventProcessor
       try
       {
         if (file.length() >0) {
-          Resource resource = ResourceFactory.newFileResource(file);
+          Resource resource = kieServices.getResources().newFileSystemResource(file);
           ruleDefinitions.put(resource, file);
           initLog.debug("Adding Rule ''{0}''...", file.getName());
         }
@@ -521,6 +535,7 @@ public class RuleEngine extends EventProcessor
    * @return  set of knowledge packages that seemed to deploy correctly -- to be deployed in
    *          the actual knowledge base we use at runtime
    */
+  /*
   private Set<KnowledgePackage> getValidKnowledgePackages(Map<Resource, File> definitions,
                                                           ResourceFileType resourceType)
   {
@@ -598,6 +613,52 @@ public class RuleEngine extends EventProcessor
 
     return packages;
   }
+ */
 
+  private void addResources(KieServices kieServices, KieFileSystem kfs, Map<Resource, File> definitions,
+                                                          ResourceFileType resourceType)
+  {
+    Set<KnowledgePackage> packages = new HashSet<KnowledgePackage>();
+
+    for (Resource resource : definitions.keySet())
+    {
+      try
+      {
+        kfs.write("src/main/resources/" + definitions.get(resource).getName(), resource);
+
+        KieBuilder kieBuilder = kieServices.newKieBuilder(kfs).buildAll();
+
+        if (kieBuilder.getResults().hasMessages(Message.Level.ERROR))
+        {
+
+          Collection<Message> errors = kieBuilder.getResults().getMessages(Message.Level.ERROR);
+
+          initLog.error(
+                  "Rule definition ''{0}'' could not be deployed. See errors below.",
+                  definitions.get(resource).getName()
+          );
+
+          for (Message error : errors)
+          {
+            initLog.error(error.getText());
+          }
+          // If compilation failed, remove rules from FileSystem so it won't fail on next pass here if any
+          kfs.delete("src/main/resources/" + definitions.get(resource).getName());
+
+        } else
+        {
+          initLog.info("Added rule definition ''{0}'' to knowledge.", definitions.get(resource).getName());
+        }
+      } catch (Throwable t) {
+        initLog.error(
+                "Error in rule definition ''{0}'' : {1}",
+                t, definitions.get(resource).getName(), t.getMessage()
+        );
+        // If compilation failed, remove rules from FileSystem so it won't fail on next pass here if any
+        kfs.delete("src/main/resources/" + definitions.get(resource).getName());
+      }
+
+    }
+  }
 }
 
