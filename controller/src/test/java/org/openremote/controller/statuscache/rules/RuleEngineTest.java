@@ -166,15 +166,17 @@ public class RuleEngineTest
     cache.start();
 
     Switch sw = new Switch(123, "test", "on", Switch.State.ON);
+    cache.registerSensor(new SwitchSensor("test", 123, cache, new TestCommand(), 1));
 
     cache.update(sw);
+
+    Thread.sleep(2000);
+
     Event evt = grab.event;
 
     Assert.assertTrue(evt.getSourceID() == 123);
     Assert.assertTrue(evt.getSource().equals("test"));
     Assert.assertTrue(evt instanceof Switch);
-    Assert.assertTrue(evt.equals(sw));
-    Assert.assertTrue(evt == sw);
 
     Switch sw1 = (Switch)evt;
 

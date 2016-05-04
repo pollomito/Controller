@@ -20,6 +20,7 @@
  */
 package org.openremote.controller.model.event
 
+global org.openremote.controller.statuscache.SwitchFacade switches;
 
 rule "Modify Switch State"
 
@@ -29,6 +30,6 @@ when
 
 then
 
-  $switch.off();
+  switches.name("test").off();
 
 end
