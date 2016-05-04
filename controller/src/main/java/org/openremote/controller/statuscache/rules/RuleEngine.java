@@ -286,25 +286,6 @@ public class RuleEngine extends EventProcessor
     addResources(kieServices, kfs, ruleDefinitions, ResourceFileType.DROOLS_RULE_LANGUAGE);
     addResources(kieServices, kfs, csvDecisionTables, ResourceFileType.CSV_DECISION_TABLE);
 
-    /*
-    kb = KnowledgeBaseFactory.newKnowledgeBase(kbConfiguration);
-
-    Set<KnowledgePackage> packages1 = getValidKnowledgePackages(ruleDefinitions, ResourceFileType.DROOLS_RULE_LANGUAGE);
-    Set<KnowledgePackage> packages2 = getValidKnowledgePackages(csvDecisionTables, ResourceFileType.CSV_DECISION_TABLE);
-
-    // TODO :
-    //    Leaving XLS out for now -- not sure they're really necessary (you can always
-    //    save as CSV) and don't want to introduce additional library dependencies (POI et al)
-    //                                                                                          [JPL]
-
-
-    kb.addKnowledgePackages(packages1);
-    kb.addKnowledgePackages(packages2);
-
-
-    knowledgeSession = kb.newStatefulKnowledgeSession();
-    */
-
     KieContainer kieContainer = kieServices.newKieContainer(kieServices.getRepository().getDefaultReleaseId());
     kb = kieContainer.getKieBase();
 
@@ -515,113 +496,22 @@ public class RuleEngine extends EventProcessor
     return ruleDefinitions;
   }
 
-
   /**
-   * This is a bit of an ugly hack -- was in a hurry and couldn't find if there's a better
-   * way in Drools API to handle this... Drools responds to errors in rule definitions by
-   * throwing runtime exceptions. This is a bit of an issue when you are potentially deploying
-   * multiple separate files, as it is not clear if the correct ones will be deployed or if
-   * everything gets discarded if even one doesn't parse.  <p>
+   * Adds the resources to the file system that will later be used to create the KieBase.
+   * Rules and decision tables compilation happens at this stage.
+   * If adding a given file fails, errors are logged and the file is removed from the file system
+   * and the method continues adding the other resources if any.
    *
-   * So the ugly hack part is that we try to add rule definitions individually to temporary
-   * knowledge bases. If they get parsed successfully then we keep them. Otherwise we don't
-   * keep them on the list, just tell user about the error and continue to deploy the ones
-   * that do work. For each rule definition we discard the temporary knowledge base and then
-   * later deploy all successful ones in the real knowledge base that we'll use at runtime. <p>
+   * @param kieServices     The KieServices instance to use to create the builder
    *
-   * Doing this feels wrong so if there's a more natural way to accomplish this (deploying
-   * different types of rule definitions -- DRL, CSV, etc -- and discarding the faulty ones
-   * only rather than all of them) then this should be fixed.
+   * @param kfs             The KieFileSystem to add resources to
    *
-   * @param definitions     potential rule definition candidates -- these will be attempted to
-   *                        add to temporary knowledge base just to see if their definitions
-   *                        cause any exceptions to be thrown
+   * @param definitions     rule definitions to be added to the file system
+   *                        Only rules that compile successfully will be added
+   *                        and included later when creating the KieBase
    *
    * @param resourceType    Resource file type -- DRL or CSV file
-   *
-   * @return  set of knowledge packages that seemed to deploy correctly -- to be deployed in
-   *          the actual knowledge base we use at runtime
    */
-  /*
-  private Set<KnowledgePackage> getValidKnowledgePackages(Map<Resource, File> definitions,
-                                                          ResourceFileType resourceType)
-  {
-    Set<KnowledgePackage> packages = new HashSet<KnowledgePackage>();
-
-    for (Resource resource : definitions.keySet())
-    {
-      KnowledgeBuilder builder = KnowledgeBuilderFactory.newKnowledgeBuilder();
-
-      try
-      {
-        if (resourceType == ResourceFileType.CSV_DECISION_TABLE)
-        {
-          DecisionTableConfiguration conf = KnowledgeBuilderFactory.newDecisionTableConfiguration();
-          conf.setInputType(DecisionTableInputType.CSV);
-
-          builder.add(resource, ResourceType.DTABLE, conf);
-        }
-
-        else if (resourceType == ResourceFileType.DROOLS_RULE_LANGUAGE)
-        {
-          builder.add(resource, ResourceType.DRL);
-        }
-
-        else
-        {
-          initLog.warn("Unrecognized rule definition file format : {0}", resourceType);
-        }
-
-        if (builder.hasErrors())
-        {
-          Collection<KnowledgeBuilderError> errors = builder.getErrors();
-
-          initLog.error(
-              "Rule definition ''{0}'' could not be deployed. See errors below.",
-              definitions.get(resource).getName()
-          );
-
-          for (KnowledgeBuilderError error : errors)
-          {
-            initLog.error(error.getMessage());
-          }
-        }else{
-           initLog.info("Added rule definition ''{0}'' to knowledge.", definitions.get(resource).getName());
-        }
-      }
-
-      catch (Throwable t)
-      {
-        initLog.error(
-            "Error in rule definition ''{0}'' : {1}",
-            t, definitions.get(resource).getName(), t.getMessage()
-        );
-      }
-
-      try
-      {
-        KnowledgeBase kb = builder.newKnowledgeBase();
-
-        kb.addKnowledgePackages(builder.getKnowledgePackages());
-
-        packages.addAll(builder.getKnowledgePackages());
-
-        initLog.debug("Adding rule definitions from ''{0}''...", definitions.get(resource).getName());
-      }
-
-      catch (IllegalArgumentException e)
-      {
-        initLog.error(
-            "There was an error parsing the rule definition ''{0}'' : {1}",
-            e, definitions.get(resource).getName(), e.getMessage()
-        );
-      }
-    }
-
-    return packages;
-  }
- */
-
   private void addResources(KieServices kieServices, KieFileSystem kfs, Map<Resource, File> definitions,
                                                           ResourceFileType resourceType)
   {
