@@ -129,26 +129,28 @@ class Alarm {
       
       if (incrementalChange) {
          mins = this.mins + mins;
-         int sign = mins >= 0 ? 1 : -1;
-         mins = Math.abs(mins);
-         int minHours = (int)Math.floor(((double)mins)/60);
-         mins = mins % 60;
-         hours += (minHours * sign);
          hours = this.hours + hours;
-         
-         if (sign == -1 && mins > 0) {
-            hours--;
-            mins = 60-mins;
-         }
-         
-         if (hours < 0) {
-            hours = 24-hours;
-         }
       }
       
-      // Sanity check hours and mins
+      // Sanity check hours and mins      
+      int sign = mins >= 0 ? 1 : -1;
+      mins = Math.abs(mins);
+      int minHours = (int)Math.floor(((double)mins)/60);
+      mins = mins % 60;
+      hours += (minHours * sign);
+
+      
+      if (sign == -1 && mins > 0) {
+         hours--;
+         mins = 60-mins;
+      }
+      
+      if (hours < 0) {
+         hours = 24-hours;
+      }
+      
       hours = Math.min(23, Math.max(0, hours));
-      mins = Math.min(60, Math.max(0, mins));
+      mins = Math.min(59, Math.max(0, mins));
       
       // Update the alarm
       this.hours = hours;
