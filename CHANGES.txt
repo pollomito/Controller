@@ -2,6 +2,7 @@ Controller Pro 1.6.0 (WIP)
 ==========================
 
   - Updated drools to version 6.4 (#3)
+  - Have drools use pre-built kjars if bundled in configuration (#5)
   - Convert build system to Gradle (ORCJAVA-511)
 
 Controller Pro 1.5.0
