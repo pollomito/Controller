@@ -1,6 +1,6 @@
 /*
  * OpenRemote, the Home of the Digital Home.
- * Copyright 2008-2012, OpenRemote Inc.
+ * Copyright 2008-2016, OpenRemote Inc.
  *
  * See the contributors.txt file in the distribution for a
  * full listing of individual contributors.
@@ -73,7 +73,7 @@ public class RuleListenerTest
      KieFileSystem kfs = kieServices.newKieFileSystem();
      kfs.writeKModuleXML(kieModuleModel.toXML());
 
-     kfs.write("src/main/resources/", ResourceFactory.newClassPathResource("org/openremote/controller/statuscache/rules/TestRuleFiring.drl"));
+     kfs.write("src/main/resources/TestRuleFiring.drl", ResourceFactory.newClassPathResource("org/openremote/controller/statuscache/rules/TestRuleFiring.drl"));
      KieBuilder kieBuilder = kieServices.newKieBuilder(kfs).buildAll();
 
      assertFalse (kieBuilder.getResults().hasMessages(Message.Level.ERROR));
@@ -93,11 +93,11 @@ public class RuleListenerTest
     * This test confirms the plumbing for the event listener is working.
     * This test is testing the following behavior:
     *    The event listener detects rule activations.
-    *    The listener fires "BeforeActivationFired" in response to rule activations.
+    *    The listener fires "BeforeMatchFired" in response to rule activations.
     *    The listener is properly detecting and logging information about the rule (name, declarations, LHS, etc.).
     */
    @Test
-   public void testBeforeActivationFired()
+   public void testBeforeMatchFired()
    {
       CustomState newState = new CustomState(1, TEST_SENSOR_NAME, "ON" );
 
