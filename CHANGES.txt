@@ -1,3 +1,8 @@
+ORCJAVA-382
+===========
+
+  - Do not rely on pre-existing directory structure when creating RRD files
+
 Controller Pro 1.6.0 (WIP)
 ==========================
 
