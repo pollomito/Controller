@@ -38,17 +38,10 @@ dependencies {
     compile "commons-lang:commons-lang:$commonsLangVersion"
     compile "commons-net:commons-net:$commonsNetVersion"
 
-    compile ("org.drools:drools-compiler:$droolsVersion:patched")
+    compile "org.kie:kie-api:$droolsVersion"
+    compile "org.drools:drools-compiler:$droolsVersion"
     compile "org.drools:drools-core:$droolsVersion"
-    compile "org.drools:drools-api:$droolsVersion"
-    // We need a specific patched version of drools-compiler,
-    // make sure "std" version is not included by transitive dependencies
-    compile ("org.drools:drools-decisiontables:$droolsVersion") {
-      exclude module: 'drools-compiler'
-    }
-    compile ("org.drools:drools-templates:$droolsVersion") {
-      exclude module: 'drools-compiler'
-    }
+    compile "org.drools:drools-decisiontables:$droolsVersion"
 
     compile "org.eclipse.jdt.core.compiler:ecj:$ecjVersion"
     compile "net.sf.flexjson:flexjson:$flexjsonVersion"

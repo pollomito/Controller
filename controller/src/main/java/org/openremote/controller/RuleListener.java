@@ -1,6 +1,6 @@
 /*
  * OpenRemote, the Home of the Digital Home.
- * Copyright 2008-2012, OpenRemote Inc.
+ * Copyright 2008-2016, OpenRemote Inc.
  *
  * See the contributors.txt file in the distribution for a
  * full listing of individual contributors.
@@ -25,10 +25,12 @@ package org.openremote.controller;
 import java.util.List;
 import java.util.Map;
 
-import org.drools.definition.rule.Rule;
-import org.drools.event.rule.BeforeActivationFiredEvent;
-import org.drools.event.rule.DefaultAgendaEventListener;
-import org.drools.runtime.rule.Activation;
+import org.drools.core.event.BeforeActivationFiredEvent;
+import org.drools.core.spi.Activation;
+import org.kie.api.definition.rule.Rule;
+import org.kie.api.event.rule.BeforeMatchFiredEvent;
+import org.kie.api.event.rule.DefaultAgendaEventListener;
+import org.kie.api.runtime.rule.Match;
 import org.openremote.controller.model.sensor.Sensor;
 import org.openremote.controller.protocol.Event;
 import org.openremote.controller.utils.Logger;
@@ -38,6 +40,7 @@ import org.openremote.controller.utils.Logger;
  * behavior.
  * 
  * @author Isaac Martin
+ * @author <a href="mailto:eric@openremote.org">Eric Bariaux</a>
  */
 public class RuleListener extends DefaultAgendaEventListener
 {
@@ -49,11 +52,11 @@ public class RuleListener extends DefaultAgendaEventListener
       super();
       log = Logger.getLogger(Constants.RUNTIME_EVENTPROCESSOR_LOG_CATEGORY + ".drools");
    }
-   
+
    @Override
-   public void beforeActivationFired(BeforeActivationFiredEvent ruleEvent)
+   public void beforeMatchFired(BeforeMatchFiredEvent event)
    {
-      final Rule rule = ruleEvent.getActivation().getRule();
+      final Rule rule = event.getMatch().getRule();
       String ruleName = rule.getName();
       
       if (ruleName.startsWith("--"))
@@ -70,9 +73,9 @@ public class RuleListener extends DefaultAgendaEventListener
       String rulePackage = rule.getPackageName();
       ruleName = "\"" + ruleName + "\" // (package " + rulePackage + ")";
       
-      Activation activationEvent = ruleEvent.getActivation();
-      List<String> declarationIDs = activationEvent.getDeclarationIDs();
-      List<Object> antecedents = activationEvent.getObjects();
+      Match matchEvent = event.getMatch();
+      List<String> declarationIDs = matchEvent.getDeclarationIds();
+      List<Object> antecedents = matchEvent.getObjects();
       
       
       String declarationLog = "";
@@ -80,7 +83,7 @@ public class RuleListener extends DefaultAgendaEventListener
       {
          Object declarationValue = null;
          String declarationValueString = "";
-         declarationValue = activationEvent.getDeclarationValue(declarationID);
+         declarationValue = matchEvent.getDeclarationValue(declarationID);
          declarationValueString = this.declarationValueToString(declarationValue);
          if (declarationValue instanceof Sensor || declarationValue instanceof Event)
          {
