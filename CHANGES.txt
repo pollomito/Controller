@@ -1,11 +1,7 @@
-ORCJAVA-382
-===========
-
-  - Do not rely on pre-existing directory structure when creating RRD files
-
 Controller Pro 1.6.0 (WIP)
 ==========================
 
+  - Do not rely on pre-existing directory structure when creating RRD files (#6, ORCJAVA-382)
   - Updated drools to version 6.4 (#3)
   - Have drools use pre-built kjars if bundled in configuration (#5)
   - Convert build system to Gradle (ORCJAVA-511)
