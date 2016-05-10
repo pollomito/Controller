@@ -1,7 +1,8 @@
-ORCJAVA-511
-===========
+Controller Pro 1.6.0 (WIP)
+==========================
 
-  - Convert build system to Gradle
+  - Updated drools to version 6.4 (#3)
+  - Convert build system to Gradle (ORCJAVA-511)
 
 Controller Pro 1.5.0
 ====================
