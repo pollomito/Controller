@@ -1,6 +1,6 @@
 /*
  * OpenRemote, the Home of the Digital Home.
- * Copyright 2008-2011, OpenRemote Inc.
+ * Copyright 2008-2016, OpenRemote Inc.
  *
  * See the contributors.txt file in the distribution for a
  * full listing of individual contributors.
@@ -64,6 +64,7 @@ import java.util.Set;
  * TODO
  *
  * @author <a href="mailto:juha@openremote.org">Juha Lindfors</a>
+ * @author <a href="mailto:eric@openremote.org">Eric Bariaux</a>
  */
 public class RuleEngine extends EventProcessor
 {
@@ -121,11 +122,7 @@ public class RuleEngine extends EventProcessor
   private LevelFacade levelFacade;
   private RangeFacade rangeFacade;
 
-
-
   // Implements EventProcessor --------------------------------------------------------------------
-
-
 
   /**
    * TODO
@@ -148,12 +145,6 @@ public class RuleEngine extends EventProcessor
     levelFacade.pushLogger(log);
     rangeFacade.pushEventContext(ctx);
     rangeFacade.pushLogger(log);
-
-//    SwitchFacade switchFacade = new SwitchFacade();
-//
-//    knowledgeSession.setGlobal("switch", switchFacade);
-//
-//    knowledgeSession.setGlobal("event", eventFacade);
 
     try
     {
