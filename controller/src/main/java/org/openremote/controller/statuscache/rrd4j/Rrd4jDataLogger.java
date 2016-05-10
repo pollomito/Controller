@@ -82,18 +82,14 @@ public class Rrd4jDataLogger extends EventProcessor
    *   recorded during the execution and operation of the event processor (outside of startup
    *   or shutdown or other lifecycle events).
    */
-  private final static Logger runtime = Logger.getLogger(
-      Constants.RUNTIME_EVENTPROCESSOR_LOG_CATEGORY + ".rrd"
-  );
+  private final static Logger runtime = Logger.getLogger(Constants.RUNTIME_EVENTPROCESSOR_LOG_CATEGORY + ".rrd");
 
   /**
    * Separate logging of the lifecycle/configuration events. Usually these are more visible
    * to the user on the console, boot logs, etc. whereas runtime logs in general are directed
    * into their own specific files.
    */
-  private final static Logger init = Logger.getLogger(
-      Constants.EVENT_PROCESSOR_INIT_LOG_CATEGORY + ".rrd"
-  );
+  private final static Logger init = Logger.getLogger(Constants.EVENT_PROCESSOR_INIT_LOG_CATEGORY + ".rrd");
 
 
   // Instance Fields ------------------------------------------------------------------------------
@@ -309,8 +305,7 @@ public class Rrd4jDataLogger extends EventProcessor
 
   // Private Instance Methods ---------------------------------------------------------------------
 
-  private Map<String,String> parseConfigXMLGraphs(URI configUri, URI rddDirUri)
-     throws InitializationException
+  private Map<String,String> parseConfigXMLGraphs(URI configUri, URI rddDirUri) throws InitializationException
   {
     File xmlFile = new File(configUri);
 
