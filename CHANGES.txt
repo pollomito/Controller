@@ -1,7 +1,10 @@
-ORCJAVA-511
-===========
+Controller Pro 1.6.0 (WIP)
+==========================
 
-  - Convert build system to Gradle
+  - Do not rely on pre-existing directory structure when creating RRD files (#6, ORCJAVA-382)
+  - Updated drools to version 6.4 (#3)
+  - Have drools use pre-built kjars if bundled in configuration (#5)
+  - Convert build system to Gradle (ORCJAVA-511)
 
 Controller Pro 1.5.0
 ====================
@@ -14,12 +17,14 @@ New Features:
   - Replace RXTX library with nrjavaserial library (ORCJAVA-449)
   - Add support for dynamic command values to Alarm Protocol (ORCJAVA-512)
   - Add Velbus logging config to log4j.properties (ORCJAVA-513)
+  - Alarm protocol enhancement (ORCJAVA-517)
 
 Bug Fixes:
 
   - Fixed: Test fixtures are bundle with controller distribution (ORCJAVA-431)
   - Update TcpSocketPort to better handle socket close by throwing an IOException (ORCJAVA-514)
   - Improve connection reliability of VELBUS protocol (ORCJAVA-515)
+  - Fixed: Alarm config updates were removign device names from command refs (ORCJAVA-516)
 
 Controller Pro 1.4.1
 ====================
