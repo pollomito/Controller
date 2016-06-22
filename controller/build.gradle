@@ -233,7 +233,13 @@ task createDockerfile(type: Dockerfile) {
     // We're adding a tar instead of a folder structure,
     // otherwise empty folders (all tomcat logs folders) where not present on image
     addFile project(':OpenRemote-Controller').dockerControllerTar.archiveName, "/opt"
+    
+    runCommand 'groupadd -r openremote && useradd -r -g openremote openremote && chown -R openremote.openremote /opt/OpenRemote-Controller'
+    
     exposePort 8688
+    
+    user 'openremote'
+    
     workingDir "/opt/OpenRemote-Controller/bin"
     entryPoint "/opt/OpenRemote-Controller/bin/openremote.sh"
 }
