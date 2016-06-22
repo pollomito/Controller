@@ -228,6 +228,8 @@ task createDockerfile(type: Dockerfile) {
     destFile = project.file("$project.buildDir/install/Dockerfile")
     from "java:8"
 
+    maintainer 'OpenRemote <support@openremote.org>'
+
     // We're adding a tar instead of a folder structure,
     // otherwise empty folders (all tomcat logs folders) where not present on image
     addFile project(':OpenRemote-Controller').dockerControllerTar.archiveName, "/opt"
