@@ -213,14 +213,14 @@ ext.dockerImageName = "$dockerRepository/controller:$imageVersion".toString()
 
 apply plugin: 'com.bmuschko.docker-remote-api'
 
-    docker {
-        url = "$System.env.DOCKER_HOST".replace("tcp:", "https:")
-        certPath = new File("$System.env.DOCKER_CERT_PATH")
-        registryCredentials {
-            username = project.properties.dockerHubUsername
-            password = project.properties.dockerHubPassword
-        }
+docker {
+    url = "$System.env.DOCKER_HOST".replace("tcp:", "https:")
+    certPath = new File("$System.env.DOCKER_CERT_PATH")
+    registryCredentials {
+        username = project.properties.dockerHubUsername
+        password = project.properties.dockerHubPassword
     }
+}
 
 import com.bmuschko.gradle.docker.tasks.image.*
 
