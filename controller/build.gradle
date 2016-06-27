@@ -196,17 +196,39 @@ task controller(type: Zip, dependsOn: assemble) {
 
 // Code related to building Docker image
 
-task dockerControllerTar(type: Tar, dependsOn: assemble) {
+task temporaryControllerDirectory(type: Copy, dependsOn: assemble) {
+    destinationDir = file("${buildDir}/tempController")
+    from('runtime/apache-tomcat-6.0.18') {
+        into project.name
+    }
+    into("$project.name/webapps/controller") {
+        with war
+    }
+}
+
+task sampleControllerConfig(type: Copy) {
+    destinationDir = file("${buildDir}/tempController")
+		from('sample') {
+		    into 'or-resources'
+		}
+}
+
+task dockerControllerTar(type: Tar, dependsOn: [temporaryControllerDirectory, sampleControllerConfig])
+
+dockerControllerTar.doFirst {
+    ant.chmod(file:"${buildDir}/tempController/${project.name}/bin/openremote.sh" , perm: "u+x")
+    
+    String contents = new File("${buildDir}/tempController/${project.name}/webapps/controller/WEB-INF/classes/config.properties").getText('UTF-8')
+    contents = contents.replaceAll('resource.path=../webapps/controller', 'resource.path=/opt/or-resources')
+    new File("${buildDir}/tempController/${project.name}/webapps/controller/WEB-INF/classes/config.properties").write(contents, 'UTF-8')
+}
+
+dockerControllerTar
+{
     description 'Prepares a tar image to be deployed to docker image'
 
-    ant.chmod(file:"runtime/apache-tomcat-6.0.18/bin/openremote.sh" , perm: "u+x")
     destinationDir = file("${buildDir}/install")
-    from('runtime/apache-tomcat-6.0.18') {
-                    into project.name
-                }
-                into("$project.name/webapps/controller") {
-                    with war
-                }
+    from(file("${buildDir}/tempController"))
 }
 
 ext.dockerImageName = "$dockerRepository/controller:$imageVersion".toString()
@@ -234,11 +256,13 @@ task createDockerfile(type: Dockerfile) {
     // otherwise empty folders (all tomcat logs folders) where not present on image
     addFile project(':OpenRemote-Controller').dockerControllerTar.archiveName, "/opt"
     
-    runCommand 'groupadd -r openremote && useradd -r -g openremote openremote && chown -R openremote.openremote /opt/OpenRemote-Controller'
+    runCommand 'groupadd -r openremote && useradd -r -g openremote openremote && chown -R openremote.openremote /opt/OpenRemote-Controller && chown -R openremote.openremote /opt/or-resources'
     
     exposePort 8688
     
     user 'openremote'
+    
+//    volume "/opt/or-resources"
     
     workingDir "/opt/OpenRemote-Controller/bin"
     entryPoint "/opt/OpenRemote-Controller/bin/openremote.sh"
