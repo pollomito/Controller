@@ -40,6 +40,7 @@ import org.kie.internal.definition.KnowledgePackage;
 import org.openremote.controller.Constants;
 import org.openremote.controller.ControllerConfiguration;
 import org.openremote.controller.RuleListener;
+import org.openremote.controller.exception.ConfigurationException;
 import org.openremote.controller.exception.InitializationException;
 import org.openremote.controller.protocol.Event;
 import org.openremote.controller.service.ServiceContext;
@@ -122,6 +123,16 @@ public class RuleEngine extends EventProcessor
   private SwitchFacade switchFacade;
   private LevelFacade levelFacade;
   private RangeFacade rangeFacade;
+
+  /**
+   * Contains the controller configuration 'resource.path' property resolved to a valid URI. <p>
+   *
+   * TODO:
+   *       the use of this field should be temporary since the proper place to resolve the
+   *       config properties into URIs would be to do it early when the ControllerConfiguration
+   *       instance is constructed.
+   */
+  private URI resourcePath = null;
 
   // Implements EventProcessor --------------------------------------------------------------------
 
@@ -216,37 +227,11 @@ public class RuleEngine extends EventProcessor
    */
   @Override public void start(LifeCycleEvent event) throws InitializationException
   {
-    ControllerConfiguration config = ServiceContext.getControllerConfiguration();
+    // Resolve the location of data files. Creates or uses an existing 'rules' directory in that
+    // location. Will throw a config exceptions if can't be resolved, or created...
 
-    URI resourceURI;
-
-    try
-    {
-      resourceURI = new URI(config.getResourcePath());
-
-      if (!resourceURI.isAbsolute())
-      {
-        resourceURI = new File(config.getResourcePath()).toURI();
-      }
-    }
-
-    catch (URISyntaxException e)
-    {
-      throw new InitializationException(
-          "Property 'resource.path' value ''{0}'' cannot be parsed. " +
-          "It must contain a valid URI : {1}",
-          e, config.getResourcePath(), e.getMessage()
-      );
-    }
-
-    URI rulesURI = resourceURI.resolve("rules");
-
-    if (!hasDirectoryReadAccess(rulesURI))
-    {
-      throw new InitializationException(
-          "Directory ''{0}'' does not exist or cannot be read.", rulesURI
-      );
-    }
+    resourcePath = resolveResourcePath();
+    URI rulesURI = getRulesDirectory();
 
     KieServices kieServices = KieServices.Factory.get();
     KieContainer kieContainer;
@@ -387,29 +372,59 @@ public class RuleEngine extends EventProcessor
 
 
   /**
+   * Attempts to resolve or create a Rules directory. First checks for the presence of
+   * 'rules' directory under the 'resource.path' location. If an 'rules' directory is present,
+   * returns an URI to that location. <p>
+   *
+   * Otherwise attempts to create a new 'rules' directory under the location pointed by
+   * 'resource.path' controller configuration property.
+   *
+   * @see org.openremote.controller.ControllerConfiguration#getResourcePath()
+   *
+   * @return    an URI pointing to the 'rules' directory if successful
+   *
+   * @throws    InitializationException if creating or accessing an existing rules directory
+   *                                    failed for any reason
+   */
+  private URI getRulesDirectory() throws InitializationException
+  {
+
+    URI rulesURI = resourcePath.resolve("rules/");
+
+    if (!hasDirectoryReadWriteAccess(rulesURI))
+    {
+      // throws config exception if fails..
+
+      createRulesDirectory(rulesURI);
+    }
+
+    return rulesURI;
+  }
+
+  /**
    * Checks that the rule directory exists and we can access it.
    *
    * @param uri   file URI pointing to the rule definition directory
    *
-   * @return      true if we can read the dir, false otherwise
+   * @return true if we can read/write the dir, false otherwise
    *
    * @throws      InitializationException   if URI is null or security manager was installed
    *                                        but read access was not granted to directory pointed
    *                                        by the given file URI
    */
-  private boolean hasDirectoryReadAccess(URI uri) throws InitializationException
+  private boolean hasDirectoryReadWriteAccess(URI uri) throws InitializationException
   {
 
     if (uri == null)
     {
-      throw new InitializationException("Rule resource directory was resolved to 'null'");
+      throw new InitializationException("Rules resource directory was resolved to 'null'");
     }
 
     File dir = new File(uri);
 
     try
     {
-      return dir.exists() && dir.canRead();
+      return dir.exists() && dir.canRead() && dir.canWrite();
     }
 
     catch (SecurityException e)
@@ -423,6 +438,100 @@ public class RuleEngine extends EventProcessor
     }
   }
 
+
+  /**
+   * Attempts to create a Rules directory if one does not exist.
+   *
+   * @param uri   an URI with "file" schema pointing to the location of the desired Rules
+   *              directory, usually prefixed with the 'resource.path' configuration
+   *              variable in {@link org.openremote.controller.ControllerConfiguration#getResourcePath()}
+   *
+   * @throws ConfigurationException if creating the directory fails because of insufficient
+   *                                security permissions or for any other reason
+   */
+  private void createRulesDirectory(URI uri) throws ConfigurationException
+  {
+    try
+    {
+      File f = new File(uri);
+
+      try
+      {
+        if (!f.isDirectory())
+        {
+          try
+          {
+            boolean success = f.mkdir();
+
+            if (!success)
+            {
+              throw new ConfigurationException(
+                      "Failed to create a file directory ''{0}'' (reason unknown)", f
+              );
+            }
+          }
+
+          catch (SecurityException e)
+          {
+            throw new ConfigurationException(
+                    "Security manager has denied write access to create directory ''{0}'': {1}",
+                    e, f, e.getMessage()
+            );
+          }
+        }
+      }
+
+      catch (SecurityException e)
+      {
+        throw new ConfigurationException(
+                "Security manager has denied read access to path ''{0}'': {1}", e, f, e.getMessage()
+        );
+      }
+    }
+
+    catch (IllegalArgumentException e)
+    {
+      throw new ConfigurationException(
+              "Configured path for Rules directory ''{0}'' must follow a ''file'' schema: {1}",
+              e, uri, e.getMessage()
+      );
+    }
+  }
+
+  private URI resolveResourcePath() throws ConfigurationException
+  {
+    // TODO:
+    //   Getting controller configuration is currently an expensive operation (due to poor API
+    //   design). Make sure we only fetch it once when this event processor is started.
+    //
+    //   As is mentioned in the config.getResourcePath() method, the conversion to valid
+    //   URI should be made already when accepting the new value into controller configuration
+    //   class (and at initialization time) so these URI conversions and checks become
+    //   unnecessary at deeper code levels (where they are likely to differ in semantics).
+    //                                                                                      [JPL]
+
+    ControllerConfiguration config = ServiceContext.getControllerConfiguration().readXML();
+
+    try
+    {
+      URI resourceURI = new URI(config.getResourcePath());
+
+      if (!resourceURI.isAbsolute())
+      {
+        resourceURI = new File(config.getResourcePath()).toURI();
+      }
+
+      return resourceURI;
+    }
+
+    catch (URISyntaxException e)
+    {
+      throw new ConfigurationException(
+              "Property 'resource.path' value ''{0}'' cannot be parsed. It must contain a valid URI: {1}",
+              e, config.getResourcePath(), e.getMessage()
+      );
+    }
+  }
 
   /**
    * Loads the rule definitions of a given type from a pre-defined file URI.  <p>
