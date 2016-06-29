@@ -3,15 +3,22 @@
   <components>
     <switch id="14">
       <on>
-        <include type="command" ref="15" />
+        <include type="command" ref="17" />
       </on>
       <off>
-        <include type="command" ref="16" />
+        <include type="command" ref="18" />
       </off>
       <include type="sensor" ref="294106" />
     </switch>
-    <button id="6" />
-    <button id="8" />
+    <button id="8">
+      <include type="command" ref="18" />
+    </button>
+    <button id="6">
+      <include type="command" ref="17" />
+    </button>
+    <label id="16">
+      <include type="sensor" ref="296083" />
+    </label>
     <label id="12">
       <include type="sensor" ref="294106" />
     </label>
@@ -19,32 +26,44 @@
   </components>
   <sensors>
     <sensor id="294106" name="Switch sensor" type="switch">
-      <include type="command" ref="17" />
+      <include type="command" ref="19" />
       <state name="on" />
       <state name="off" />
     </sensor>
+    <sensor id="296083" name="TimeWithSeconds" type="custom">
+      <include type="command" ref="20" />
+    </sensor>
   </sensors>
   <commands>
-    <command id="15" protocol="virtual">
+    <command id="17" protocol="virtual">
       <property name="address" value="SWITCH" />
       <property name="command" value="ON" />
       <property name="name" value="Switch on" />
       <property name="urn:openremote:device-command:device-name" value="Virtual switch" />
       <property name="urn:openremote:device-command:device-id" value="27977" />
     </command>
-    <command id="16" protocol="virtual">
+    <command id="18" protocol="virtual">
       <property name="address" value="SWITCH" />
       <property name="command" value="OFF" />
       <property name="name" value="Switch off" />
       <property name="urn:openremote:device-command:device-name" value="Virtual switch" />
       <property name="urn:openremote:device-command:device-id" value="27977" />
     </command>
-    <command id="17" protocol="virtual">
+    <command id="19" protocol="virtual">
       <property name="address" value="SWITCH" />
       <property name="command" value="STATUS" />
       <property name="name" value="Switch status" />
       <property name="urn:openremote:device-command:device-name" value="Virtual switch" />
       <property name="urn:openremote:device-command:device-id" value="27977" />
+    </command>
+    <command id="20" protocol="datetime">
+      <property name="timezone" value="Europe/Brussels" />
+      <property name="command" value="date" />
+      <property name="pollingInterval" value="1s" />
+      <property name="format" value="HH:mm:ss" />
+      <property name="name" value="TimeWithSecondsCommand" />
+      <property name="urn:openremote:device-command:device-name" value="DateTime" />
+      <property name="urn:openremote:device-command:device-id" value="28480" />
     </command>
   </commands>
   <config>
