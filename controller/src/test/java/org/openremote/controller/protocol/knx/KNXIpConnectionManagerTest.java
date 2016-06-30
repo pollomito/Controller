@@ -31,6 +31,7 @@ public class KNXIpConnectionManagerTest {
    @Test
    public void testDiscover() throws ConnectionException, ConversionException, IOException, InterruptedException {
       KNXIpConnectionManager mgr = new KNXIpConnectionManager();
+      mgr.setPhysicalBusClazz("org.openremote.controller.protocol.port.DatagramSocketPort");
       DummyDiscoverServer discoverServer = new DummyDiscoverServer();
       synchronized (discoverServer) {
          discoverServer.start();
