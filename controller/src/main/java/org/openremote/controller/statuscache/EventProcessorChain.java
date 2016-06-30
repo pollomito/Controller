@@ -65,13 +65,7 @@ public class EventProcessorChain
    */
   private List<EventProcessor> processors = new ArrayList<EventProcessor>(5);
 
-//  /**
-//   * Flag for lazy initialization.
-//   */
-//  private boolean hasInit = false;
-//
-//  private InitializationContext eventProcessorInitContext;
-    private CommandFacade commandFacade;
+  private CommandFacade commandFacade;
 
 
 
@@ -168,19 +162,6 @@ public class EventProcessorChain
    */
   protected void push(EventContext ctx)
   {
-//    // This was a lazy initialization of processors due to some earlier bugs that have been
-//    // resolved now. Can eventually be placed into constructor or other more appropriate
-//    // initialization sequence -- although lazy init is not bad in itself
-//    //                                                                          [JPL]
-//
-//    if (!hasInit)
-//    {
-//      initProcessors(ctx);
-//
-//      hasInit = true;
-//    }
-
-
     for (EventProcessor processor : processors)
     {
       log.trace("Processing {0}...", ctx.getEvent());
@@ -208,44 +189,6 @@ public class EventProcessorChain
   {
     return commandFacade;
   }
-
-
-  // Private Methods ------------------------------------------------------------------------------
-
-  /**
-   * Initializes each event processor in the stack by calling its
-   * {@link EventProcessor#start()} method.
-   */
-  private void initProcessors(EventContext ctx)
-  {
-//    // Log for initialization -- separate from runtime logging
-//
-//    Logger initLog = Logger.getLogger(Constants.EVENT_PROCESSOR_INIT_LOG_CATEGORY);
-//
-//    for (EventProcessor ep : processors)
-//    {
-//      try
-//      {
-//        initLog.debug("Initializing event processor: {0}", ep.getName());
-//
-//        ep.start(ctx);
-//
-//        initLog.info("Initialized event processor : {0}", ep.getName());
-//      }
-//
-//      catch (Throwable t)
-//      {
-//        initLog.error(
-//            "Cannot start event processor ''{0}'' : {1}",
-//            t, ep.getName(), t.getMessage()
-//        );
-//      }
-//    }
-  }
-
-
-
-
 
 }
 
