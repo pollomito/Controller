@@ -30,7 +30,7 @@ import org.openremote.controller.exception.InitializationException;
 public abstract class EventProcessor // TODO : implement lifecycle
 {
 
-  public void init() {}
+  public void init() throws InitializationException {}
 
   public void start(LifeCycleEvent ctx) throws InitializationException {}
 
