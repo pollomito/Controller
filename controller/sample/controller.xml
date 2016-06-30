@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openremote xmlns="http://www.openremote.org" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openremote.org http://www.openremote.org/schemas/controller.xsd">
+  <components>
+    <switch id="14">
+      <on>
+        <include type="command" ref="17" />
+      </on>
+      <off>
+        <include type="command" ref="18" />
+      </off>
+      <include type="sensor" ref="294106" />
+    </switch>
+    <button id="8">
+      <include type="command" ref="18" />
+    </button>
+    <button id="6">
+      <include type="command" ref="17" />
+    </button>
+    <label id="16">
+      <include type="sensor" ref="296083" />
+    </label>
+    <label id="12">
+      <include type="sensor" ref="294106" />
+    </label>
+    <label id="10" />
+  </components>
+  <sensors>
+    <sensor id="294106" name="Switch sensor" type="switch">
+      <include type="command" ref="19" />
+      <state name="on" />
+      <state name="off" />
+    </sensor>
+    <sensor id="296083" name="TimeWithSeconds" type="custom">
+      <include type="command" ref="20" />
+    </sensor>
+  </sensors>
+  <commands>
+    <command id="17" protocol="virtual">
+      <property name="address" value="SWITCH" />
+      <property name="command" value="ON" />
+      <property name="name" value="Switch on" />
+      <property name="urn:openremote:device-command:device-name" value="Virtual switch" />
+      <property name="urn:openremote:device-command:device-id" value="27977" />
+    </command>
+    <command id="18" protocol="virtual">
+      <property name="address" value="SWITCH" />
+      <property name="command" value="OFF" />
+      <property name="name" value="Switch off" />
+      <property name="urn:openremote:device-command:device-name" value="Virtual switch" />
+      <property name="urn:openremote:device-command:device-id" value="27977" />
+    </command>
+    <command id="19" protocol="virtual">
+      <property name="address" value="SWITCH" />
+      <property name="command" value="STATUS" />
+      <property name="name" value="Switch status" />
+      <property name="urn:openremote:device-command:device-name" value="Virtual switch" />
+      <property name="urn:openremote:device-command:device-id" value="27977" />
+    </command>
+    <command id="20" protocol="datetime">
+      <property name="timezone" value="Europe/Brussels" />
+      <property name="command" value="date" />
+      <property name="pollingInterval" value="1s" />
+      <property name="format" value="HH:mm:ss" />
+      <property name="name" value="TimeWithSecondsCommand" />
+      <property name="urn:openremote:device-command:device-name" value="DateTime" />
+      <property name="urn:openremote:device-command:device-id" value="28480" />
+    </command>
+  </commands>
+  <config>
+    <property name="controller.roundrobin.multicast.port" value="10000" />
+    <property name="controller.roundrobin.tcpserver.port" value="20000" />
+    <property name="controller.groupname" value="floor20" />
+    <property name="multicast.port" value="3333" />
+    <property name="enocean.commLayer" value="RXTX" />
+    <property name="enocean.comPort" value="/dev/ttyUSB0" />
+    <property name="protocol.alarm.classname" value="org.openremote.controller.protocol.alarm.AlarmCommandBuilder" />
+    <property name="protocol.vera.classname" value="org.openremote.controller.protocol.vera.VeraCommandBuilder" />
+    <property name="controller.groupmember.autodetect.on" value="true" />
+    <property name="amx_ni.port" value="50000" />
+    <property name="samsungTV.address" value="" />
+    <property name="velbus.server.hostnames" value="localhost" />
+    <property name="enocean.serialProtocol" value="ESP3" />
+    <property name="zwave.commLayer" value="RXTX" />
+    <property name="protocol.samsungTV.classname" value="org.openremote.controller.protocol.samsungtv.SamsungTVRemoteCommandBuilder" />
+    <property name="copy.lircd.conf.on" value="true" />
+    <property name="protocol.velbus.classname" value="org.openremote.controller.protocol.velbus.VelbusCommandBuilder" />
+    <property name="irsend.path" value="/usr/local/bin/irsend" />
+    <property name="domintell.port" value="17481" />
+    <property name="controller.applicationname" value="controller" />
+    <property name="domintell.address" value="192.168.1.1" />
+    <property name="multicast.address" value="224.0.1.100" />
+    <property name="velbus.server.ports" value="8080" />
+    <property name="marantz_avr.address" value="192.168.1.1" />
+    <property name="Macro.IR.Execution.Delay" value="500" />
+    <property name="zwave.pad.port" value="7876" />
+    <property name="zwave.comPort" value="/dev/ttyUSB0" />
+    <property name="controller.roundrobin.multicast.address" value="224.0.1.200" />
+    <property name="lutron_homeworks.password" value="openremote" />
+    <property name="lagarto_network.broadcast" value="tcp://127.0.0.1:5001" />
+    <property name="lircd.conf.path" value="/etc/lircd.conf" />
+    <property name="lutron_homeworks.port" value="23" />
+    <property name="lutron_homeworks.address" value="192.168.1.1" />
+    <property name="zwave.pad.host" value="localhost" />
+    <property name="lutron_homeworks.username" value="openremote" />
+    <property name="webapp.port" value="8688" />
+    <property name="vera.address" value="" />
+    <property name="protocol.zwave.classname" value="org.openremote.controller.protocol.zwave.ZWaveCommandBuilder" />
+    <property name="resource.upload.enable" value="true" />
+    <property name="amx_ni.address" value="192.168.1.1" />
+  </config>
+</openremote>
+
