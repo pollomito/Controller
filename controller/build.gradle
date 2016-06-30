@@ -273,3 +273,8 @@ task buildImage(type: DockerBuildImage) {
     inputDir = createDockerfile.destFile.parentFile
     tag = dockerImageName
 }
+
+task pushImage(type: DockerPushImage) {
+    dependsOn buildImage
+    imageName = dockerImageName
+}
