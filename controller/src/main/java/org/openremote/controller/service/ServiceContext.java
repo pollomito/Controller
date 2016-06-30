@@ -40,6 +40,8 @@ import org.openremote.controller.net.IPAutoDiscoveryServer;
 import org.openremote.controller.net.RoundRobinTCPServer;
 import org.openremote.controller.net.RoundRobinUDPServer;
 import org.openremote.controller.DenonAVRSerialConfiguration;
+import org.openremote.controller.statuscache.EventProcessor;
+import org.openremote.controller.statuscache.EventProcessorChain;
 import org.openremote.controller.statuscache.StatusCache;
 import org.openremote.controller.utils.Logger;
 
@@ -108,6 +110,7 @@ public abstract class ServiceContext
     AMX_NI_CONFIGURATION("AMXNIConfig"),                      // TODO : To be removed, see ORCJAVA-183
     DOMINTELL_CONFIGURATION("domintellConfig"),               // TODO : To be removed, see ORCJAVA-183
     DEVICE_STATE_CACHE("statusCache"),                        // TODO : Deprecated, see ORCJAVA-197
+    EVENT_PROCESSOR_CHAIN("eventProcessorChain"),             // TODO : introduced for #18, should eventually go away as others here
     COMPONENT_CONTROL_SERVICE("controlCommandService"),       // TODO : should be retrieved through deployer interface
     COMMAND_SERVICE("commandService"),                        // TODO : should be retrieved through deployer interface
     DEVICE_SERVICE("deviceService"),                          // TODO : should be retrieved through deployer interface
@@ -367,6 +370,21 @@ public abstract class ServiceContext
       throw new Error(
           "Device state cache service implementation has had an incompatible change.", e
       );
+    }
+  }
+
+  /**
+   * Introduced to implement #18, will most probably eventually go away when bigger refactoring is done.
+   */
+  public static EventProcessorChain getEventProcessorChain()
+  {
+    try
+    {
+      return (EventProcessorChain)getInstance().getService(ServiceName.EVENT_PROCESSOR_CHAIN);
+    }
+    catch (ClassCastException e)
+    {
+      throw new Error("Event processor chain implementation has had an incompatible change.", e);
     }
   }
 

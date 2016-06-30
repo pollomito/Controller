@@ -6,6 +6,7 @@ Controller Pro 1.6.0 (WIP)
   - Have drools use pre-built kjars if bundled in configuration (#5)
   - Convert build system to Gradle (ORCJAVA-511)
   - Add unit tests for EventProcessorChain (#17, ORCJAVA-207)
+  - Add an initialisation step to the event processors (#18)
 
 Controller Pro 1.5.0
 ====================

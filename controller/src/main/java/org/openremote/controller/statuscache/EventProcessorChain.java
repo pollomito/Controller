@@ -88,6 +88,36 @@ public class EventProcessorChain
     this.commandFacade = new CommandFacade(commands);
   }
 
+  /**
+   * Initialises the processor chain and each processor in the chain.
+   * This method will be called only once when the controller is started,
+   * it is not linked to configuration deployments.
+   */
+  public void init()
+  {
+    // Log for initialization -- separate from runtime logging
+    Logger initLog = Logger.getLogger(Constants.EVENT_PROCESSOR_INIT_LOG_CATEGORY);
+
+    for (EventProcessor ep : processors)
+    {
+      try
+      {
+        initLog.debug("Initializing event processor: {0}", ep.getName());
+
+        ep.init();
+
+        initLog.info("Initialized event processor : {0}", ep.getName());
+      }
+
+      catch (Throwable t)
+      {
+        initLog.error(
+                "Cannot initialize event processor ''{0}'' : {1}",
+                t, ep.getName(), t.getMessage()
+        );
+      }
+    }
+  }
 
   public void start()
   {
@@ -101,11 +131,11 @@ public class EventProcessorChain
     {
       try
       {
-        initLog.debug("Initializing event processor: {0}", ep.getName());
+        initLog.debug("Starting event processor: {0}", ep.getName());
 
         ep.start(ctx);
 
-        initLog.info("Initialized event processor : {0}", ep.getName());
+        initLog.info("Started event processor : {0}", ep.getName());
       }
 
       catch (Throwable t)
@@ -144,9 +174,6 @@ public class EventProcessorChain
       }
     }
   }
-    
-
-
 
   // Protected Instance Methods -------------------------------------------------------------------
 

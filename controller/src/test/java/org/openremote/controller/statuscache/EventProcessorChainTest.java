@@ -35,6 +35,17 @@ public class EventProcessorChainTest
 {
 
   @Test
+  public void testEventProcessorInit()
+  {
+    EventProcessor testProcessor = Mockito.mock(EventProcessor.class);
+    EventProcessorChain chain = new EventProcessorChain();
+    chain.setEventProcessors(Arrays.asList(testProcessor));
+
+    chain.init();
+    verify(testProcessor, times(1)).init();
+  }
+
+  @Test
   public void testEventProcessorStartStop() throws InitializationException
   {
     EventProcessor testProcessor = Mockito.mock(EventProcessor.class);
