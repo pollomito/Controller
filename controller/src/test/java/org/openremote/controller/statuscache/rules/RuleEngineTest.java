@@ -161,6 +161,7 @@ public class RuleEngineTest
     processors.add(grab);
 
     epc.setEventProcessors(processors);
+    epc.init();
 
     StatusCache cache = new StatusCache(cst, epc);
     cache.start();
@@ -484,6 +485,7 @@ public class RuleEngineTest
     config.setResourcePath(newResourcePath);
 
     RuleEngine rules = new RuleEngine();
+    rules.init();
 
     rules.start(new LifeCycleEvent(null));
   }
@@ -504,6 +506,7 @@ public class RuleEngineTest
     config.setResourcePath(newResourcePath);
 
     RuleEngine rules = new RuleEngine();
+    rules.init();
 
     rules.start(new LifeCycleEvent(null));
   }
@@ -523,6 +526,7 @@ public class RuleEngineTest
     config.setResourcePath(newResourcePath);
 
     RuleEngine rules = new RuleEngine();
+    rules.init();
     EventGrab grab = new EventGrab();
 
     List<EventProcessor> processors = new ArrayList<EventProcessor>();
@@ -1908,6 +1912,7 @@ public class RuleEngineTest
 
     try
     {
+      rules.init();
       rules.start(new LifeCycleEvent(null));
 
       Assert.fail("Should not get here...");
@@ -1934,6 +1939,7 @@ public class RuleEngineTest
     EventProcessorChain epc = new EventProcessorChain();
 
     epc.setEventProcessors(processors);
+    epc.init();
 
     StatusCache cache = new StatusCache(cst, epc);
 
