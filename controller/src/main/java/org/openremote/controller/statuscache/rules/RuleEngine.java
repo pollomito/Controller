@@ -134,6 +134,11 @@ public class RuleEngine extends EventProcessor
    */
   private URI resourcePath = null;
 
+  /**
+   * Contains URI to rules folder, initialise only once at controller startup, as this property can't be changed afterwards.
+   */
+  private URI rulesURI = null;
+
   // Implements EventProcessor --------------------------------------------------------------------
 
   /**
@@ -220,6 +225,14 @@ public class RuleEngine extends EventProcessor
     }
   }
 
+  @Override public void init() throws InitializationException
+  {
+    // Resolve the location of data files. Creates or uses an existing 'rules' directory in that
+    // location. Will throw a config exceptions if can't be resolved, or created...
+
+    resourcePath = resolveResourcePath();
+    rulesURI = getRulesDirectory();
+  }
 
   /**
    * TODO
@@ -227,12 +240,6 @@ public class RuleEngine extends EventProcessor
    */
   @Override public void start(LifeCycleEvent event) throws InitializationException
   {
-    // Resolve the location of data files. Creates or uses an existing 'rules' directory in that
-    // location. Will throw a config exceptions if can't be resolved, or created...
-
-    resourcePath = resolveResourcePath();
-    URI rulesURI = getRulesDirectory();
-
     KieServices kieServices = KieServices.Factory.get();
     KieContainer kieContainer;
 
