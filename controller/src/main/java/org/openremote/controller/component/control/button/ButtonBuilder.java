@@ -63,6 +63,13 @@ public class ButtonBuilder extends ComponentBuilder
   @Override public Component build(Element componentElement, String commandParam)
       throws InitializationException
   {
+    if (!componentElement.getName().toLowerCase().equals(Button.BUTTON_XML_ELEMENT_NAME))
+    {
+      throw new RuntimeException(
+          "Cannot create 'Button' object based on '" + componentElement.getName() + "' XML element."
+      );
+    }
+
     Button button = new Button();
 
     if (button.isValidActionWith(commandParam))

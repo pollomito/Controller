@@ -75,7 +75,8 @@ public class ButtonBuilderTest
 
   // Tests ----------------------------------------------------------------------------------------
 
-  @Test public void testNoSuchButton() throws Exception
+  @Test (expected = RuntimeException.class)
+  public void testNoSuchButton() throws Exception
   {
     getButtonByID(10, "click");
 
