@@ -1137,9 +1137,22 @@ public class Deployer
 
     // TODO - update message below once 3.0 is in place
 
+    File file = null;
+
+    try
+    {
+      file = Version20ModelBuilder.getControllerDefinitionFile(controllerConfig);
+    }
+
+    catch (ConfigurationException e)
+    {
+      throw new ControllerDefinitionNotFoundException(
+          "Could not find a controller definition (for version 2.0).", e
+      );
+    }
+
     throw new ControllerDefinitionNotFoundException(
-        "Could not find a controller definition to load at path ''{0}'' (for version 2.0)",
-        Version20ModelBuilder.getControllerDefinitionFile(controllerConfig)
+          "Could not find a controller definition to load at path ''{0}'' (for version 2.0)", file
     );
   }
 

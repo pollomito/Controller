@@ -438,7 +438,12 @@ public class ControllerConfiguration extends Configuration
    * @param resourcePath  system specific filesystem path as a string to a directory containing
    *                      the resource files of a controller
    */
-  public void setResourcePath(String resourcePath) {
+  public void setResourcePath(String resourcePath)
+  {
+    if (resourcePath == null)
+    {
+      throw new IllegalArgumentException("Invalid resource path.");
+    }
 
     // TODO :
     //  could attempt to convert the string to a valid URI to support

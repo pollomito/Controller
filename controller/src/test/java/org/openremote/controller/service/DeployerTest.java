@@ -210,8 +210,11 @@ public class DeployerTest
   private static Deployer createDeployer(String name, StatusCache cache)
       throws InitializationException
   {
+    ControllerConfiguration config = new ControllerConfiguration();
+    config.setResourcePath("\test");
+
     return createDeployer(
-        name, cache, new ControllerConfiguration(),
+        name, cache, config,
         createCommandFactory(), new Version20SensorBuilder()
     );
   }
@@ -287,6 +290,9 @@ public class DeployerTest
   {
     StatusCache cache = new StatusCache();
     ControllerConfiguration config = new ControllerConfiguration();
+    config.setResourcePath(
+        AllTests.getAbsoluteFixturePath().resolve("deployment/sensorsonly").getPath()
+    );
 
     Map<String, ModelBuilder> map = new HashMap<String, ModelBuilder>();
     map.put(
