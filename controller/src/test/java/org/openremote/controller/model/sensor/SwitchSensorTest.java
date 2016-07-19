@@ -212,21 +212,115 @@ public class SwitchSensorTest
   }
 
 
-  @Test public void testMixedMapping()
+  /**
+   * Test mapping when only one of the two states is mapped
+   *
+   * @throws Exception if test fails
+   */
+  @Test public void testMixedMapping() throws Exception
   {
 
-    // test mapping when only one of the two states is mapped
+    SwitchSensor.DistinctStates mapping = new SwitchSensor.DistinctStates();
+    mapping.addStateMapping("on", "open");
 
-    Assert.fail("Not Yet Implemented.");
+    final int SENSOR_ID = 8;
+
+    SwitchSensor s1 = new SwitchSensor("with mapping", SENSOR_ID, cache, new SwitchReadCommand("with mapping", SENSOR_ID, "on"), 1,  mapping);
+    s1.setStrictStateMapping(false);
+
+    cache.registerSensor(s1);
+    s1.start();
+
+    String tst = getSensorValueFromCache(SENSOR_ID);
+
+    Assert.assertTrue(
+        "Expected 'open', got " + getSensorValueFromCache(SENSOR_ID),
+        getSensorValueFromCache(SENSOR_ID).equals("open")
+    );
+
+    Assert.assertTrue(s1.getSensorID() == SENSOR_ID);
+    Assert.assertTrue(s1.isPolling());
+    Assert.assertFalse(s1.isEventListener());
+    Assert.assertTrue(s1.getName().equals("with mapping"));
+    Assert.assertTrue(s1.getProperties().size() == 0);
+
+
+    final int SENSOR_ID2 = 9;
+
+    SwitchSensor s2 = new SwitchSensor("no mapping", SENSOR_ID2, cache, new SwitchReadCommand("no mapping", SENSOR_ID2, "off"), 1,  mapping);
+    s2.setStrictStateMapping(false);
+
+    cache.registerSensor(s2);
+    s2.start();
+
+    Assert.assertTrue(getSensorValueFromCache(SENSOR_ID2).equals("off"));
+
+    Assert.assertTrue(s2.getSensorID() == SENSOR_ID2);
+    Assert.assertFalse(s2.isEventListener());
+    Assert.assertTrue(s2.isPolling());
+    Assert.assertTrue(s2.getName().equals("no mapping"));
+    Assert.assertTrue(s2.getProperties().size() == 0);
   }
 
 
+  /**
+   * Test null args
+   *
+   * @throws Exception if test fails
+   */
   @Test public void testNullArgs()
   {
+    SwitchSensor.DistinctStates mapping = new SwitchSensor.DistinctStates();
+    mapping.addStateMapping("on", "open");
+    mapping.addStateMapping("off", "close");
 
-    // test null args on constructor etc
+    final int SENSOR_ID = 10;
 
-    Assert.fail("Not Yet Implemented.");
+    SwitchSensor s1 = null;
+
+    try
+    {
+      s1 = new SwitchSensor("sensor", SENSOR_ID, null, new SwitchReadCommand("sensor", SENSOR_ID, "on"), 1);
+
+      Assert.fail();
+    }
+    catch (IllegalArgumentException exc)
+    {
+      // expected
+    }
+
+    try
+    {
+      s1 = new SwitchSensor("sensor", SENSOR_ID, null, new SwitchReadCommand("sensor", SENSOR_ID, "on"), 1,  mapping);
+
+      Assert.fail();
+    }
+    catch (IllegalArgumentException exc)
+    {
+      // expected
+    }
+
+    try
+    {
+      s1 = new SwitchSensor("sensor", SENSOR_ID, new StatusCache(), null, 1);
+
+      Assert.fail();
+    }
+    catch (IllegalArgumentException exc)
+    {
+      // expected
+    }
+
+    try
+    {
+      s1 = new SwitchSensor("sensor", SENSOR_ID, new StatusCache(), null, 1,  mapping);
+
+      Assert.fail();
+    }
+    catch (IllegalArgumentException exc)
+    {
+      // expected
+    }
   }
 
 
