@@ -30,6 +30,7 @@ import org.junit.Assert;
  *
  * @author <a href="mailto:juha@openremote.org">Juha Lindfors</a>
  * @author <a href="mailto:marcus@openremote.org">Marcus Redeker</a>
+ * @author <a href="mailto:rainer@openremote.org">Rainer Hitz</a>
  */
 public class StringsTest
 {

@@ -110,6 +110,7 @@ import flexjson.JSONSerializer;
  *
  * @author <a href="mailto:juha@openremote.org">Juha Lindfors</a>
  * @author <a href="mailto:eric@openremote.org">Eric Bariaux</a>
+ * @author <a href="mailto:rainer@openremote.org">Rainer Hitz</a>
  */
 public class Deployer
 {

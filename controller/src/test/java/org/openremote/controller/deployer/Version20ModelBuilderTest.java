@@ -41,6 +41,7 @@ import org.openremote.controller.suite.AllTests;
  * TODO: ORCJAVA-285 -- complete the unit tests of this class
  *
  * @author <a href="mailto:juha@openremote.org">Juha Lindfors</a>
+ * @author <a href="mailto:rainer@openremote.org">Rainer Hitz</a>
  */
 public class Version20ModelBuilderTest
 {

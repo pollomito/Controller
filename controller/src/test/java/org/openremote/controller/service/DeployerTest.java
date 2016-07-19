@@ -57,6 +57,7 @@ import org.jdom.Element;
  *
  *
  * @author <a href="mailto:juha@openremote.org">Juha Lindfors</a>
+ * @author <a href="mailto:rainer@openremote.org">Rainer Hitz</a>
  */
 public class DeployerTest
 {

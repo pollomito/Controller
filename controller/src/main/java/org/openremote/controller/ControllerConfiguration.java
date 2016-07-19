@@ -52,6 +52,7 @@ import org.openremote.controller.utils.Strings;
  * @author <a href="mailto:juha@openremote.org>Juha Lindfors</a>
  * @author Jerome Velociter
  * @author <a href="mailto:eric@openremote.org">Eric Bariaux</a>
+ * @author <a href="mailto:rainer@openremote.org">Rainer Hitz</a>
  */
 public class ControllerConfiguration extends Configuration
 {

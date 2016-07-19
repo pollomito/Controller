@@ -61,6 +61,7 @@ import org.openremote.controller.utils.PathUtil;
  * @see DeviceProtocolBuilder
  *
  * @author <a href="mailto:juha@openremote.org">Juha Lindfors</a>
+ * @author <a href="mailto:rainer@openremote.org">Rainer Hitz</a>
  */
 public class Version20ModelBuilder extends AbstractModelBuilder
 {
