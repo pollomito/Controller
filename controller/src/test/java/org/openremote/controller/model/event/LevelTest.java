@@ -89,11 +89,34 @@ public class LevelTest
 
   @Test public void testEquals()
   {
-    // TODO
+    Level l1 = new Level(1, "Source-1", 50);
+    Level l2 = new Level(1, "Source-1", 50);
 
-    Assert.fail("Not Yet Implemented -- See ORCJAVA-95 http://jira.openremote.org/browse/ORCJAVA-95");
+    Assert.assertTrue(l1.equals(l1));
+    Assert.assertTrue(l1.equals(l2));
+    Assert.assertTrue(l2.equals(l1));
+    Assert.assertTrue(l1.hashCode() == l2.hashCode());
+
+
+    Level l3 = new Level(2, "Source-1", 50);
+
+    Assert.assertFalse(l3.equals(l1));
+
+
+    Level l4 = new Level(1, "Source-2", 50);
+
+    Assert.assertFalse(l4.equals(l1));
+
+
+    Level l5 = new Level(1, "Source-1", 10);
+
+    Assert.assertFalse(l5.equals(l1));
+
+
+    Range r1 = new Range(1, "Source-1", 50, 10, 90);
+
+    Assert.assertFalse(l1.equals(r1));
+    Assert.assertFalse(r1.equals(l1));
   }
-
-
 }
 
