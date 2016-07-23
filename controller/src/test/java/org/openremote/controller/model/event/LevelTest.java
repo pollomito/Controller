@@ -29,6 +29,7 @@ import org.junit.Assert;
  * (ORCJAVA-86 -- http://jira.openremote.org/browse/ORCJAVA-86)
  *
  * @author <a href="mailto:juha@openremote.org">Juha Lindfors</a>
+ * @author <a href="mailto:rainer@openremote.org">Rainer Hitz</a>
  */
 public class LevelTest
 {
