@@ -29,6 +29,7 @@ import org.openremote.controller.component.Component;
 import org.openremote.controller.component.ComponentBuilder;
 import org.openremote.controller.component.control.Control;
 import org.openremote.controller.exception.InitializationException;
+import org.openremote.controller.exception.XMLParsingException;
 import org.openremote.controller.service.Deployer;
 
 /**
@@ -65,8 +66,8 @@ public class ButtonBuilder extends ComponentBuilder
   {
     if (!componentElement.getName().toLowerCase().equals(Button.BUTTON_XML_ELEMENT_NAME))
     {
-      throw new RuntimeException(
-          "Cannot create 'Button' object based on '" + componentElement.getName() + "' XML element."
+      throw new XMLParsingException(
+          "Cannot create button from <{0}> element.", componentElement.getName()
       );
     }
 

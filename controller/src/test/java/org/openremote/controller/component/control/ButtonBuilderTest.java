@@ -31,6 +31,7 @@ import org.openremote.controller.command.CommandFactory;
 import org.openremote.controller.component.control.button.Button;
 import org.openremote.controller.component.control.button.ButtonBuilder;
 import org.openremote.controller.exception.InitializationException;
+import org.openremote.controller.exception.XMLParsingException;
 import org.openremote.controller.service.Deployer;
 import org.openremote.controller.service.DeployerTest;
 import org.openremote.controller.suite.AllTests;
@@ -75,7 +76,7 @@ public class ButtonBuilderTest
 
   // Tests ----------------------------------------------------------------------------------------
 
-  @Test (expected = RuntimeException.class)
+  @Test (expected = XMLParsingException.class)
   public void testNoSuchButton() throws Exception
   {
     getButtonByID(10, "click");
