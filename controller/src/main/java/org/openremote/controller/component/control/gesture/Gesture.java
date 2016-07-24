@@ -30,6 +30,8 @@ import org.openremote.controller.component.control.Control;
  */
 public class Gesture extends Control {
 
+   public static String GESTURE_XML_ELEMENT_NAME = "gesture";
+
    @Override
    protected List<String> getAvailableActions() {
       List<String> availableActions = new ArrayList<String>();
