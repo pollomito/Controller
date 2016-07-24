@@ -107,12 +107,19 @@ public class LoggerTest
 
 
   /**
-   * TODO : trace not yet implemented
+   * Just simply run through the method invocations to make sure nothing is badly broken.
    */
   @Test public void testTraceMethod()
   {
-    throw new Error("Not Yet Implemented");
+    Logger log = Logger.getLogger(Constants.CONTROLLER_ROOT_LOG_CATEGORY + ".test");
 
+    log.trace("Test message");
+
+    log.trace("Test {0} message", "this");
+
+    log.trace("test message", new RuntimeException("log trace testing"));
+
+    log.trace("test {0} message with {1}", new RuntimeException("log trace testing"), "trace", this.getClass());
   }
   
 
