@@ -242,6 +242,8 @@ public class BeehiveCommandCheckService
 
         while (running)
         {
+          boolean isFastPolling = false;
+
           try
           {
             String str = httpGet(serviceURL, deployer.getUserName() /* TODO : dont fetch for each conn. */);
@@ -264,6 +266,8 @@ public class BeehiveCommandCheckService
               if (commands != null && !commands.isEmpty())
               {
                 executeCommand(commands.get(0));
+
+                isFastPolling = true;
               }
             }
           }
@@ -283,7 +287,10 @@ public class BeehiveCommandCheckService
 
           try
           {
-            Thread.sleep(sleepTime);
+            if (!isFastPolling)
+            {
+              Thread.sleep(sleepTime);
+            }
           }
 
           catch (InterruptedException e)

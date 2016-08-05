@@ -8,6 +8,7 @@ Controller Pro 1.6.0 (WIP)
   - Convert build system to Gradle (ORCJAVA-511)
   - Add unit tests for EventProcessorChain (#17, ORCJAVA-207)
   - Add an initialisation step to the event processors (#18)
+  - Improve RemoteProxy polling mechanism (ORCJAVA-518, Rainer Hitz)
 
 Controller Pro 1.5.0
 ====================
