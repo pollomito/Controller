@@ -57,7 +57,7 @@ public class EepA50701Test
     // New EEP number ...
 
     Eep eep = EepType.lookup("A5-07-01").createEep(
-        deviceID, Constants.PIR_STATUS_COMMAND
+        deviceID, Constants.PIR_STATUS_COMMAND, null
     );
 
     Assert.assertTrue(eep instanceof EepA50701);
@@ -66,7 +66,7 @@ public class EepA50701Test
     // Old EEP number ...
 
     eep = EepType.lookup("07-07-01").createEep(
-        deviceID, Constants.PIR_STATUS_COMMAND
+        deviceID, Constants.PIR_STATUS_COMMAND, null
     );
 
     Assert.assertTrue(eep instanceof EepA50701);
@@ -76,7 +76,7 @@ public class EepA50701Test
   @Test public void testUpdatePirStatus() throws Exception
   {
     EepA50701 eep = (EepA50701)EepType.lookup("A5-07-01").createEep(
-        deviceID, Constants.PIR_STATUS_COMMAND
+        deviceID, Constants.PIR_STATUS_COMMAND, null
     );
 
     Assert.assertNull(eep.getPirStatus());
@@ -146,14 +146,14 @@ public class EepA50701Test
   public void testUnknownCommand() throws Exception
   {
     Eep eep = EepType.lookup("A5-07-01").createEep(
-        deviceID, "UNKONWN_COMMAND"
+        deviceID, "UNKONWN_COMMAND", null
     );
   }
 
   @Test public void testInvalidRadioTelegramType() throws Exception
   {
     EepA50701 eep = (EepA50701)EepType.lookup("A5-07-01").createEep(
-        deviceID, Constants.PIR_STATUS_COMMAND
+        deviceID, Constants.PIR_STATUS_COMMAND, null
     );
 
     EspRadioTelegram invalidTelegram = new Esp31BSTelegram(deviceID, (byte)0x00, (byte)0x00);
@@ -173,7 +173,7 @@ public class EepA50701Test
   @Test public void testInvalidDeviceID() throws Exception
   {
     EepA50701 eep = (EepA50701)EepType.lookup("A5-07-01").createEep(
-        deviceID, Constants.PIR_STATUS_COMMAND
+        deviceID, Constants.PIR_STATUS_COMMAND, null
     );
 
     int rawPirStatusValue = 0;

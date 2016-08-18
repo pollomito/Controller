@@ -57,7 +57,7 @@ public class EepD50001Test
     // New EEP number ...
 
     Eep eep = EepType.lookup("D5-00-01").createEep(
-        deviceID, Constants.CONTACT_STATUS_COMMAND
+        deviceID, Constants.CONTACT_STATUS_COMMAND, null
     );
 
     Assert.assertTrue(eep instanceof EepD50001);
@@ -66,7 +66,7 @@ public class EepD50001Test
     // Old EEP number ...
 
     eep = EepType.lookup("06-00-01").createEep(
-        deviceID, Constants.CONTACT_STATUS_COMMAND
+        deviceID, Constants.CONTACT_STATUS_COMMAND, null
     );
 
     Assert.assertTrue(eep instanceof EepD50001);
@@ -76,7 +76,7 @@ public class EepD50001Test
   @Test public void testUpdate() throws Exception
   {
     EepD50001 eep = (EepD50001)EepType.lookup("D5-00-01").createEep(
-        deviceID, Constants.CONTACT_STATUS_COMMAND
+        deviceID, Constants.CONTACT_STATUS_COMMAND, null
     );
 
     Assert.assertNull(eep.isClosed());
@@ -105,7 +105,7 @@ public class EepD50001Test
   @Test public void testUpdateWithLearnTelegram() throws Exception
   {
     EepD50001 eep = (EepD50001)EepType.lookup("D5-00-01").createEep(
-        deviceID, Constants.CONTACT_STATUS_COMMAND
+        deviceID, Constants.CONTACT_STATUS_COMMAND, null
     );
 
 

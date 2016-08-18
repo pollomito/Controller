@@ -20,6 +20,7 @@
  */
 package org.openremote.controller.protocol.enocean.profile;
 
+import org.openremote.controller.command.CommandParameter;
 import org.openremote.controller.protocol.enocean.ConfigurationException;
 import org.openremote.controller.protocol.enocean.DeviceID;
 import org.openremote.controller.protocol.enocean.packet.radio.EspRadioTelegram;
@@ -395,6 +396,11 @@ public abstract class EepType
   public final static EepType EEP_TYPE_A51203 = new EepTypeA51203();
 
   /**
+   * EnOcean equipment profile (EEP) 'A5-38-08' type.
+   */
+  public final static EepType EEP_TYPE_A53808 = new EepTypeA53808();
+
+  /**
    * End of FUNC value range: {@value}
    */
   public final static int EEP_MAX_FUNC = 0x3F;
@@ -577,7 +583,7 @@ public abstract class EepType
    * @throws ConfigurationException
    *           if the command is unknown
    */
-  public abstract Eep createEep(DeviceID deviceID, String command) throws ConfigurationException;
+  public abstract Eep createEep(DeviceID deviceID, String command, CommandParameter parameter) throws ConfigurationException;
 
   /**
    * Returns the RORG-XX-XX part of the EEP type.
@@ -677,7 +683,7 @@ public abstract class EepType
     /**
      * {@inheritDoc}
      */
-    @Override public Eep createEep(DeviceID deviceID, String command) throws ConfigurationException
+    @Override public Eep createEep(DeviceID deviceID, String command, CommandParameter parameter) throws ConfigurationException
     {
       return new EepF60201(this, deviceID, command);
     }
@@ -700,7 +706,7 @@ public abstract class EepType
     /**
      * {@inheritDoc}
      */
-    @Override public Eep createEep(DeviceID deviceID, String command) throws ConfigurationException
+    @Override public Eep createEep(DeviceID deviceID, String command, CommandParameter parameter) throws ConfigurationException
     {
       return new EepD50001(deviceID, command);
     }
@@ -724,7 +730,7 @@ public abstract class EepType
     /**
      * {@inheritDoc}
      */
-    @Override public Eep createEep(DeviceID deviceID, String command) throws ConfigurationException
+    @Override public Eep createEep(DeviceID deviceID, String command, CommandParameter parameter) throws ConfigurationException
     {
       return new EepA50201(deviceID, command);
     }
@@ -747,7 +753,7 @@ public abstract class EepType
     /**
      * {@inheritDoc}
      */
-    @Override public Eep createEep(DeviceID deviceID, String command) throws ConfigurationException
+    @Override public Eep createEep(DeviceID deviceID, String command, CommandParameter parameter) throws ConfigurationException
     {
       return new EepA50202(deviceID, command);
     }
@@ -770,7 +776,7 @@ public abstract class EepType
     /**
      * {@inheritDoc}
      */
-    @Override public Eep createEep(DeviceID deviceID, String command) throws ConfigurationException
+    @Override public Eep createEep(DeviceID deviceID, String command, CommandParameter parameter) throws ConfigurationException
     {
       return new EepA50203(deviceID, command);
     }
@@ -793,7 +799,7 @@ public abstract class EepType
     /**
      * {@inheritDoc}
      */
-    @Override public Eep createEep(DeviceID deviceID, String command) throws ConfigurationException
+    @Override public Eep createEep(DeviceID deviceID, String command, CommandParameter parameter) throws ConfigurationException
     {
       return new EepA50204(deviceID, command);
     }
@@ -816,7 +822,7 @@ public abstract class EepType
     /**
      * {@inheritDoc}
      */
-    @Override public Eep createEep(DeviceID deviceID, String command) throws ConfigurationException
+    @Override public Eep createEep(DeviceID deviceID, String command, CommandParameter parameter) throws ConfigurationException
     {
       return new EepA50205(deviceID, command);
     }
@@ -839,7 +845,7 @@ public abstract class EepType
     /**
      * {@inheritDoc}
      */
-    @Override public Eep createEep(DeviceID deviceID, String command) throws ConfigurationException
+    @Override public Eep createEep(DeviceID deviceID, String command, CommandParameter parameter) throws ConfigurationException
     {
       return new EepA50206(deviceID, command);
     }
@@ -862,7 +868,7 @@ public abstract class EepType
     /**
      * {@inheritDoc}
      */
-    @Override public Eep createEep(DeviceID deviceID, String command) throws ConfigurationException
+    @Override public Eep createEep(DeviceID deviceID, String command, CommandParameter parameter) throws ConfigurationException
     {
       return new EepA50207(deviceID, command);
     }
@@ -885,7 +891,7 @@ public abstract class EepType
     /**
      * {@inheritDoc}
      */
-    @Override public Eep createEep(DeviceID deviceID, String command) throws ConfigurationException
+    @Override public Eep createEep(DeviceID deviceID, String command, CommandParameter parameter) throws ConfigurationException
     {
       return new EepA50208(deviceID, command);
     }
@@ -908,7 +914,7 @@ public abstract class EepType
     /**
      * {@inheritDoc}
      */
-    @Override public Eep createEep(DeviceID deviceID, String command) throws ConfigurationException
+    @Override public Eep createEep(DeviceID deviceID, String command, CommandParameter parameter) throws ConfigurationException
     {
       return new EepA50209(deviceID, command);
     }
@@ -931,7 +937,7 @@ public abstract class EepType
     /**
      * {@inheritDoc}
      */
-    @Override public Eep createEep(DeviceID deviceID, String command) throws ConfigurationException
+    @Override public Eep createEep(DeviceID deviceID, String command, CommandParameter parameter) throws ConfigurationException
     {
       return new EepA5020A(deviceID, command);
     }
@@ -954,7 +960,7 @@ public abstract class EepType
     /**
      * {@inheritDoc}
      */
-    @Override public Eep createEep(DeviceID deviceID, String command) throws ConfigurationException
+    @Override public Eep createEep(DeviceID deviceID, String command, CommandParameter parameter) throws ConfigurationException
     {
       return new EepA5020B(deviceID, command);
     }
@@ -977,7 +983,7 @@ public abstract class EepType
     /**
      * {@inheritDoc}
      */
-    @Override public Eep createEep(DeviceID deviceID, String command) throws ConfigurationException
+    @Override public Eep createEep(DeviceID deviceID, String command, CommandParameter parameter) throws ConfigurationException
     {
       return new EepA50210(deviceID, command);
     }
@@ -1000,7 +1006,7 @@ public abstract class EepType
     /**
      * {@inheritDoc}
      */
-    @Override public Eep createEep(DeviceID deviceID, String command) throws ConfigurationException
+    @Override public Eep createEep(DeviceID deviceID, String command, CommandParameter parameter) throws ConfigurationException
     {
       return new EepA50211(deviceID, command);
     }
@@ -1023,7 +1029,7 @@ public abstract class EepType
     /**
      * {@inheritDoc}
      */
-    @Override public Eep createEep(DeviceID deviceID, String command) throws ConfigurationException
+    @Override public Eep createEep(DeviceID deviceID, String command, CommandParameter parameter) throws ConfigurationException
     {
       return new EepA50212(deviceID, command);
     }
@@ -1046,7 +1052,7 @@ public abstract class EepType
     /**
      * {@inheritDoc}
      */
-    @Override public Eep createEep(DeviceID deviceID, String command) throws ConfigurationException
+    @Override public Eep createEep(DeviceID deviceID, String command, CommandParameter parameter) throws ConfigurationException
     {
       return new EepA50213(deviceID, command);
     }
@@ -1069,7 +1075,7 @@ public abstract class EepType
     /**
      * {@inheritDoc}
      */
-    @Override public Eep createEep(DeviceID deviceID, String command) throws ConfigurationException
+    @Override public Eep createEep(DeviceID deviceID, String command, CommandParameter parameter) throws ConfigurationException
     {
       return new EepA50214(deviceID, command);
     }
@@ -1092,7 +1098,7 @@ public abstract class EepType
     /**
      * {@inheritDoc}
      */
-    @Override public Eep createEep(DeviceID deviceID, String command) throws ConfigurationException
+    @Override public Eep createEep(DeviceID deviceID, String command, CommandParameter parameter) throws ConfigurationException
     {
       return new EepA50215(deviceID, command);
     }
@@ -1115,7 +1121,7 @@ public abstract class EepType
     /**
      * {@inheritDoc}
      */
-    @Override public Eep createEep(DeviceID deviceID, String command) throws ConfigurationException
+    @Override public Eep createEep(DeviceID deviceID, String command, CommandParameter parameter) throws ConfigurationException
     {
       return new EepA50216(deviceID, command);
     }
@@ -1138,7 +1144,7 @@ public abstract class EepType
     /**
      * {@inheritDoc}
      */
-    @Override public Eep createEep(DeviceID deviceID, String command) throws ConfigurationException
+    @Override public Eep createEep(DeviceID deviceID, String command, CommandParameter parameter) throws ConfigurationException
     {
       return new EepA50217(deviceID, command);
     }
@@ -1161,7 +1167,7 @@ public abstract class EepType
     /**
      * {@inheritDoc}
      */
-    @Override public Eep createEep(DeviceID deviceID, String command) throws ConfigurationException
+    @Override public Eep createEep(DeviceID deviceID, String command, CommandParameter parameter) throws ConfigurationException
     {
       return new EepA50218(deviceID, command);
     }
@@ -1184,7 +1190,7 @@ public abstract class EepType
     /**
      * {@inheritDoc}
      */
-    @Override public Eep createEep(DeviceID deviceID, String command) throws ConfigurationException
+    @Override public Eep createEep(DeviceID deviceID, String command, CommandParameter parameter) throws ConfigurationException
     {
       return new EepA50219(deviceID, command);
     }
@@ -1207,7 +1213,7 @@ public abstract class EepType
     /**
      * {@inheritDoc}
      */
-    @Override public Eep createEep(DeviceID deviceID, String command) throws ConfigurationException
+    @Override public Eep createEep(DeviceID deviceID, String command, CommandParameter parameter) throws ConfigurationException
     {
       return new EepA5021A(deviceID, command);
     }
@@ -1230,7 +1236,7 @@ public abstract class EepType
     /**
      * {@inheritDoc}
      */
-    @Override public Eep createEep(DeviceID deviceID, String command) throws ConfigurationException
+    @Override public Eep createEep(DeviceID deviceID, String command, CommandParameter parameter) throws ConfigurationException
     {
       return new EepA5021B(deviceID, command);
     }
@@ -1253,7 +1259,7 @@ public abstract class EepType
     /**
      * {@inheritDoc}
      */
-    @Override public Eep createEep(DeviceID deviceID, String command) throws ConfigurationException
+    @Override public Eep createEep(DeviceID deviceID, String command, CommandParameter parameter) throws ConfigurationException
     {
       return new EepA50220(deviceID, command);
     }
@@ -1276,7 +1282,7 @@ public abstract class EepType
     /**
      * {@inheritDoc}
      */
-    @Override public Eep createEep(DeviceID deviceID, String command) throws ConfigurationException
+    @Override public Eep createEep(DeviceID deviceID, String command, CommandParameter parameter) throws ConfigurationException
     {
       return new EepA50230(deviceID, command);
     }
@@ -1299,7 +1305,7 @@ public abstract class EepType
     /**
      * {@inheritDoc}
      */
-    @Override public Eep createEep(DeviceID deviceID, String command) throws ConfigurationException
+    @Override public Eep createEep(DeviceID deviceID, String command, CommandParameter parameter) throws ConfigurationException
     {
       return new EepA50401(deviceID, command);
     }
@@ -1322,7 +1328,7 @@ public abstract class EepType
     /**
      * {@inheritDoc}
      */
-    @Override public Eep createEep(DeviceID deviceID, String command) throws ConfigurationException
+    @Override public Eep createEep(DeviceID deviceID, String command, CommandParameter parameter) throws ConfigurationException
     {
       return new EepA50601(deviceID, command);
     }
@@ -1345,7 +1351,7 @@ public abstract class EepType
     /**
      * {@inheritDoc}
      */
-    @Override public Eep createEep(DeviceID deviceID, String command) throws ConfigurationException
+    @Override public Eep createEep(DeviceID deviceID, String command, CommandParameter parameter) throws ConfigurationException
     {
       return new EepA50602(deviceID, command);
     }
@@ -1368,7 +1374,7 @@ public abstract class EepType
     /**
      * {@inheritDoc}
      */
-    @Override public Eep createEep(DeviceID deviceID, String command) throws ConfigurationException
+    @Override public Eep createEep(DeviceID deviceID, String command, CommandParameter parameter) throws ConfigurationException
     {
       return new EepA50701(deviceID, command);
     }
@@ -1391,7 +1397,7 @@ public abstract class EepType
     /**
      * {@inheritDoc}
      */
-    @Override public Eep createEep(DeviceID deviceID, String command) throws ConfigurationException
+    @Override public Eep createEep(DeviceID deviceID, String command, CommandParameter parameter) throws ConfigurationException
     {
       return new EepA50801(deviceID, command);
     }
@@ -1414,7 +1420,7 @@ public abstract class EepType
     /**
      * {@inheritDoc}
      */
-    @Override public Eep createEep(DeviceID deviceID, String command) throws ConfigurationException
+    @Override public Eep createEep(DeviceID deviceID, String command, CommandParameter parameter) throws ConfigurationException
     {
       return new EepA50802(deviceID, command);
     }
@@ -1437,7 +1443,7 @@ public abstract class EepType
     /**
      * {@inheritDoc}
      */
-    @Override public Eep createEep(DeviceID deviceID, String command) throws ConfigurationException
+    @Override public Eep createEep(DeviceID deviceID, String command, CommandParameter parameter) throws ConfigurationException
     {
       return new EepA50803(deviceID, command);
     }
@@ -1460,7 +1466,7 @@ public abstract class EepType
     /**
      * {@inheritDoc}
      */
-    @Override public Eep createEep(DeviceID deviceID, String command) throws ConfigurationException
+    @Override public Eep createEep(DeviceID deviceID, String command, CommandParameter parameter) throws ConfigurationException
     {
       return new EepA50904(deviceID, command);
     }
@@ -1483,7 +1489,7 @@ public abstract class EepType
     /**
      * {@inheritDoc}
      */
-    @Override public Eep createEep(DeviceID deviceID, String command) throws ConfigurationException
+    @Override public Eep createEep(DeviceID deviceID, String command, CommandParameter parameter) throws ConfigurationException
     {
       return new EepA51001(deviceID, command);
     }
@@ -1506,7 +1512,7 @@ public abstract class EepType
     /**
      * {@inheritDoc}
      */
-    @Override public Eep createEep(DeviceID deviceID, String command) throws ConfigurationException
+    @Override public Eep createEep(DeviceID deviceID, String command, CommandParameter parameter) throws ConfigurationException
     {
       return new EepA51002(deviceID, command);
     }
@@ -1529,7 +1535,7 @@ public abstract class EepType
     /**
      * {@inheritDoc}
      */
-    @Override public Eep createEep(DeviceID deviceID, String command) throws ConfigurationException
+    @Override public Eep createEep(DeviceID deviceID, String command, CommandParameter parameter) throws ConfigurationException
     {
       return new EepA51003(deviceID, command);
     }
@@ -1552,7 +1558,7 @@ public abstract class EepType
     /**
      * {@inheritDoc}
      */
-    @Override public Eep createEep(DeviceID deviceID, String command) throws ConfigurationException
+    @Override public Eep createEep(DeviceID deviceID, String command, CommandParameter parameter) throws ConfigurationException
     {
       return new EepA51004(deviceID, command);
     }
@@ -1575,7 +1581,7 @@ public abstract class EepType
     /**
      * {@inheritDoc}
      */
-    @Override public Eep createEep(DeviceID deviceID, String command) throws ConfigurationException
+    @Override public Eep createEep(DeviceID deviceID, String command, CommandParameter parameter) throws ConfigurationException
     {
       return new EepA51005(deviceID, command);
     }
@@ -1598,7 +1604,7 @@ public abstract class EepType
     /**
      * {@inheritDoc}
      */
-    @Override public Eep createEep(DeviceID deviceID, String command) throws ConfigurationException
+    @Override public Eep createEep(DeviceID deviceID, String command, CommandParameter parameter) throws ConfigurationException
     {
       return new EepA51006(deviceID, command);
     }
@@ -1621,7 +1627,7 @@ public abstract class EepType
     /**
      * {@inheritDoc}
      */
-    @Override public Eep createEep(DeviceID deviceID, String command) throws ConfigurationException
+    @Override public Eep createEep(DeviceID deviceID, String command, CommandParameter parameter) throws ConfigurationException
     {
       return new EepA51007(deviceID, command);
     }
@@ -1644,7 +1650,7 @@ public abstract class EepType
     /**
      * {@inheritDoc}
      */
-    @Override public Eep createEep(DeviceID deviceID, String command) throws ConfigurationException
+    @Override public Eep createEep(DeviceID deviceID, String command, CommandParameter parameter) throws ConfigurationException
     {
       return new EepA51008(deviceID, command);
     }
@@ -1667,7 +1673,7 @@ public abstract class EepType
     /**
      * {@inheritDoc}
      */
-    @Override public Eep createEep(DeviceID deviceID, String command) throws ConfigurationException
+    @Override public Eep createEep(DeviceID deviceID, String command, CommandParameter parameter) throws ConfigurationException
     {
       return new EepA51009(deviceID, command);
     }
@@ -1690,7 +1696,7 @@ public abstract class EepType
     /**
      * {@inheritDoc}
      */
-    @Override public Eep createEep(DeviceID deviceID, String command) throws ConfigurationException
+    @Override public Eep createEep(DeviceID deviceID, String command, CommandParameter parameter) throws ConfigurationException
     {
       return new EepA5100A(deviceID, command);
     }
@@ -1713,7 +1719,7 @@ public abstract class EepType
     /**
      * {@inheritDoc}
      */
-    @Override public Eep createEep(DeviceID deviceID, String command) throws ConfigurationException
+    @Override public Eep createEep(DeviceID deviceID, String command, CommandParameter parameter) throws ConfigurationException
     {
       return new EepA5100B(deviceID, command);
     }
@@ -1736,7 +1742,7 @@ public abstract class EepType
     /**
      * {@inheritDoc}
      */
-    @Override public Eep createEep(DeviceID deviceID, String command) throws ConfigurationException
+    @Override public Eep createEep(DeviceID deviceID, String command, CommandParameter parameter) throws ConfigurationException
     {
       return new EepA5100C(deviceID, command);
     }
@@ -1759,7 +1765,7 @@ public abstract class EepType
     /**
      * {@inheritDoc}
      */
-    @Override public Eep createEep(DeviceID deviceID, String command) throws ConfigurationException
+    @Override public Eep createEep(DeviceID deviceID, String command, CommandParameter parameter) throws ConfigurationException
     {
       return new EepA5100D(deviceID, command);
     }
@@ -1782,7 +1788,7 @@ public abstract class EepType
     /**
      * {@inheritDoc}
      */
-    @Override public Eep createEep(DeviceID deviceID, String command) throws ConfigurationException
+    @Override public Eep createEep(DeviceID deviceID, String command, CommandParameter parameter) throws ConfigurationException
     {
       return new EepA51010(deviceID, command);
     }
@@ -1805,7 +1811,7 @@ public abstract class EepType
     /**
      * {@inheritDoc}
      */
-    @Override public Eep createEep(DeviceID deviceID, String command) throws ConfigurationException
+    @Override public Eep createEep(DeviceID deviceID, String command, CommandParameter parameter) throws ConfigurationException
     {
       return new EepA51011(deviceID, command);
     }
@@ -1828,7 +1834,7 @@ public abstract class EepType
     /**
      * {@inheritDoc}
      */
-    @Override public Eep createEep(DeviceID deviceID, String command) throws ConfigurationException
+    @Override public Eep createEep(DeviceID deviceID, String command, CommandParameter parameter) throws ConfigurationException
     {
       return new EepA51012(deviceID, command);
     }
@@ -1851,7 +1857,7 @@ public abstract class EepType
     /**
      * {@inheritDoc}
      */
-    @Override public Eep createEep(DeviceID deviceID, String command) throws ConfigurationException
+    @Override public Eep createEep(DeviceID deviceID, String command, CommandParameter parameter) throws ConfigurationException
     {
       return new EepA51013(deviceID, command);
     }
@@ -1874,7 +1880,7 @@ public abstract class EepType
     /**
      * {@inheritDoc}
      */
-    @Override public Eep createEep(DeviceID deviceID, String command) throws ConfigurationException
+    @Override public Eep createEep(DeviceID deviceID, String command, CommandParameter parameter) throws ConfigurationException
     {
       return new EepA51014(deviceID, command);
     }
@@ -1897,7 +1903,7 @@ public abstract class EepType
     /**
      * {@inheritDoc}
      */
-    @Override public Eep createEep(DeviceID deviceID, String command) throws ConfigurationException
+    @Override public Eep createEep(DeviceID deviceID, String command, CommandParameter parameter) throws ConfigurationException
     {
       return new EepA51015(deviceID, command);
     }
@@ -1920,7 +1926,7 @@ public abstract class EepType
     /**
      * {@inheritDoc}
      */
-    @Override public Eep createEep(DeviceID deviceID, String command) throws ConfigurationException
+    @Override public Eep createEep(DeviceID deviceID, String command, CommandParameter parameter) throws ConfigurationException
     {
       return new EepA51016(deviceID, command);
     }
@@ -1943,7 +1949,7 @@ public abstract class EepType
     /**
      * {@inheritDoc}
      */
-    @Override public Eep createEep(DeviceID deviceID, String command) throws ConfigurationException
+    @Override public Eep createEep(DeviceID deviceID, String command, CommandParameter parameter) throws ConfigurationException
     {
       return new EepA51017(deviceID, command);
     }
@@ -1966,7 +1972,7 @@ public abstract class EepType
     /**
      * {@inheritDoc}
      */
-    @Override public Eep createEep(DeviceID deviceID, String command) throws ConfigurationException
+    @Override public Eep createEep(DeviceID deviceID, String command, CommandParameter parameter) throws ConfigurationException
     {
       return new EepA51018(deviceID, command);
     }
@@ -1989,7 +1995,7 @@ public abstract class EepType
     /**
      * {@inheritDoc}
      */
-    @Override public Eep createEep(DeviceID deviceID, String command) throws ConfigurationException
+    @Override public Eep createEep(DeviceID deviceID, String command, CommandParameter parameter) throws ConfigurationException
     {
       return new EepA51019(deviceID, command);
     }
@@ -2012,7 +2018,7 @@ public abstract class EepType
     /**
      * {@inheritDoc}
      */
-    @Override public Eep createEep(DeviceID deviceID, String command) throws ConfigurationException
+    @Override public Eep createEep(DeviceID deviceID, String command, CommandParameter parameter) throws ConfigurationException
     {
       return new EepA5101A(deviceID, command);
     }
@@ -2035,7 +2041,7 @@ public abstract class EepType
     /**
      * {@inheritDoc}
      */
-    @Override public Eep createEep(DeviceID deviceID, String command) throws ConfigurationException
+    @Override public Eep createEep(DeviceID deviceID, String command, CommandParameter parameter) throws ConfigurationException
     {
       return new EepA5101B(deviceID, command);
     }
@@ -2058,7 +2064,7 @@ public abstract class EepType
     /**
      * {@inheritDoc}
      */
-    @Override public Eep createEep(DeviceID deviceID, String command) throws ConfigurationException
+    @Override public Eep createEep(DeviceID deviceID, String command, CommandParameter parameter) throws ConfigurationException
     {
       return new EepA5101C(deviceID, command);
     }
@@ -2081,7 +2087,7 @@ public abstract class EepType
     /**
      * {@inheritDoc}
      */
-    @Override public Eep createEep(DeviceID deviceID, String command) throws ConfigurationException
+    @Override public Eep createEep(DeviceID deviceID, String command, CommandParameter parameter) throws ConfigurationException
     {
       return new EepA5101D(deviceID, command);
     }
@@ -2104,7 +2110,7 @@ public abstract class EepType
     /**
      * {@inheritDoc}
      */
-    @Override public Eep createEep(DeviceID deviceID, String command) throws ConfigurationException
+    @Override public Eep createEep(DeviceID deviceID, String command, CommandParameter parameter) throws ConfigurationException
     {
       return new EepA51200(deviceID, command);
     }
@@ -2127,7 +2133,7 @@ public abstract class EepType
     /**
      * {@inheritDoc}
      */
-    @Override public Eep createEep(DeviceID deviceID, String command) throws ConfigurationException
+    @Override public Eep createEep(DeviceID deviceID, String command, CommandParameter parameter) throws ConfigurationException
     {
       return new EepA51201(deviceID, command);
     }
@@ -2150,7 +2156,7 @@ public abstract class EepType
     /**
      * {@inheritDoc}
      */
-    @Override public Eep createEep(DeviceID deviceID, String command) throws ConfigurationException
+    @Override public Eep createEep(DeviceID deviceID, String command, CommandParameter parameter) throws ConfigurationException
     {
       return new EepA51202(deviceID, command);
     }
@@ -2173,9 +2179,32 @@ public abstract class EepType
     /**
      * {@inheritDoc}
      */
-    @Override public Eep createEep(DeviceID deviceID, String command) throws ConfigurationException
+    @Override public Eep createEep(DeviceID deviceID, String command, CommandParameter parameter) throws ConfigurationException
     {
       return new EepA51203(deviceID, command);
+    }
+  }
+
+  /**
+   * EnOcean equipment profile (EEP) type 'A5-38-08'.
+   */
+  private static class EepTypeA53808 extends EepType
+  {
+    /**
+     * Constructs a new instance for the EEP number 'A5-38-08' and puts it into the
+     * lookup table of all supported profiles.
+     */
+    public EepTypeA53808()
+    {
+      super(EspRadioTelegram.RORG.BS4, 0x38, 0x08);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override public Eep createEep(DeviceID deviceID, String command, CommandParameter parameter) throws ConfigurationException
+    {
+      return new EepA53808(deviceID, command, parameter);
     }
   }
 

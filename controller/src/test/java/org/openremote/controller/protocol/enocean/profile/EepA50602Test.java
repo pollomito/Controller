@@ -56,7 +56,7 @@ public class EepA50602Test
     // New EEP number ...
 
     Eep eep = EepType.lookup("A5-06-02").createEep(
-        deviceID, Constants.ILLUMINATION_STATUS_COMMAND
+        deviceID, Constants.ILLUMINATION_STATUS_COMMAND, null
     );
 
     Assert.assertTrue(eep instanceof EepA50602);
@@ -65,7 +65,7 @@ public class EepA50602Test
     // Old EEP number ...
 
     eep = EepType.lookup("07-06-02").createEep(
-        deviceID, Constants.ILLUMINATION_STATUS_COMMAND
+        deviceID, Constants.ILLUMINATION_STATUS_COMMAND, null
     );
 
     Assert.assertTrue(eep instanceof EepA50602);
@@ -75,7 +75,7 @@ public class EepA50602Test
   @Test public void testUpdateIllumination1() throws Exception
   {
     EepA50602 eep = (EepA50602)EepType.lookup("A5-06-02").createEep(
-        deviceID, Constants.ILLUMINATION_STATUS_COMMAND
+        deviceID, Constants.ILLUMINATION_STATUS_COMMAND, null
     );
 
     Assert.assertNull(eep.getIllumination1());
@@ -133,7 +133,7 @@ public class EepA50602Test
   @Test public void testUpdateIllumination2() throws Exception
   {
     EepA50602 eep = (EepA50602)EepType.lookup("A5-06-02").createEep(
-        deviceID, Constants.ILLUMINATION_STATUS_COMMAND
+        deviceID, Constants.ILLUMINATION_STATUS_COMMAND, null
     );
 
     Assert.assertNull(eep.getIllumination2());
@@ -191,7 +191,7 @@ public class EepA50602Test
   @Test public void testUpdateSupplyVoltage() throws Exception
   {
     EepA50602 eep = (EepA50602)EepType.lookup("A5-06-02").createEep(
-        deviceID, Constants.SUPPLY_VOLTAGE_STATUS_COMMAND
+        deviceID, Constants.SUPPLY_VOLTAGE_STATUS_COMMAND, null
     );
 
     Assert.assertNull(eep.getSupplyVoltage());
@@ -250,14 +250,14 @@ public class EepA50602Test
   public void testUnknownCommand() throws Exception
   {
     Eep eep = EepType.lookup("A5-06-02").createEep(
-        deviceID, "UNKONWN_COMMAND"
+        deviceID, "UNKONWN_COMMAND", null
     );
   }
 
   @Test public void testInvalidRadioTelegramType() throws Exception
   {
     EepA50602 eep = (EepA50602)EepType.lookup("A5-06-02").createEep(
-        deviceID, Constants.ILLUMINATION_STATUS_COMMAND
+        deviceID, Constants.ILLUMINATION_STATUS_COMMAND, null
     );
 
     EspRadioTelegram invalidTelegram = new Esp31BSTelegram(deviceID, (byte)0x00, (byte)0x00);
@@ -277,7 +277,7 @@ public class EepA50602Test
   @Test public void testInvalidDeviceID() throws Exception
   {
     EepA50602 eep = (EepA50602)EepType.lookup("A5-06-02").createEep(
-        deviceID, Constants.ILLUMINATION_STATUS_COMMAND
+        deviceID, Constants.ILLUMINATION_STATUS_COMMAND, null
     );
 
     int rawIllu1Value = 0;

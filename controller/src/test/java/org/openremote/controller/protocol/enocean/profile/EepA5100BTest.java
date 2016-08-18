@@ -57,7 +57,7 @@ public class EepA5100BTest
     // New EEP number ...
 
     Eep eep = EepType.lookup("A5-10-0B").createEep(
-        deviceID, Constants.TEMPERATURE_STATUS_COMMAND
+        deviceID, Constants.TEMPERATURE_STATUS_COMMAND, null
     );
 
     Assert.assertTrue(eep instanceof EepA5100B);
@@ -66,7 +66,7 @@ public class EepA5100BTest
     // Old EEP number ...
 
     eep = EepType.lookup("07-10-0B").createEep(
-        deviceID, Constants.TEMPERATURE_STATUS_COMMAND
+        deviceID, Constants.TEMPERATURE_STATUS_COMMAND, null
     );
 
     Assert.assertTrue(eep instanceof EepA5100B);
@@ -76,7 +76,7 @@ public class EepA5100BTest
   @Test public void testUpdateTemperature() throws Exception
   {
     EepA5100B eep = (EepA5100B)EepType.lookup("A5-10-0B").createEep(
-        deviceID, Constants.TEMPERATURE_STATUS_COMMAND
+        deviceID, Constants.TEMPERATURE_STATUS_COMMAND, null
     );
 
     Assert.assertNull(eep.getTemperature());
@@ -137,7 +137,7 @@ public class EepA5100BTest
   @Test public void testUpdateContact() throws Exception
   {
     EepA5100B eep = (EepA5100B)EepType.lookup("A5-10-0B").createEep(
-        deviceID, Constants.CONTACT_STATE_STATUS_COMMAND
+        deviceID, Constants.CONTACT_STATE_STATUS_COMMAND, null
     );
 
     Assert.assertNull(eep.isContactClosed());
@@ -199,14 +199,14 @@ public class EepA5100BTest
   public void testUnknownCommand() throws Exception
   {
     Eep eep = EepType.lookup("A5-10-0B").createEep(
-        deviceID, "UNKONWN_COMMAND"
+        deviceID, "UNKONWN_COMMAND", null
     );
   }
 
   @Test public void testInvalidRadioTelegramType() throws Exception
   {
     EepA5100B eep = (EepA5100B)EepType.lookup("A5-10-0B").createEep(
-        deviceID, Constants.TEMPERATURE_STATUS_COMMAND
+        deviceID, Constants.TEMPERATURE_STATUS_COMMAND, null
     );
 
     EspRadioTelegram invalidTelegram = new Esp31BSTelegram(deviceID, (byte)0x00, (byte)0x00);
@@ -226,7 +226,7 @@ public class EepA5100BTest
   @Test public void testInvalidDeviceID() throws Exception
   {
     EepA5100B eep = (EepA5100B)EepType.lookup("A5-10-0B").createEep(
-        deviceID, Constants.TEMPERATURE_STATUS_COMMAND
+        deviceID, Constants.TEMPERATURE_STATUS_COMMAND, null
     );
 
     int rawTempValue = 0;
