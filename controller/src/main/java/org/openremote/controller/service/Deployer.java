@@ -1064,8 +1064,14 @@ public class Deployer
         beehiveCommandCheckService.stop();
       }
 
-      beehiveCommandCheckService = new BeehiveCommandCheckService(controllerConfig);
-      beehiveCommandCheckService.start(this);
+        //  Use a magic URI value to disable this background thread in some configurations...
+        if (controllerConfig.getRemoteCommandURIs().length == 1
+            && controllerConfig.getRemoteCommandURIs()[0].toString().equals("urn:disabled")) {
+            log.info("Beehive command checking service disabled");
+        } else {
+            beehiveCommandCheckService = new BeehiveCommandCheckService(controllerConfig);
+            beehiveCommandCheckService.start(this);
+        }
 
       log.info("Startup complete.");
     }
