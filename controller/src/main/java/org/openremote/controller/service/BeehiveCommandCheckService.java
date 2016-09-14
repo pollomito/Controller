@@ -248,26 +248,39 @@ public class BeehiveCommandCheckService
           {
             String str = httpGet(serviceURL, deployer.getUserName() /* TODO : dont fetch for each conn. */);
 
-            GenericResourceResultWithErrorMessage res =
-                new JSONDeserializer<GenericResourceResultWithErrorMessage>()
-                    .use(null, GenericResourceResultWithErrorMessage.class)
-                    .use("result", ArrayList.class)
-                    .use("result.values", ControllerCommandDTO.class).deserialize(str);
+            GenericResourceResultWithErrorMessage res = null;
 
-            if (res.getErrorMessage() != null)
+            try
             {
-              log.warn("Remote command service returned an error : {0}", res.getErrorMessage());
+              res = new JSONDeserializer<GenericResourceResultWithErrorMessage>()
+                        .use(null, GenericResourceResultWithErrorMessage.class)
+                        .use("result", ArrayList.class)
+                        .use("result.values", ControllerCommandDTO.class).deserialize(str);
             }
 
-            else
+            catch(RuntimeException e)
             {
-              List<ControllerCommandDTO> commands = resolveResult(res.getResult());
+               log.error("Failed to deserialize commands from remote command service : ''{0}''.", e, str);
+            }
 
-              if (commands != null && !commands.isEmpty())
+
+            if (res != null)
+            {
+              if (res.getErrorMessage() != null)
               {
-                executeCommand(commands.get(0));
+                log.warn("Remote command service returned an error : {0}", res.getErrorMessage());
+              }
 
-                isFastPolling = true;
+              else
+              {
+                List<ControllerCommandDTO> commands = resolveResult(res.getResult());
+
+                if (commands != null && !commands.isEmpty())
+                {
+                  executeCommand(commands.get(0));
+
+                  isFastPolling = true;
+                }
               }
             }
           }
