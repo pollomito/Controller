@@ -1,6 +1,7 @@
 Controller Pro 1.6.0 (WIP)
 ==========================
 
+  - Implement EnOcean equipment profile A5-38-08 command 2 in order to support bidirectional Eltako dimmers (ORCJAVA-427, Rainer Hitz)
   - Do not rely on pre-existing directory structure when creating RRD files (#6, ORCJAVA-382)
   - Do not rely on pre-existing directory structure when deploying rules (#7, ORCJAVA-383)
   - Updated drools to version 6.4 (#3)
