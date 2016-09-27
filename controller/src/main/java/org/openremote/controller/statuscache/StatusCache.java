@@ -349,7 +349,7 @@ public class StatusCache implements DeployerCommandListener, DeployerSensorListe
     if (!sensorMap.hasExistingState(sensorID))
     {
 
-      log.error(
+      log.info(
           "Requested sensor id ''{0}'' was not found. Defaulting to ''{1}''.",
           sensorID, Sensor.UNKNOWN_STATUS);
 
