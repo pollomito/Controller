@@ -141,7 +141,8 @@ import org.openremote.controller.protocol.enocean.profile.*;
         EepA51200Test.class,
         EepA51201Test.class,
         EepA51202Test.class,
-        EepA51203Test.class
+        EepA51203Test.class,
+        EepA53808Test.class
     }
 )
 public class EnOceanTests

@@ -56,7 +56,7 @@ public class EepA50802Test
     // New EEP number ...
 
     Eep eep = EepType.lookup("A5-08-02").createEep(
-        deviceID, Constants.TEMPERATURE_STATUS_COMMAND
+        deviceID, Constants.TEMPERATURE_STATUS_COMMAND, null
     );
 
     Assert.assertTrue(eep instanceof EepA50802);
@@ -65,7 +65,7 @@ public class EepA50802Test
     // Old EEP number ...
 
     eep = EepType.lookup("07-08-02").createEep(
-        deviceID, Constants.TEMPERATURE_STATUS_COMMAND
+        deviceID, Constants.TEMPERATURE_STATUS_COMMAND, null
     );
 
     Assert.assertTrue(eep instanceof EepA50802);
@@ -75,7 +75,7 @@ public class EepA50802Test
   @Test public void testUpdateSupplyVoltage() throws Exception
   {
     EepA50802 eep = (EepA50802)EepType.lookup("A5-08-02").createEep(
-        deviceID, Constants.SUPPLY_VOLTAGE_STATUS_COMMAND
+        deviceID, Constants.SUPPLY_VOLTAGE_STATUS_COMMAND, null
     );
 
     Assert.assertNull(eep.getSupplyVoltage());
@@ -138,7 +138,7 @@ public class EepA50802Test
   @Test public void testUpdateIllumination() throws Exception
   {
     EepA50802 eep = (EepA50802)EepType.lookup("A5-08-02").createEep(
-        deviceID, Constants.ILLUMINATION_STATUS_COMMAND
+        deviceID, Constants.ILLUMINATION_STATUS_COMMAND, null
     );
 
     Assert.assertNull(eep.getIllumination());
@@ -201,7 +201,7 @@ public class EepA50802Test
   @Test public void testUpdateTemperature() throws Exception
   {
     EepA50802 eep = (EepA50802)EepType.lookup("A5-08-02").createEep(
-        deviceID, Constants.TEMPERATURE_STATUS_COMMAND
+        deviceID, Constants.TEMPERATURE_STATUS_COMMAND, null
     );
 
     Assert.assertNull(eep.getTemperature());
@@ -264,7 +264,7 @@ public class EepA50802Test
   @Test public void testUpdatePirStatus() throws Exception
   {
     EepA50802 eep = (EepA50802)EepType.lookup("A5-08-02").createEep(
-        deviceID, Constants.PIR_STATUS_COMMAND
+        deviceID, Constants.PIR_STATUS_COMMAND, null
     );
 
     Assert.assertNull(eep.isPirOn());
@@ -327,7 +327,7 @@ public class EepA50802Test
   @Test public void testUpdateOccupancy() throws Exception
   {
     EepA50802 eep = (EepA50802)EepType.lookup("A5-08-02").createEep(
-        deviceID, Constants.OCCUPANCY_STATUS_COMMAND
+        deviceID, Constants.OCCUPANCY_STATUS_COMMAND, null
     );
 
     Assert.assertNull(eep.isOccupancy());
@@ -391,14 +391,14 @@ public class EepA50802Test
   public void testUnknownCommand() throws Exception
   {
     Eep eep = EepType.lookup("A5-08-02").createEep(
-        deviceID, "UNKONWN_COMMAND"
+        deviceID, "UNKONWN_COMMAND", null
     );
   }
 
   @Test public void testInvalidRadioTelegramType() throws Exception
   {
     EepA50802 eep = (EepA50802)EepType.lookup("A5-08-02").createEep(
-        deviceID, Constants.TEMPERATURE_STATUS_COMMAND
+        deviceID, Constants.TEMPERATURE_STATUS_COMMAND, null
     );
 
     EspRadioTelegram invalidTelegram = new Esp31BSTelegram(deviceID, (byte)0x00, (byte)0x00);
@@ -418,7 +418,7 @@ public class EepA50802Test
   @Test public void testInvalidDeviceID() throws Exception
   {
     EepA50802 eep = (EepA50802)EepType.lookup("A5-08-02").createEep(
-        deviceID, Constants.TEMPERATURE_STATUS_COMMAND
+        deviceID, Constants.TEMPERATURE_STATUS_COMMAND, null
     );
 
     int rawVoltageValue = 0;

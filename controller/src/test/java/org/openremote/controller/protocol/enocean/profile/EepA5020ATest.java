@@ -43,7 +43,7 @@ public class EepA5020ATest extends EepA502XXTest
     // New EEP number ...
 
     Eep eep = EepType.lookup("A5-02-0A").createEep(
-        deviceID, Constants.TEMPERATURE_STATUS_COMMAND
+        deviceID, Constants.TEMPERATURE_STATUS_COMMAND, null
     );
 
     Assert.assertTrue(eep instanceof EepA5020A);
@@ -52,7 +52,7 @@ public class EepA5020ATest extends EepA502XXTest
     // Old EEP number ...
 
     eep = EepType.lookup("07-02-0A").createEep(
-        deviceID, Constants.TEMPERATURE_STATUS_COMMAND
+        deviceID, Constants.TEMPERATURE_STATUS_COMMAND, null
     );
 
     Assert.assertTrue(eep instanceof EepA5020A);
@@ -62,7 +62,7 @@ public class EepA5020ATest extends EepA502XXTest
   @Test public void testUpdateESP3() throws Exception
   {
     EepA5020A eep = (EepA5020A)EepType.lookup("A5-02-0A").createEep(
-        deviceID, Constants.TEMPERATURE_STATUS_COMMAND
+        deviceID, Constants.TEMPERATURE_STATUS_COMMAND, null
     );
 
     int rawTemperatureValue = 255;
@@ -87,7 +87,7 @@ public class EepA5020ATest extends EepA502XXTest
   @Test public void testUpdateESP2() throws Exception
   {
     EepA5020A eep = (EepA5020A)EepType.lookup("A5-02-0A").createEep(
-        deviceID, Constants.TEMPERATURE_STATUS_COMMAND
+        deviceID, Constants.TEMPERATURE_STATUS_COMMAND, null
     );
 
     int rawTemperatureValue = 255;
@@ -112,7 +112,7 @@ public class EepA5020ATest extends EepA502XXTest
   @Test public void testUpdateWithTeachInTelegram() throws Exception
   {
     EepA5020A eep = (EepA5020A)EepType.lookup("A5-02-0A").createEep(
-        deviceID, Constants.TEMPERATURE_STATUS_COMMAND
+        deviceID, Constants.TEMPERATURE_STATUS_COMMAND, null
     );
 
     // Regular update...

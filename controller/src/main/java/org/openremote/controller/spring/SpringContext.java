@@ -106,6 +106,8 @@ public class SpringContext extends ServiceContext
    */
   @Override protected void initializeController()
   {
+    getEventProcessorChain().init();
+
     getDeployer().startController();
   }
 

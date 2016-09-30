@@ -193,3 +193,90 @@ task controller(type: Zip, dependsOn: assemble) {
 		    with war
 		}
 }
+
+// Code related to building Docker image
+
+task temporaryControllerDirectory(type: Copy, dependsOn: assemble) {
+    destinationDir = file("${buildDir}/tempController")
+    from('runtime/apache-tomcat-6.0.18') {
+        into project.name
+    }
+    into("$project.name/webapps/controller") {
+        with war
+    }
+}
+
+task sampleControllerConfig(type: Copy) {
+    destinationDir = file("${buildDir}/tempController")
+		from('sample') {
+		    into 'or-resources'
+		}
+}
+
+task dockerControllerTar(type: Tar, dependsOn: [temporaryControllerDirectory, sampleControllerConfig])
+
+dockerControllerTar.doFirst {
+    ant.chmod(file:"${buildDir}/tempController/${project.name}/bin/openremote.sh" , perm: "u+x")
+    
+    String contents = new File("${buildDir}/tempController/${project.name}/webapps/controller/WEB-INF/classes/config.properties").getText('UTF-8')
+    contents = contents.replaceAll('resource.path=../webapps/controller', 'resource.path=/opt/or-resources')
+    new File("${buildDir}/tempController/${project.name}/webapps/controller/WEB-INF/classes/config.properties").write(contents, 'UTF-8')
+}
+
+dockerControllerTar
+{
+    description 'Prepares a tar image to be deployed to docker image'
+
+    destinationDir = file("${buildDir}/install")
+    from(file("${buildDir}/tempController"))
+}
+
+ext.dockerImageName = "$dockerRepository/controller:$imageVersion".toString()
+
+apply plugin: 'com.bmuschko.docker-remote-api'
+
+docker {
+    url = "$System.env.DOCKER_HOST".replace("tcp:", "https:")
+    certPath = new File("$System.env.DOCKER_CERT_PATH")
+    registryCredentials {
+        username = project.properties.dockerHubUsername
+        password = project.properties.dockerHubPassword
+    }
+}
+
+import com.bmuschko.gradle.docker.tasks.image.*
+
+task createDockerfile(type: Dockerfile) {
+    destFile = project.file("$project.buildDir/install/Dockerfile")
+    from "java:8"
+
+    maintainer 'OpenRemote <support@openremote.org>'
+
+    // We're adding a tar instead of a folder structure,
+    // otherwise empty folders (all tomcat logs folders) where not present on image
+    addFile project(':OpenRemote-Controller').dockerControllerTar.archiveName, "/opt"
+
+    runCommand 'groupadd -r openremote && useradd -r -g openremote openremote && chown -R openremote.openremote /opt/OpenRemote-Controller && chown -R openremote.openremote /opt/or-resources'
+    
+    exposePort 8688
+    
+    user 'openremote'
+
+    // TODO Weird permission problems with this if you touch any of these files in a sub-image build
+    // TODO Maybe we run into https://github.com/docker/docker/issues/783
+    // volume "/opt/or-resources"
+    
+    workingDir "/opt/OpenRemote-Controller/bin"
+    entryPoint "/opt/OpenRemote-Controller/bin/openremote.sh"
+}
+
+task buildImage(type: DockerBuildImage) {
+    dependsOn ":OpenRemote-Controller:dockerControllerTar", createDockerfile
+    inputDir = createDockerfile.destFile.parentFile
+    tag = dockerImageName
+}
+
+task pushImage(type: DockerPushImage) {
+    dependsOn buildImage
+    imageName = dockerImageName
+}

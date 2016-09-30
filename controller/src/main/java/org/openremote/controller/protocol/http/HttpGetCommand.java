@@ -204,6 +204,8 @@ public class HttpGetCommand extends ReadCommand implements ExecutableCommand
        logger.error("ClientProtocolException when executing HTTP method", e);
     } catch (IOException e) {
        logger.error("IOException when executing HTTP method", e);
+    } finally {
+       client.getConnectionManager().shutdown();
     }
     logger.info("received message: " + resp);
     return resp;

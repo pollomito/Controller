@@ -1,10 +1,16 @@
 Controller Pro 1.6.0 (WIP)
 ==========================
 
+  - Fixed: Controller command polling thread dies for uncaught exceptions (#22)
+  - Implement EnOcean equipment profile A5-38-08 command 2 in order to support bidirectional Eltako dimmers (ORCJAVA-427, Rainer Hitz)
   - Do not rely on pre-existing directory structure when creating RRD files (#6, ORCJAVA-382)
+  - Do not rely on pre-existing directory structure when deploying rules (#7, ORCJAVA-383)
   - Updated drools to version 6.4 (#3)
   - Have drools use pre-built kjars if bundled in configuration (#5)
   - Convert build system to Gradle (ORCJAVA-511)
+  - Add unit tests for EventProcessorChain (#17, ORCJAVA-207)
+  - Add an initialisation step to the event processors (#18)
+  - Improve RemoteProxy polling mechanism (ORCJAVA-518, Rainer Hitz)
 
 Controller Pro 1.5.0
 ====================

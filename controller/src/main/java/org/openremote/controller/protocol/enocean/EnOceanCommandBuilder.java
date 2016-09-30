@@ -298,7 +298,7 @@ public class EnOceanCommandBuilder implements CommandBuilder
 
     try
     {
-      eep = eepType.createEep(deviceID, commandAsString);
+      eep = eepType.createEep(deviceID, commandAsString, parameter);
     }
     catch (ConfigurationException e)
     {

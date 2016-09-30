@@ -57,7 +57,7 @@ public class EepA5101CTest
     // New EEP number ...
 
     Eep eep = EepType.lookup("A5-10-1C").createEep(
-        deviceID, Constants.TEMPERATURE_STATUS_COMMAND
+        deviceID, Constants.TEMPERATURE_STATUS_COMMAND, null
     );
 
     Assert.assertTrue(eep instanceof EepA5101C);
@@ -66,7 +66,7 @@ public class EepA5101CTest
     // Old EEP number ...
 
     eep = EepType.lookup("07-10-1C").createEep(
-        deviceID, Constants.TEMPERATURE_STATUS_COMMAND
+        deviceID, Constants.TEMPERATURE_STATUS_COMMAND, null
     );
 
     Assert.assertTrue(eep instanceof EepA5101C);
@@ -77,7 +77,7 @@ public class EepA5101CTest
   {
 
     EepA5101C eep = (EepA5101C)EepType.lookup("A5-10-1C").createEep(
-        deviceID, Constants.ILLUMINATION_STATUS_COMMAND
+        deviceID, Constants.ILLUMINATION_STATUS_COMMAND, null
     );
 
     Assert.assertNull(eep.getIllumination());
@@ -145,7 +145,7 @@ public class EepA5101CTest
   @Test public void testUpdateSetPoint() throws Exception
   {
     EepA5101C eep = (EepA5101C)EepType.lookup("A5-10-1C").createEep(
-        deviceID, Constants.ILL_SET_POINT_STATUS_COMMAND
+        deviceID, Constants.ILL_SET_POINT_STATUS_COMMAND, null
     );
 
     Assert.assertNull(eep.getSetPoint());
@@ -213,7 +213,7 @@ public class EepA5101CTest
   @Test public void testUpdateTemperature() throws Exception
   {
     EepA5101C eep = (EepA5101C)EepType.lookup("A5-10-1C").createEep(
-        deviceID, Constants.TEMPERATURE_STATUS_COMMAND
+        deviceID, Constants.TEMPERATURE_STATUS_COMMAND, null
     );
 
     Assert.assertNull(eep.getTemperature());
@@ -281,7 +281,7 @@ public class EepA5101CTest
   @Test public void testUpdateFanSpeed() throws Exception
   {
     EepA5101C eep = (EepA5101C)EepType.lookup("A5-10-1C").createEep(
-        deviceID, Constants.FAN_SPEED_STATUS_COMMAND
+        deviceID, Constants.FAN_SPEED_STATUS_COMMAND, null
     );
 
     Assert.assertNull(eep.getFanSpeed());
@@ -412,7 +412,7 @@ public class EepA5101CTest
   @Test public void testUpdateOccupancyEnable() throws Exception
   {
     EepA5101C eep = (EepA5101C)EepType.lookup("A5-10-1C").createEep(
-        deviceID, Constants.OCCUPANCY_ENABLE_STATUS_COMMAND
+        deviceID, Constants.OCCUPANCY_ENABLE_STATUS_COMMAND, null
     );
 
     Assert.assertNull(eep.isOccupancyEnabled());
@@ -480,7 +480,7 @@ public class EepA5101CTest
   @Test public void testUpdateOccupancy() throws Exception
   {
     EepA5101C eep = (EepA5101C)EepType.lookup("A5-10-1C").createEep(
-        deviceID, Constants.OCCUPANCY_BUTTON_STATUS_COMMAND
+        deviceID, Constants.OCCUPANCY_BUTTON_STATUS_COMMAND, null
     );
 
     Assert.assertNull(eep.isOccupied());
@@ -549,14 +549,14 @@ public class EepA5101CTest
   public void testUnknownCommand() throws Exception
   {
     Eep eep = EepType.lookup("A5-10-1C").createEep(
-        deviceID, "UNKONWN_COMMAND"
+        deviceID, "UNKONWN_COMMAND", null
     );
   }
 
   @Test public void testInvalidRadioTelegramType() throws Exception
   {
     EepA5101C eep = (EepA5101C)EepType.lookup("A5-10-1C").createEep(
-        deviceID, Constants.TEMPERATURE_STATUS_COMMAND
+        deviceID, Constants.TEMPERATURE_STATUS_COMMAND, null
     );
 
     EspRadioTelegram invalidTelegram = new Esp31BSTelegram(deviceID, (byte)0x00, (byte)0x00);
@@ -576,7 +576,7 @@ public class EepA5101CTest
   @Test public void testInvalidDeviceID() throws Exception
   {
     EepA5101C eep = (EepA5101C)EepType.lookup("A5-10-1C").createEep(
-        deviceID, Constants.TEMPERATURE_STATUS_COMMAND
+        deviceID, Constants.TEMPERATURE_STATUS_COMMAND, null
     );
 
     int rawIlluminationValue = 0;

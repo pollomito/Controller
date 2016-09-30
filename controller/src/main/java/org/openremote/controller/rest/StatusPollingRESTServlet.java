@@ -29,6 +29,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.jdom.*;
 import org.jdom.input.SAXBuilder;
 import org.openremote.controller.Constants;
+import org.openremote.controller.config.ControllerXMLChangedException;
 import org.openremote.controller.exception.ControlCommandException;
 import org.openremote.controller.exception.ControllerException;
 import org.openremote.controller.exception.ControllerRESTAPIException;
@@ -248,8 +249,11 @@ public class StatusPollingRESTServlet extends RESTAPI {
                sendResponse(request, response, 504, "Time out");
             }
             logger.info("Finished polling at " + new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()) + "\n");
+         } catch (ControllerXMLChangedException e) {
+            logger.info("Controller XML file changed while polling status, this can be ignored...");
+            sendResponse(request, response, e.getErrorCode(), e.getMessage());
          } catch (ControllerException e) {
-            logger.error("CommandException occurs", e);
+            logger.error("ControllerException occurs", e);
             sendResponse(request, response, e.getErrorCode(), e.getMessage());
          }
       } else {

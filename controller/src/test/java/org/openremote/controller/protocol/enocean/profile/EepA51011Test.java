@@ -57,7 +57,7 @@ public class EepA51011Test
     // New EEP number ...
 
     Eep eep = EepType.lookup("A5-10-11").createEep(
-        deviceID, Constants.TEMPERATURE_STATUS_COMMAND
+        deviceID, Constants.TEMPERATURE_STATUS_COMMAND, null
     );
 
     Assert.assertTrue(eep instanceof EepA51011);
@@ -66,7 +66,7 @@ public class EepA51011Test
     // Old EEP number ...
 
     eep = EepType.lookup("07-10-11").createEep(
-        deviceID, Constants.TEMPERATURE_STATUS_COMMAND
+        deviceID, Constants.TEMPERATURE_STATUS_COMMAND, null
     );
 
     Assert.assertTrue(eep instanceof EepA51011);
@@ -77,7 +77,7 @@ public class EepA51011Test
   {
 
     EepA51011 eep = (EepA51011)EepType.lookup("A5-10-11").createEep(
-        deviceID, Constants.SET_POINT_STATUS_COMMAND
+        deviceID, Constants.SET_POINT_STATUS_COMMAND, null
     );
 
     Assert.assertNull(eep.getSetPoint());
@@ -140,7 +140,7 @@ public class EepA51011Test
   @Test public void testUpdateTemperature() throws Exception
   {
     EepA51011 eep = (EepA51011)EepType.lookup("A5-10-11").createEep(
-        deviceID, Constants.TEMPERATURE_STATUS_COMMAND
+        deviceID, Constants.TEMPERATURE_STATUS_COMMAND, null
     );
 
     Assert.assertNull(eep.getTemperature());
@@ -203,7 +203,7 @@ public class EepA51011Test
   @Test public void testUpdateHumidity() throws Exception
   {
     EepA51011 eep = (EepA51011)EepType.lookup("A5-10-11").createEep(
-        deviceID, Constants.HUMIDITY_STATUS_COMMAND
+        deviceID, Constants.HUMIDITY_STATUS_COMMAND, null
     );
 
     Assert.assertNull(eep.getHumidity());
@@ -266,7 +266,7 @@ public class EepA51011Test
   @Test public void testUpdateSlideSwitch() throws Exception
   {
     EepA51011 eep = (EepA51011)EepType.lookup("A5-10-11").createEep(
-        deviceID, Constants.SLIDE_SWITCH_STATUS_COMMAND
+        deviceID, Constants.SLIDE_SWITCH_STATUS_COMMAND, null
     );
 
     Assert.assertNull(eep.isSlideSwitchOn());
@@ -331,14 +331,14 @@ public class EepA51011Test
   public void testUnknownCommand() throws Exception
   {
     Eep eep = EepType.lookup("A5-10-11").createEep(
-        deviceID, "UNKONWN_COMMAND"
+        deviceID, "UNKONWN_COMMAND", null
     );
   }
 
   @Test public void testInvalidRadioTelegramType() throws Exception
   {
     EepA51011 eep = (EepA51011)EepType.lookup("A5-10-11").createEep(
-        deviceID, Constants.TEMPERATURE_STATUS_COMMAND
+        deviceID, Constants.TEMPERATURE_STATUS_COMMAND, null
     );
 
     EspRadioTelegram invalidTelegram = new Esp31BSTelegram(deviceID, (byte)0x00, (byte)0x00);
@@ -358,7 +358,7 @@ public class EepA51011Test
   @Test public void testInvalidDeviceID() throws Exception
   {
     EepA51011 eep = (EepA51011)EepType.lookup("A5-10-11").createEep(
-        deviceID, Constants.TEMPERATURE_STATUS_COMMAND
+        deviceID, Constants.TEMPERATURE_STATUS_COMMAND, null
     );
 
     int rawSetPointValue = 0;

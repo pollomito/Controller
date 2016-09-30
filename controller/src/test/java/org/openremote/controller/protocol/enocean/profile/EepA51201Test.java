@@ -48,7 +48,7 @@ public class EepA51201Test extends EepA512XXTest
     // New EEP number ...
 
     Eep eep = EepType.lookup("A5-12-01").createEep(
-        deviceID, Constants.AMR_METER_READING_STATUS_COMMAND
+        deviceID, Constants.AMR_METER_READING_STATUS_COMMAND, null
     );
 
     Assert.assertTrue(eep instanceof EepA51201);
@@ -57,7 +57,7 @@ public class EepA51201Test extends EepA512XXTest
     // Old EEP number ...
 
     eep = EepType.lookup("07-12-01").createEep(
-        deviceID, Constants.AMR_METER_READING_STATUS_COMMAND
+        deviceID, Constants.AMR_METER_READING_STATUS_COMMAND, null
     );
 
     Assert.assertTrue(eep instanceof EepA51201);
@@ -67,7 +67,7 @@ public class EepA51201Test extends EepA512XXTest
   @Test public void testUpdateMeterReadingESP3() throws Exception
   {
     EepA51201 eep = (EepA51201)EepType.lookup("A5-12-01").createEep(
-        deviceID, Constants.AMR_METER_READING_STATUS_COMMAND
+        deviceID, Constants.AMR_METER_READING_STATUS_COMMAND, null
     );
 
     Assert.assertNull(eep.getMeterReading());
@@ -128,7 +128,7 @@ public class EepA51201Test extends EepA512XXTest
   @Test public void testUpdateMeterReadingESP2() throws Exception
   {
     EepA51201 eep = (EepA51201)EepType.lookup("A5-12-01").createEep(
-        deviceID, Constants.AMR_METER_READING_STATUS_COMMAND
+        deviceID, Constants.AMR_METER_READING_STATUS_COMMAND, null
     );
 
     Assert.assertNull(eep.getMeterReading());
@@ -193,7 +193,7 @@ public class EepA51201Test extends EepA512XXTest
     double [] scaledValues = {1, 0.1, 0.01, 0.001};
 
     EepA51201 eep = (EepA51201)EepType.lookup("A5-12-01").createEep(
-        deviceID, Constants.AMR_METER_READING_STATUS_COMMAND
+        deviceID, Constants.AMR_METER_READING_STATUS_COMMAND, null
     );
 
     int tariffInfo = 0;
@@ -222,7 +222,7 @@ public class EepA51201Test extends EepA512XXTest
   @Test public void testTariff() throws Exception
   {
     EepA51201 eep = (EepA51201)EepType.lookup("A5-12-01").createEep(
-        deviceID, Constants.AMR_TARIFF_STATUS_COMMAND
+        deviceID, Constants.AMR_TARIFF_STATUS_COMMAND, null
     );
 
     Assert.assertNull(eep.getTariff());
@@ -298,7 +298,7 @@ public class EepA51201Test extends EepA512XXTest
   @Test public void testDataType() throws Exception
   {
     EepA51201 eep = (EepA51201)EepType.lookup("A5-12-01").createEep(
-        deviceID, Constants.AMR_DATA_TYPE_STATUS_COMMAND
+        deviceID, Constants.AMR_DATA_TYPE_STATUS_COMMAND, null
     );
 
     Assert.assertNull(eep.isCurrentValue());
@@ -359,7 +359,7 @@ public class EepA51201Test extends EepA512XXTest
   @Test public void testDivisor() throws Exception
   {
     EepA51201 eep = (EepA51201)EepType.lookup("A5-12-01").createEep(
-        deviceID, Constants.AMR_DIVISOR_STATUS_COMMAND
+        deviceID, Constants.AMR_DIVISOR_STATUS_COMMAND, null
     );
 
     Assert.assertNull(eep.getDivisor());
@@ -437,7 +437,7 @@ public class EepA51201Test extends EepA512XXTest
   public void testUnknownCommand() throws Exception
   {
     Eep eep = EepType.lookup("A5-12-01").createEep(
-        deviceID, "UNKONWN_COMMAND"
+        deviceID, "UNKONWN_COMMAND", null
     );
   }
 
@@ -445,7 +445,7 @@ public class EepA51201Test extends EepA512XXTest
   {
 
     EepA51201 eep = (EepA51201)EepType.lookup("A5-12-01").createEep(
-        deviceID, Constants.AMR_METER_READING_STATUS_COMMAND
+        deviceID, Constants.AMR_METER_READING_STATUS_COMMAND, null
     );
 
     EspRadioTelegram invalidTelegram = new Esp31BSTelegram(deviceID, (byte)0x00, (byte)0x00);
@@ -465,7 +465,7 @@ public class EepA51201Test extends EepA512XXTest
   @Test public void testInvalidDeviceID() throws Exception
   {
     EepA51201 eep = (EepA51201)EepType.lookup("A5-12-01").createEep(
-        deviceID, Constants.AMR_METER_READING_STATUS_COMMAND
+        deviceID, Constants.AMR_METER_READING_STATUS_COMMAND, null
     );
 
     int rawMeterValue = 0;
