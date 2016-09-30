@@ -397,15 +397,14 @@ public abstract class EepType
   public final static EepType EEP_TYPE_A51203 = new EepTypeA51203();
 
   /**
-<<<<<<< HEAD
    * EnOcean equipment profile (EEP) 'A5-20-01' type.
    */
   public final static EepType EEP_TYPE_A52001 = new EepTypeA52001();
-=======
+
+  /**
    * EnOcean equipment profile (EEP) 'A5-38-08' type.
    */
   public final static EepType EEP_TYPE_A53808 = new EepTypeA53808();
->>>>>>> d87e8b960264e78245d49ec744566e108b73c57d
 
   /**
    * End of FUNC value range: {@value}
