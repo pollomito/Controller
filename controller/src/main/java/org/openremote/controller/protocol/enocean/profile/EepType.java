@@ -2191,20 +2191,24 @@ public abstract class EepType
     }
   }
   
+  /**
+   * EnOcean equipment profile (EEP) type 'A5-20-01'.
+   */
   private static class EepTypeA52001 extends EepType
   {
     /**
      * Constructs a new instance for the EEP number 'A5-20-01' and puts it into the
      * lookup table of all supported profiles.
      */
-    public EepTypeA52001() {
+    public EepTypeA52001()
+    {
       super(EspRadioTelegram.RORG.BS4, 0x20, 0x01);
     }
  
     /**
      * {@inheritDoc}
      */
-    @Override public Eep createEep(DeviceID deviceID, String command) throws ConfigurationException
+      @Override public Eep createEep(DeviceID deviceID, String command, CommandParameter parameter) throws ConfigurationException
     {
       return new EepA52001(deviceID, command);
     }
