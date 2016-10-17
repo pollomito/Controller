@@ -570,6 +570,11 @@ public class Version20ModelBuilder extends AbstractModelBuilder
       {
         controllerDefinitionIsPresent = true;
 
+        if (lastTimeStamp == 0)
+        {
+          lastTimeStamp = getControllerXMLTimeStamp();
+        }
+
         return true;
       }
     }
