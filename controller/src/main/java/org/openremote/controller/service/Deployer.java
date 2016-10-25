@@ -1625,16 +1625,9 @@ public class Deployer
 
           if (deployer.modelBuilder == null || deployer.modelBuilder.hasControllerDefinitionChanged())
           {
-            boolean isUpdateChangedState = (deployer.modelBuilder == null);
-
             try
             {
               deployer.softRestart();
-
-              if (isUpdateChangedState && deployer.modelBuilder != null)
-              {
-                deployer.modelBuilder.hasControllerDefinitionChanged();
-              }
             }
 
             catch (ControllerDefinitionNotFoundException e)

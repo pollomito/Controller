@@ -306,14 +306,6 @@ public class Version20ModelBuilder extends AbstractModelBuilder
 
 
   /**
-   * Indicates whether the controller.xml for this schema implementation has been found.
-   *
-   * @see #hasControllerDefinitionChanged()
-   */
-  private boolean controllerDefinitionIsPresent;
-
-
-  /**
    * Last known timestamp of controller.xml file.
    */
   private long lastTimeStamp = 0L;
@@ -426,15 +418,6 @@ public class Version20ModelBuilder extends AbstractModelBuilder
 
     this.config = config;
 
-
-    // check for the required artifacts (XML document) are present to build the object model...
-
-    controllerDefinitionIsPresent = checkControllerDefinitionExists(config);
-
-    if (controllerDefinitionIsPresent)
-    {
-      lastTimeStamp = getControllerXMLTimeStamp();
-    }
   }
 
 
@@ -544,12 +527,11 @@ public class Version20ModelBuilder extends AbstractModelBuilder
    */
   @Override public boolean hasControllerDefinitionChanged()
   {
-    if (controllerDefinitionIsPresent)
+    if (lastTimeStamp > 0)
     {
       if (!checkControllerDefinitionExists(config))
       {
-        // it was there before, now it's gone...
-        controllerDefinitionIsPresent = false;
+        lastTimeStamp = 0;
 
         return true;
       }
@@ -558,8 +540,6 @@ public class Version20ModelBuilder extends AbstractModelBuilder
 
       if (lastModified > lastTimeStamp)
       {
-        lastTimeStamp = lastModified;
-
         return true;
       }
     }
@@ -568,13 +548,6 @@ public class Version20ModelBuilder extends AbstractModelBuilder
     {
       if (checkControllerDefinitionExists(config))
       {
-        controllerDefinitionIsPresent = true;
-
-        if (lastTimeStamp == 0)
-        {
-          lastTimeStamp = getControllerXMLTimeStamp();
-        }
-
         return true;
       }
     }
@@ -674,7 +647,11 @@ public class Version20ModelBuilder extends AbstractModelBuilder
         builder.setValidation(true);
       }
 
-      return builder.build(controllerXMLFile);
+      Document doc =  builder.build(controllerXMLFile);
+
+      lastTimeStamp = getControllerXMLTimeStamp();
+
+      return doc;
     }
 
     catch (Throwable t)
