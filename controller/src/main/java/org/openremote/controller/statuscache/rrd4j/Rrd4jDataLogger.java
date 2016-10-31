@@ -410,7 +410,7 @@ public class Rrd4jDataLogger extends EventProcessor
          return rrdDefList;
       } catch (Exception e) {
          e.printStackTrace();
-         throw new InitializationException("Error parsinf rrd4j-config.xml", e);
+         throw new InitializationException("Error parsing rrd4j-config.xml", e);
       }
    }
 
