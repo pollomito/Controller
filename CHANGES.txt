@@ -1,5 +1,5 @@
-Controller Pro 1.6.0 (WIP)
-==========================
+Controller 2.6.0 (WIP)
+======================
 
   - Fixed: Controller command polling thread dies for uncaught exceptions (#22)
   - Implement EnOcean equipment profile A5-38-08 command 2 in order to support bidirectional Eltako dimmers (ORCJAVA-427, Rainer Hitz)
