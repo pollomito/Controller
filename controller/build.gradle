@@ -183,18 +183,7 @@ test {
     include '**/AllTests.class'
 }
 
-task controller(type: Zip, dependsOn: assemble) {
-    description 'Creates a zip distribution of the controller runtime, including Tomcat'
-
-    from('runtime/apache-tomcat-6.0.18') {
-		    into project.name
-		}
- 		into("$project.name/webapps/controller") {
-		    with war
-		}
-}
-
-// Code related to building Docker image
+// Code related to building a controller distribution
 
 task temporaryControllerDirectory(type: Copy, dependsOn: assemble) {
     destinationDir = file("${buildDir}/tempController")
@@ -205,6 +194,22 @@ task temporaryControllerDirectory(type: Copy, dependsOn: assemble) {
         with war
     }
 }
+
+task controller(type: Zip, dependsOn: temporaryControllerDirectory) 
+
+controller.doFirst {
+    ant.chmod(file:"${buildDir}/tempController/${project.name}/bin/openremote.sh" , perm: "u+x")
+}
+
+controller {
+    description 'Creates a zip distribution of the controller runtime, including Tomcat'
+
+    from("${buildDir}/tempController/$project.name") {
+		    into project.name
+		}
+}
+
+// Code related to building Docker image
 
 task sampleControllerConfig(type: Copy) {
     destinationDir = file("${buildDir}/tempController")
