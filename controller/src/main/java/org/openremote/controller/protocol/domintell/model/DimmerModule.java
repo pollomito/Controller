@@ -78,8 +78,11 @@ public class DimmerModule extends DomintellModule implements Dimmer {
      } catch (NumberFormatException e) {
        // Not understood as a scene, do not update ourself
        log.warn("Invalid feedback received " + info, e);
+     } catch (StringIndexOutOfBoundsException e) {
+        // Not understood as a scene, do not update ourself
+        log.warn("Invalid feedback received " + info, e);
      }
-       
+
      super.processUpdate(info);
    }
 
