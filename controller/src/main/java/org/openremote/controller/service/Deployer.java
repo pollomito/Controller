@@ -519,9 +519,13 @@ public class Deployer
 
     URI resourceDirURI = new File(controllerConfig.getResourcePath()).toURI();
 
-    unzip(inputStream, resourceDirURI);
-
-    copyLircdConf(resourceDirURI, controllerConfig);
+    try {
+      pause();
+      unzip(inputStream, resourceDirURI);
+      copyLircdConf(resourceDirURI, controllerConfig);
+    } finally {
+      resume();
+    }
   }
 
 
