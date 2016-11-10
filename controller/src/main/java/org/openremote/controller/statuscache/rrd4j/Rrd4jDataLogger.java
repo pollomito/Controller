@@ -275,7 +275,7 @@ public class Rrd4jDataLogger extends EventProcessor
       catch (IOException e)
       {
          init.error(
-             "I/O error in accessing RRD datafile ''{0}'': {1}", e, rrdFileURI, e.getMessage()
+             "I/O error in accessing RRD datafile ''{0}'' - please make sure your process user has read/write permission: {1}", e, rrdFileURI, e.getMessage()
          );
       }
     }

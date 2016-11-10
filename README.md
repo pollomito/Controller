@@ -1,26 +1,36 @@
 #OpenRemote Controller 2
 
-### Build
+### Run tests
 
-Build is done using gradle.
+`./gradlew clean check`
 
-To build the controller war, run *gradlew clean build*.
-This also runs the tests, currently 44 tests are failing, this is "normal" and will eventually get fixed.
-war file can be found under build/libs
+(Ignore the 44 tests which are currently failing, we are working on fixing them.)
 
-To build controller zip distribution, run *gradlew clean controller*.
-zip file can be found under build/distributions
+### Build the application WAR
 
-Samsung protocol jar that was built by previous ant build mechanism is not yet integrated into new gradle build.
+`./gradlew clean war`
 
-### Docker image
+The deployable WAR file can be found under `build/libs`. 
 
-Build Docker images with `./gradlew clean buildImage`. Remove old images before if you don't want to use the Docker build cache.
+### Build the distribution ZIP
 
-You can start and test these images with the `docker run -i -t -p 8688:8688 openremote/controller run`.
+`./gradlew clean controller`
+
+The ZIP file can be found under `build/distributions`.
+
+### Build and deploy with Docker
+
+`./gradlew clean buildImage`
+
+Start the container:
+
+`docker run -i -t -p 8688:8688 openremote/controller run`
+
+Access the controller at `http://<Your Docker Host>:8688/controller/` and synchronize its configuration with your [Designer account](http://designer.openremote.com/). 
 
 You can also directly build and push the image to our [Docker Hub Account](https://hub.docker.com/u/openremote/): `/gradlew clean pushImage -PdockerHubUsername=username -PdockerHubPassword=secret`
 
-This is work in progress and there are still pending issues on the Docker image:
+The Docker image is currently work in progress and some issues remain:
+
+* Configuration and stored data is not persistent (problems with Docker volume mapping)
 * Z-Wave and Velbus protocols are not bundled
-* configuration is not exposed outside of the docker image

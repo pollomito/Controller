@@ -3,6 +3,7 @@ apply plugin: "war"
 ext {
     testWebApplicationFolder = 'build/testcontainer/war'
     testWebServerBase = 'https://designer-test.openremote.com'
+    dockerImageName = "$dockerRepository/controller:$imageVersion".toString()
 }
 
 configurations {
@@ -235,8 +236,6 @@ dockerControllerTar
     destinationDir = file("${buildDir}/install")
     from(file("${buildDir}/tempController"))
 }
-
-ext.dockerImageName = "$dockerRepository/controller:$imageVersion".toString()
 
 apply plugin: 'com.bmuschko.docker-remote-api'
 
