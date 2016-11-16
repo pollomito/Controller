@@ -262,7 +262,7 @@ public class Deployer
    * Reference to the service which checks Beehive regularly for any new actions that this controller should perform<br>
    * For example unlink from Beehive, download new design, start proxy, update controller, ....
    */
-  private BeehiveCommandCheckService beehiveCommandCheckService;
+  private BeehiveCommandCheckService2 beehiveCommandCheckService;
 
   // Constructors ---------------------------------------------------------------------------------
 
@@ -982,7 +982,7 @@ public class Deployer
 
     if (beehiveCommandCheckService != null)
     {
-      beehiveCommandCheckService.stop();
+      //beehiveCommandCheckService.stop();
     }
 
     deviceStateCache.shutdown();
@@ -1061,7 +1061,7 @@ public class Deployer
     } finally {
       if (beehiveCommandCheckService != null)
       {
-        beehiveCommandCheckService.stop();
+       // beehiveCommandCheckService.stop();
       }
 
         //  Use a magic URI value to disable this background thread in some configurations...
@@ -1069,8 +1069,8 @@ public class Deployer
             && controllerConfig.getRemoteCommandURIs()[0].toString().equals("urn:disabled")) {
             log.info("Beehive command checking service disabled");
         } else {
-            beehiveCommandCheckService = new BeehiveCommandCheckService(controllerConfig);
-            beehiveCommandCheckService.start(this);
+            beehiveCommandCheckService = new BeehiveCommandCheckService2();
+            beehiveCommandCheckService.start();
         }
 
       log.info("Startup complete.");

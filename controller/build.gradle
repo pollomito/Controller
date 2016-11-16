@@ -37,6 +37,7 @@ dependencies {
     compile "commons-io:commons-io:$commonsIoVersion"
     compile "commons-lang:commons-lang:$commonsLangVersion"
     compile "commons-net:commons-net:$commonsNetVersion"
+    compile "io.netty:netty-all:4.1.6.Final"
 
     compile "org.kie:kie-api:$droolsVersion"
     compile "org.drools:drools-compiler:$droolsVersion"
@@ -100,16 +101,26 @@ task prepareTestFolder(type: Copy, dependsOn: war) {
 }
 
 war {
-    // Make sure configuration files from sources also make it to war
-    from('src/main/java') {
-        include '**/*.xml'
-        into ('WEB-INF/classes')
-    }
-    
-    // Also copy native libraries, getting rid of version information from file names
-    into ('WEB-INF/lib/native') {
-        from configurations.staticLibraries.files
-        rename { it - '-2.2-pre2' }
+    archiveName = 'ccs.war'
+
+    if (project.hasProperty("targetEnv")) {
+        def targetEnvFolder = 'environments/' + targetEnv;
+        if (new File(targetEnvFolder).exists()) {
+            from(targetEnvFolder) {
+                include '*.properties'
+                include '*.xml'
+                exclude 'web.xml'
+                into ('WEB-INF/classes')
+            }
+            from(targetEnvFolder) {
+                include 'web.xml'
+                into ('WEB-INF')
+            }
+        } else {
+            println "*** No configuration exists for target environment"
+        }
+    } else {
+        println "*** No target environment defined"
     }
 }
 
@@ -235,13 +246,37 @@ ext.dockerImageName = "$dockerRepository/controller:$imageVersion".toString()
 
 apply plugin: 'com.bmuschko.docker-remote-api'
 
+
 docker {
-    url = "$System.env.DOCKER_HOST".replace("tcp:", "https:")
-    certPath = new File("$System.env.DOCKER_CERT_PATH")
-    registryCredentials {
+  url = dockerHostUrl()
+  certPath = dockerCertPath()
+  registryCredentials {
         username = project.properties.dockerHubUsername
         password = project.properties.dockerHubPassword
     }
+}
+
+URI dockerHostEnv() {
+  String uri = System.getenv('DOCKER_HOST')
+  uri ? new URI(uri) : null
+}
+
+String dockerHostUrl() {
+  if (dockerHostEnv()) {
+    URI uri = dockerHostEnv()
+    if (uri.scheme == 'unix') {
+      uri
+    } else if (uri.scheme == 'tcp') {
+      (new URI(uri.scheme != 'tcp' ?: 'https' , uri.userInfo, uri.host, uri.port, uri.path, uri.query, uri.fragment)).toString()
+    }
+  } else {
+    org.gradle.internal.os.OperatingSystem.current().isLinux() ? 'unix:///var/run/docker.sock' : 'http://localhost:2375'
+  }
+}
+
+File dockerCertPath() {
+  String certPathEnv = System.getenv('DOCKER_CERT_PATH')
+  certPathEnv ? file(certPathEnv) : null;
 }
 
 import com.bmuschko.gradle.docker.tasks.image.*
