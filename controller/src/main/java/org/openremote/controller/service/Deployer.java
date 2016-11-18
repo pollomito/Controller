@@ -982,7 +982,7 @@ public class Deployer
 
     if (beehiveCommandCheckService != null)
     {
-      //beehiveCommandCheckService.stop();
+      beehiveCommandCheckService.stop();
     }
 
     deviceStateCache.shutdown();
@@ -1061,7 +1061,7 @@ public class Deployer
     } finally {
       if (beehiveCommandCheckService != null)
       {
-       // beehiveCommandCheckService.stop();
+        beehiveCommandCheckService.stop();
       }
 
         //  Use a magic URI value to disable this background thread in some configurations...
@@ -1070,7 +1070,7 @@ public class Deployer
             log.info("Beehive command checking service disabled");
         } else {
             beehiveCommandCheckService = new BeehiveCommandCheckService2();
-            beehiveCommandCheckService.start();
+            beehiveCommandCheckService.start(this, controllerConfig);
         }
 
       log.info("Startup complete.");

@@ -42,6 +42,7 @@ import io.netty.handler.ssl.SslContext;
 import io.netty.handler.ssl.SslContextBuilder;
 import io.netty.util.CharsetUtil;
 import org.openremote.controller.Constants;
+import org.openremote.controller.ControllerConfiguration;
 import org.openremote.controller.utils.Logger;
 
 import javax.net.ssl.SSLException;
@@ -65,7 +66,7 @@ public class BeehiveCommandCheckService2 {
     private final static Logger log = Logger.getLogger(Constants.BEEHIVE_COMMAND_CHECKER_LOG_CATEGORY);
     private EventLoopGroup group;
 
-    public void start()
+    public void start(Deployer deployer, ControllerConfiguration config)
     {
         try {
             URI uri = new URI(URL);
@@ -109,7 +110,7 @@ public class BeehiveCommandCheckService2 {
                 final WebSocketClientHandler handler =
                         new WebSocketClientHandler(
                                 WebSocketClientHandshakerFactory.newHandshaker(
-                                        uri, WebSocketVersion.V13, null, true, customHeaders));
+                                        uri, WebSocketVersion.V13, null, true, customHeaders), deployer, config);
 
                 Bootstrap b = new Bootstrap();
                 b.group(group)
