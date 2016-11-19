@@ -118,6 +118,26 @@ class GroupValueRead extends KNXCommand implements StatusCommand
   }
 
 
+  // Object Overrides -----------------------------------------------------------------------------
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override public boolean equals(Object o)
+  {
+    if (o == null)
+      return false;
+
+    if (!(o instanceof GroupValueRead))
+      return false;
+
+    GroupValueRead gvr = (GroupValueRead)o;
+
+    return gvr.getAddress().equals(this.getAddress()) &&
+           gvr.getDataPointType().equals(this.getDataPointType());
+  }
+
+
   // Implements StatusCommand ---------------------------------------------------------------------
 
   /**
