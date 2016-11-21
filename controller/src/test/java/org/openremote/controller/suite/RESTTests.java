@@ -33,7 +33,6 @@ import org.junit.runners.Suite.SuiteClasses;
 import org.junit.Assert;
 import org.openremote.controller.rest.ControlStatusPollingRESTServletTest;
 import org.openremote.controller.rest.FindPanelByIDTest;
-import org.openremote.controller.rest.SkipStateTrackTest;
 import org.openremote.controller.rest.ListPanelIDsTest;
 import org.openremote.controller.rest.SensorStatusTest;
 import org.openremote.controller.rest.support.json.JSONTranslatorTest;
@@ -51,7 +50,6 @@ import org.w3c.dom.Node;
 @SuiteClasses(
 {
    ControlStatusPollingRESTServletTest.class,
-   SkipStateTrackTest.class,
    StatusAndPollingTest.class,
    JSONTranslatorTest.class,
 
