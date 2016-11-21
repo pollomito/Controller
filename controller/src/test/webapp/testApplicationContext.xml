@@ -84,6 +84,7 @@
     <property name = "proxyTimeout" value = "${proxy.timeout}"/>
 
     <property name = "remoteCommandServiceURI" value = "${remote.command.service.uri}"/>
+    <property name = "remoteCommandServiceWsURI" value = "${remote.command.service.ws.uri}"/>
     <property name = "remoteCommandRequestInterval" value = "${remote.command.request.interval}"/>
     <property name = "remoteCommandConnectionTimeout" value = "${remote.command.connection.timeout}"/>
     <property name = "remoteCommandResponseTimeout" value = "${remote.command.response.timeout}"/>

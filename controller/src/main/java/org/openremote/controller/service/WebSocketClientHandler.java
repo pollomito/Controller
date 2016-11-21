@@ -1,17 +1,9 @@
 package org.openremote.controller.service;
 
 import flexjson.JSONDeserializer;
-import io.netty.channel.Channel;
-import io.netty.channel.ChannelFuture;
-import io.netty.channel.ChannelHandlerContext;
-import io.netty.channel.ChannelPromise;
-import io.netty.channel.SimpleChannelInboundHandler;
+import io.netty.channel.*;
 import io.netty.handler.codec.http.FullHttpResponse;
-import io.netty.handler.codec.http.websocketx.CloseWebSocketFrame;
-import io.netty.handler.codec.http.websocketx.PongWebSocketFrame;
-import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
-import io.netty.handler.codec.http.websocketx.WebSocketClientHandshaker;
-import io.netty.handler.codec.http.websocketx.WebSocketFrame;
+import io.netty.handler.codec.http.websocketx.*;
 import io.netty.util.CharsetUtil;
 import org.openremote.controller.Constants;
 import org.openremote.controller.ControllerConfiguration;
@@ -21,15 +13,9 @@ import org.openremote.controller.proxy.ControllerProxy;
 import org.openremote.controller.utils.Logger;
 import org.openremote.controllercommand.domain.ControllerCommandDTO;
 import org.openremote.rest.GenericResourceResultWithErrorMessage;
-import org.restlet.data.ChallengeScheme;
-import org.restlet.representation.Representation;
-import org.restlet.resource.ClientResource;
 
 import java.io.IOException;
 import java.net.Socket;
-import java.net.URI;
-import java.util.ArrayList;
-import java.util.List;
 
 public class WebSocketClientHandler extends SimpleChannelInboundHandler<Object> {
 
@@ -82,6 +68,7 @@ public class WebSocketClientHandler extends SimpleChannelInboundHandler<Object> 
                             ", content=" + response.content().toString(CharsetUtil.UTF_8) + ')');
         }
 
+
         WebSocketFrame frame = (WebSocketFrame) msg;
         if (frame instanceof TextWebSocketFrame) {
             TextWebSocketFrame textFrame = (TextWebSocketFrame) frame;
@@ -109,8 +96,7 @@ public class WebSocketClientHandler extends SimpleChannelInboundHandler<Object> 
 
                 else
                 {
-                    ControllerCommandDTO command = (ControllerCommandDTO) res.getResult();
-                     executeCommand(command);
+                     executeCommand((ControllerCommandDTO) res.getResult());
                 }
             }
             
@@ -154,12 +140,15 @@ public class WebSocketClientHandler extends SimpleChannelInboundHandler<Object> 
                     String password = deployer.getPassword(username);
                     deployer.deployFromOnline(username, password);
                     ackCommand(controllerCommand.getOid());
+
                 } catch (Deployer.PasswordException e) {
                     log.error("Unable to retrieve password for beehive command service API call. Skipped...", e);
                 } catch (ConfigurationException e) {
                     log.error("Synchronizing controller with online account failed : {0}", e, e.getMessage());
                 } catch (ConnectionException e) {
                     log.error("Synchronizing controller with online account failed : {0}", e, e.getMessage());
+                } catch (Exception e) {
+                    log.error("Other Exception", e);
                 }
                 break;
             }
@@ -171,7 +160,9 @@ public class WebSocketClientHandler extends SimpleChannelInboundHandler<Object> 
 
     private void ackCommand(Long id)
     {
-        //TODO send back ack
+        System.out.println("Clean command_controller!");
+        WebSocketFrame frame = new TextWebSocketFrame(id.toString());
+        handshakeFuture.channel().writeAndFlush(frame);
     }
 
     //

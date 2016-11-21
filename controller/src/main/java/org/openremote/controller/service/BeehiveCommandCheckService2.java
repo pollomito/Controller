@@ -54,10 +54,6 @@ import java.net.URISyntaxException;
  */
 public class BeehiveCommandCheckService2 {
 
-    // Constants ------------------------------------------------------------------------------------
-    //TODO: externalise config ccs url
-    public final static String URL = "wss://ccs.or:8443/ccs/ws-commands";
-
     // Class Members --------------------------------------------------------------------------------
 
     /**
@@ -69,7 +65,7 @@ public class BeehiveCommandCheckService2 {
     public void start(Deployer deployer, ControllerConfiguration config)
     {
         try {
-            URI uri = new URI(URL);
+            URI uri = new URI(config.getRemoteCommandServiceWsURI());
 
             String scheme = uri.getScheme() == null ? "ws" : uri.getScheme();
             final String host = uri.getHost() == null ? "127.0.0.1" : uri.getHost();

@@ -429,6 +429,7 @@ executeTomcat()
             -Dopenremote.controller.startup.log.level="$CONTROLLER_STARTUP_LOG_LEVEL" \
             -Dopenremote.controller.console.threshold="$CONTROLLER_CONSOLE_THRESHOLD" \
             -Dopenremote.remote.command.service.uri="$BEEHIVE_REMOTE_SERVICE_URI" \
+            -Dopenremote.remote.command.service.ws.uri="$BEEHIVE_REMOTE_SERVICE_WS_URI" \
             -Dopenremote.device.discovery.service.uri="$BEEHIVE_DEVICE_DISCOVERY_SERVICE_URI" \
             -Dopenremote.sync.service.uri="$BEEHIVE_SYNC_SERVICE_URI" \
             -Dopenremote.controller.id="$OPENREMOTE_CONTROLLER_ID" \

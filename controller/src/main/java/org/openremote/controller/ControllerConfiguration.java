@@ -87,6 +87,11 @@ public class ControllerConfiguration extends Configuration
   public static final String REMOTE_COMMAND_SERVICE_URI = "remote.command.service.uri";
 
   /**
+   * Configuration property name used for connecting to the remote websocket command service URIs: {@value}
+   */
+  public static final String REMOTE_COMMAND_SERVICE_WS_URI = "remote.command.service.ws.uri";
+
+  /**
    * Configuration property name used for setting the request interval to check incoming
    * remote commands to the controller.
    */
@@ -209,6 +214,11 @@ public class ControllerConfiguration extends Configuration
    * actual URI instance that can be used.
    */
   private String remoteCommandServiceURI = "<undefined>";
+
+  /**
+   * The set of URIs used to connect to websocket remote commands.
+   */
+  private String remoteCommandServiceWsURI = "<undefined>";
 
   /**
    * The request interval used to check if remote commands are available for this controller.
@@ -656,6 +666,17 @@ public class ControllerConfiguration extends Configuration
     ).trim();
   }
 
+  public String getRemoteCommandServiceWsURI()
+  {
+    // NOTE: this mainly exist to satisfy Spring requirements for configuration, otherwise
+    //       it is not really useful, use URL[] getRemoteCommandURIs() instead
+
+    return preferAttrCustomValue(
+          REMOTE_COMMAND_SERVICE_WS_URI,
+          remoteCommandServiceWsURI
+    ).trim();
+  }
+
   /**
    * Returns a list of configured URIs that are used to connect to a remote command service.
    * Note that the list will not contain any values returned by {@link #getRemoteCommandServiceURI()}
@@ -701,6 +722,12 @@ public class ControllerConfiguration extends Configuration
   public void setRemoteCommandServiceURI(String remoteCommandServiceURI)
   {
     this.remoteCommandServiceURI = remoteCommandServiceURI.trim();
+  }
+
+
+  public void setRemoteCommandServiceWsURI(String remoteCommandServiceWsURI)
+  {
+    this.remoteCommandServiceWsURI = remoteCommandServiceWsURI.trim();
   }
 
 
