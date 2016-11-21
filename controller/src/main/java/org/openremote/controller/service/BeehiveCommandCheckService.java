@@ -41,7 +41,6 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
 
-import org.apache.commons.codec.binary.Base64;
 import org.openremote.controller.Constants;
 import org.openremote.controller.ControllerConfiguration;
 import org.openremote.controller.exception.ConfigurationException;
@@ -168,6 +167,11 @@ public class BeehiveCommandCheckService
   public BeehiveCommandCheckService(ControllerConfiguration config)
   {
     this.config = config;
+    // TODO: This is a global switch for _ALL_ HttpsURLConnections. We must switch to a proper HTTP client library!
+      if ("true".equals(System.getenv("SSL_DISABLE_HOSTNAME_VERIFICATION"))) {
+          log.warn("Disabling SSL hostname verification for all connections to Beehive command checking service!");
+          HttpUtils.disableHostnameVerification();
+      }
   }
 
 

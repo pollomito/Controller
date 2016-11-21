@@ -256,14 +256,16 @@ task createDockerfile(type: Dockerfile) {
 
     maintainer 'OpenRemote <support@openremote.org>'
 
+    runCommand 'apt-get update && apt-get -y install netcat'
+
     // We're adding a tar instead of a folder structure,
     // otherwise empty folders (all tomcat logs folders) where not present on image
     addFile project(':OpenRemote-Controller').dockerControllerTar.archiveName, "/opt"
 
     runCommand 'groupadd -r openremote && useradd -r -g openremote openremote && chown -R openremote.openremote /opt/OpenRemote-Controller && chown -R openremote.openremote /opt/or-resources'
-    
+
     exposePort 8688
-    
+
     user 'openremote'
 
     // TODO Weird permission problems with this if you touch any of these files in a sub-image build
