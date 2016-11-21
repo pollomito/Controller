@@ -38,6 +38,7 @@ import junit.framework.Assert;
 
 import org.jdom.Element;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.openremote.controller.command.Command;
 import org.openremote.controller.model.sensor.Sensor;
@@ -125,8 +126,12 @@ public class TelnetCommandBuilderTest
    *
    * @throws Exception if test fails
    */
+  @Ignore
   @Test public void testWaitForMessage() throws Exception
   {
+
+    // TODO : see ORCJAVA-327
+
     Server server = null;
     SwitchSensor s2 = null;
 
@@ -342,8 +347,12 @@ public class TelnetCommandBuilderTest
    *
    * @throws Exception if test fails
    */
+  @Ignore
   @Test public void testIncreasedWaitForMessageTimeout() throws Exception
   {
+
+    // TODO : see ORCJAVA-327
+
     Server server = null;
     SwitchSensor s4 = null;
 
