@@ -1,10 +1,13 @@
 package org.openremote.controller.service;
 
 import flexjson.JSONDeserializer;
+import flexjson.JSONSerializer;
 import io.netty.channel.*;
 import io.netty.handler.codec.http.FullHttpResponse;
 import io.netty.handler.codec.http.websocketx.*;
 import io.netty.util.CharsetUtil;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.openremote.controller.Constants;
 import org.openremote.controller.ControllerConfiguration;
 import org.openremote.controller.exception.ConfigurationException;
@@ -12,6 +15,7 @@ import org.openremote.controller.exception.ConnectionException;
 import org.openremote.controller.proxy.ControllerProxy;
 import org.openremote.controller.utils.Logger;
 import org.openremote.controllercommand.domain.ControllerCommandDTO;
+import org.openremote.controllercommand.domain.ControllerCommandResponseDTO;
 import org.openremote.rest.GenericResourceResultWithErrorMessage;
 
 import java.io.IOException;
@@ -48,7 +52,7 @@ public class WebSocketClientHandler extends SimpleChannelInboundHandler<Object> 
 
     @Override
     public void channelInactive(ChannelHandlerContext ctx) {
-        System.out.println("WebSocket Client disconnected!");
+       log.info("WebSocket Client disconnected!");
     }
 
     @Override
@@ -56,7 +60,7 @@ public class WebSocketClientHandler extends SimpleChannelInboundHandler<Object> 
         Channel ch = ctx.channel();
         if (!handshaker.isHandshakeComplete()) {
             handshaker.finishHandshake(ch, (FullHttpResponse) msg);
-            System.out.println("WebSocket Client connected!");
+           log.info("WebSocket Client connected!");
             handshakeFuture.setSuccess();
             return;
         }
@@ -99,11 +103,11 @@ public class WebSocketClientHandler extends SimpleChannelInboundHandler<Object> 
                      executeCommand((ControllerCommandDTO) res.getResult());
                 }
             }
-            
+
         } else if (frame instanceof PongWebSocketFrame) {
-            System.out.println("WebSocket Client received pong");
+           log.info("WebSocket Client received pong");
         } else if (frame instanceof CloseWebSocketFrame) {
-            System.out.println("WebSocket Client received closing");
+           log.info("WebSocket Client received closing");
             ch.close();
         }
     }
@@ -117,14 +121,18 @@ public class WebSocketClientHandler extends SimpleChannelInboundHandler<Object> 
         switch (controllerCommand.getCommandTypeEnum())
         {
             case INITIATE_PROXY:
-                initiateProxy(controllerCommand);
+                if (initiateProxy(controllerCommand)) {
+                   ackResponse(controllerCommand.getOid());
+                } else {
+                   ackResponse(controllerCommand.getOid(),"Error trying to connect on beehive");
+                }
                 break;
 
             case UNLINK_CONTROLLER:
 
                 stop();
                 deployer.unlinkController();
-
+                ackResponse(controllerCommand.getOid());
                 break;
 
             case DOWNLOAD_DESIGN:
@@ -133,42 +141,60 @@ public class WebSocketClientHandler extends SimpleChannelInboundHandler<Object> 
                     String username = deployer.getUserName();
                     if (username == null || username.equals(""))
                     {
-                        log.error("Unable to retrieve username for beehive command service API call. Skipped...");
+                        ackResponse(controllerCommand.getOid(),"Unable to retrieve username for beehive command service API call. Skipped...");
                         break;
                     }
 
                     String password = deployer.getPassword(username);
                     deployer.deployFromOnline(username, password);
-                    ackCommand(controllerCommand.getOid());
+                    ackResponse(controllerCommand.getOid());
 
                 } catch (Deployer.PasswordException e) {
-                    log.error("Unable to retrieve password for beehive command service API call. Skipped...", e);
+                    ackResponse(controllerCommand.getOid(),"Unable to retrieve password for beehive command service API call. Skipped...", e);
                 } catch (ConfigurationException e) {
-                    log.error("Synchronizing controller with online account failed : {0}", e, e.getMessage());
+                    ackResponse(controllerCommand.getOid(),"Synchronizing controller with online account failed : "+e.getMessage(), e);
                 } catch (ConnectionException e) {
-                    log.error("Synchronizing controller with online account failed : {0}", e, e.getMessage());
+                    ackResponse(controllerCommand.getOid(),"Synchronizing controller with online account failed : "+e.getMessage(), e);
                 } catch (Exception e) {
-                    log.error("Other Exception", e);
+                    ackResponse(controllerCommand.getOid(),"Other Exception", e);
                 }
                 break;
             }
 
             default:
-                log.error("ControllerCommand not implemented yet: " + controllerCommand.getCommandType());
+                ackResponse(controllerCommand.getOid(),"ControllerCommand not implemented yet: " + controllerCommand.getCommandType());
         }
+       }
+
+    private void ackResponse(Long oid) {
+        ackResponse(oid,null);
     }
 
-    private void ackCommand(Long id)
-    {
-        System.out.println("Clean command_controller!");
-        WebSocketFrame frame = new TextWebSocketFrame(id.toString());
-        handshakeFuture.channel().writeAndFlush(frame);
+    private void ackResponse(Long oid, String errorMessage) {
+        ackResponse(oid, errorMessage,null);
+    }
+
+    private void ackResponse(Long oid, String errorMessage, Throwable e) {
+        ControllerCommandResponseDTO responseDTO = new ControllerCommandResponseDTO();
+        responseDTO.setOid(oid);
+        if (errorMessage != null) {
+            log.error(errorMessage, e);
+            responseDTO.setCommandTypeEnum(ControllerCommandResponseDTO.Type.ERROR);
+        } else {
+            responseDTO.setCommandTypeEnum(ControllerCommandResponseDTO.Type.SUCCESS);
+        }
+       try {
+          JSONObject response = new JSONObject(new JSONSerializer().deepSerialize(responseDTO));
+          handshakeFuture.channel().writeAndFlush(new TextWebSocketFrame(response.toString()));
+       } catch (JSONException e1) {
+          log.error("Error serialising command json",e1);
+       }
     }
 
     //
     // TODO
     //
-    private void initiateProxy(ControllerCommandDTO command)
+    private boolean initiateProxy(ControllerCommandDTO command)
     {
         Long id = command.getOid();
         String url = command.getCommandParameter().get("url");
@@ -176,7 +202,7 @@ public class WebSocketClientHandler extends SimpleChannelInboundHandler<Object> 
 
         Socket beehiveSocket = null;
 
-        boolean needsAck = true;
+        boolean isSuccess = true;
 
         try
         {
@@ -186,7 +212,6 @@ public class WebSocketClientHandler extends SimpleChannelInboundHandler<Object> 
             // at this point the command should already have been marked as ack by the listening end at beehive
 
             log.info("Connected to beehive");
-            needsAck = false;
 
             // try to connect to it, see if it's still valid
 
@@ -226,12 +251,9 @@ public class WebSocketClientHandler extends SimpleChannelInboundHandler<Object> 
             }
 
             // the server should have closed it, but let's help him to make sure
-
-            if(needsAck)
-            {
-                ackCommand(id);
-            }
+           isSuccess = false;
         }
+        return isSuccess;
     }
 
 
@@ -242,7 +264,7 @@ public class WebSocketClientHandler extends SimpleChannelInboundHandler<Object> 
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
-        cause.printStackTrace();
+        log.error("Exception on WebsocketClientHandler",cause);
         if (!handshakeFuture.isDone()) {
             handshakeFuture.setFailure(cause);
         }

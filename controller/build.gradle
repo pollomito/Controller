@@ -19,7 +19,8 @@ repositories {
 }
 
 dependencies {
-    compile "org.openremote:or-commons:0.1.0"
+    //compile "org.openremote:or-commons:0.2.0"
+    compile files('../../or-commons/output/or-commons.jar')
     compile "org.openremote:or-security:0.2.0"
     compile "org.openremote:or-logging:0.1.0"
     
