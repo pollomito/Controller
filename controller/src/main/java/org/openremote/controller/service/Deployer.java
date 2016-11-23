@@ -262,7 +262,7 @@ public class Deployer
    * Reference to the service which checks Beehive regularly for any new actions that this controller should perform<br>
    * For example unlink from Beehive, download new design, start proxy, update controller, ....
    */
-  private org.openremote.controller.service.beehiveCommandCheckService beehiveCommandCheckService;
+  private org.openremote.controller.service.BeehiveCommandCheckService beehiveCommandCheckService;
 
   // Constructors ---------------------------------------------------------------------------------
 
@@ -728,7 +728,7 @@ public class Deployer
         if ((controllerDTO != null) && (controllerDTO.getAccount() != null)) {
            return controllerDTO.getAccount().getOid().toString();
         } else {
-           return "-"+ org.openremote.controller.service.beehiveCommandCheckService.getMACAddresses();
+           return "-"+ org.openremote.controller.service.BeehiveCommandCheckService.getMACAddresses();
         }
      } else {
         return "no";
@@ -1069,7 +1069,7 @@ public class Deployer
             && controllerConfig.getRemoteCommandURIs()[0].toString().equals("urn:disabled")) {
             log.info("Beehive command checking service disabled");
         } else {
-            beehiveCommandCheckService = new beehiveCommandCheckService();
+            beehiveCommandCheckService = new BeehiveCommandCheckService();
             beehiveCommandCheckService.start(this, controllerConfig);
         }
 
@@ -2143,8 +2143,8 @@ public class Deployer
           ClientResource cr = null;
           Client c = new Client(new Context(), Protocol.HTTPS);
           try {
-             log.trace("Controller will announce " + org.openremote.controller.service.beehiveCommandCheckService.getMACAddresses() + " as MAC address to beehive");
-             cr = new ClientResource( acctURI + "controller/announce/"+ org.openremote.controller.service.beehiveCommandCheckService.getMACAddresses());
+             log.trace("Controller will announce " + org.openremote.controller.service.BeehiveCommandCheckService.getMACAddresses() + " as MAC address to beehive");
+             cr = new ClientResource( acctURI + "controller/announce/"+ org.openremote.controller.service.BeehiveCommandCheckService.getMACAddresses());
              cr.setNext(c);
              Representation r = cr.post(null);
              String str;
