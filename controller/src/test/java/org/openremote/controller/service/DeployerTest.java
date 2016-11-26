@@ -25,9 +25,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.HashMap;
 import java.net.URI;
+import java.util.concurrent.CyclicBarrier;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 import org.junit.Test;
 import org.junit.Assert;
+import org.openremote.controller.deployer.DeviceProtocolBuilder;
+import org.openremote.controller.deployer.SensorBuilder;
 import org.openremote.controller.statuscache.StatusCache;
 import org.openremote.controller.ControllerConfiguration;
 import org.openremote.controller.deployer.Version20ModelBuilder;
@@ -263,6 +269,56 @@ public class DeployerTest
     return new Deployer(deployerName, cache, config, modelBuilders);
   }
 
+
+  /**
+   * Creates a deployer with a configurable deployment delay.
+   *
+   * @param deployerName
+   *            name of the deployer
+   *
+   * @param cache
+   *            reference to device state cache to be used with the built deployer
+   *
+   * @param config
+   *            controller's configuration
+   *
+   * @param cf
+   *            command factory instance for the built deployer (command builders)
+   *
+   * @param sensorBuilder
+   *            sensor builder instance for the built deployer
+   *
+   * @param barrier
+   *            used to synchronize test and worker thread in order to make sure
+   *            that the deployment delay has started
+   *
+   * @param delay
+   *            deployment delay [ms]
+   *
+   * @return    deployer instance
+   *
+   * @throws InitializationException    if initialization fails
+   */
+  private static Deployer createLongRunningDeployer(String deployerName, StatusCache cache,
+                                                    ControllerConfiguration config,
+                                                    CommandFactory cf, Version20SensorBuilder sensorBuilder,
+                                                    CyclicBarrier barrier, int delay)
+      throws InitializationException
+  {
+    sensorBuilder.setCommandFactory(cf);
+
+    LongRunningModelBuilder builder = new LongRunningModelBuilder(
+        cache, config, sensorBuilder, new Version20CommandBuilder(cf), cf, barrier, delay
+    );
+    List<DeployerSensorListener> listeners = new ArrayList<DeployerSensorListener>();
+    listeners.add(cache);
+    builder.setSensorListeners(listeners);
+
+    Map<String, ModelBuilder> modelBuilders = new HashMap<String, ModelBuilder>();
+    modelBuilders.put(ModelBuilder.SchemaVersion.VERSION_2_0.toString(), builder);
+
+    return new Deployer(deployerName, cache, config, modelBuilders);
+  }
 
   /**
    * Creates a preconfigured command factory instance that includes virtual commands only.
@@ -809,9 +865,51 @@ public class DeployerTest
   }
   
 
-  @Test public void testIsPaused()
+  @Test public void testIsPaused() throws Exception
   {
-    Assert.fail("Not Yet Implemented. See ORCJAVA-161");  
+    int MODEL_BUILDER_DELAY = 500;
+
+    ExecutorService executor = Executors.newFixedThreadPool(1);
+    CyclicBarrier barrier = new CyclicBarrier(2);
+
+    ControllerConfiguration config = new ControllerConfiguration();
+    URI deploymentURI = AllTests.getAbsoluteFixturePath().resolve("deployment/sensorsonly");
+    config.setResourcePath(deploymentURI.getPath());
+
+    CommandFactory cf = createCommandFactory();
+
+    StatusCache cache = new StatusCache();
+
+    final Deployer d = createLongRunningDeployer(
+        deployerName, cache, config, cf, new Version20SensorBuilder(), barrier, MODEL_BUILDER_DELAY
+    );
+
+    Assert.assertFalse(d.isPaused());
+
+    executor.execute(new Runnable()
+    {
+      @Override public void run()
+      {
+        try
+        {
+          d.softRestart();
+        }
+
+        catch (ControllerDefinitionNotFoundException e)
+        {
+          e.printStackTrace();
+        }
+      }
+    });
+
+    barrier.await();
+
+    Assert.assertTrue(d.isPaused());
+    Thread.sleep(MODEL_BUILDER_DELAY * 2);
+    Assert.assertFalse(d.isPaused());
+
+    executor.shutdownNow();
+    executor.awaitTermination(500, TimeUnit.MILLISECONDS);
   }
 
   @Test public void testAutoAndRedeployment()
@@ -921,5 +1019,39 @@ public class DeployerTest
     }
   }
 
+  private static class LongRunningModelBuilder extends Version20ModelBuilder
+  {
+    private CyclicBarrier barrier;
+    private int delay;
+
+    public LongRunningModelBuilder(StatusCache cache, ControllerConfiguration config,
+                                   SensorBuilder<Version20ModelBuilder> sensorBuilder,
+                                   DeviceProtocolBuilder deviceProtocolBuilder,
+                                   CommandFactory commandFactory, CyclicBarrier barrier,
+                                   int delay)
+        throws InitializationException
+    {
+      super(cache, config, sensorBuilder, deviceProtocolBuilder, commandFactory);
+
+      this.barrier = barrier;
+      this.delay = delay;
+    }
+
+    @Override public void buildModel()
+    {
+      try
+      {
+        super.buildModel();
+
+        barrier.await();
+
+        Thread.sleep(delay);
+      }
+
+      catch (Exception e)
+      {
+      }
+    }
+  }
 }
 
