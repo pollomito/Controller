@@ -20,39 +20,47 @@
  */
 package org.openremote.controller.service;
 
+import org.jdom.Element;
+import org.junit.Assert;
+import org.junit.Test;
+import org.openremote.controller.ControllerConfiguration;
+import org.openremote.controller.command.Command;
+import org.openremote.controller.command.CommandBuilder;
+import org.openremote.controller.command.CommandFactory;
+import org.openremote.controller.command.StatusCommand;
+import org.openremote.controller.component.EnumSensorType;
+import org.openremote.controller.component.LevelSensor;
+import org.openremote.controller.component.RangeSensor;
+import org.openremote.controller.deployer.DeviceProtocolBuilder;
+import org.openremote.controller.deployer.ModelBuilder;
+import org.openremote.controller.deployer.SensorBuilder;
+import org.openremote.controller.deployer.Version20CommandBuilder;
+import org.openremote.controller.deployer.Version20ModelBuilder;
+import org.openremote.controller.exception.ControllerDefinitionNotFoundException;
+import org.openremote.controller.exception.InitializationException;
+import org.openremote.controller.model.sensor.Sensor;
+import org.openremote.controller.model.sensor.StateSensor;
+import org.openremote.controller.model.sensor.SwitchSensor;
+import org.openremote.controller.model.xml.Version20SensorBuilder;
+import org.openremote.controller.protocol.EventListener;
+import org.openremote.controller.protocol.ReadCommand;
+import org.openremote.controller.protocol.virtual.VirtualCommandBuilder;
+import org.openremote.controller.statuscache.StatusCache;
+import org.openremote.controller.suite.AllTests;
+
+import java.net.URI;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.HashMap;
-import java.net.URI;
+import java.util.concurrent.BrokenBarrierException;
 import java.util.concurrent.CyclicBarrier;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
-import org.junit.Test;
-import org.junit.Assert;
-import org.openremote.controller.deployer.DeviceProtocolBuilder;
-import org.openremote.controller.deployer.SensorBuilder;
-import org.openremote.controller.statuscache.StatusCache;
-import org.openremote.controller.ControllerConfiguration;
-import org.openremote.controller.deployer.Version20ModelBuilder;
-import org.openremote.controller.deployer.ModelBuilder;
-import org.openremote.controller.deployer.Version20CommandBuilder;
-import org.openremote.controller.exception.ControllerDefinitionNotFoundException;
-import org.openremote.controller.exception.InitializationException;
-import org.openremote.controller.command.CommandFactory;
-import org.openremote.controller.command.CommandBuilder;
-import org.openremote.controller.suite.AllTests;
-import org.openremote.controller.component.RangeSensor;
-import org.openremote.controller.component.LevelSensor;
-import org.openremote.controller.protocol.EventListener;
-import org.openremote.controller.protocol.virtual.VirtualCommandBuilder;
-import org.openremote.controller.model.xml.Version20SensorBuilder;
-import org.openremote.controller.model.sensor.Sensor;
-import org.openremote.controller.model.sensor.SwitchSensor;
-import org.openremote.controller.model.sensor.StateSensor;
-import org.jdom.Element;
+import static org.bouncycastle.asn1.x500.style.RFC4519Style.c;
 
 /**
  * Basic unit tests for {@link org.openremote.controller.service.Deployer Deployer} service.  <p>
@@ -920,10 +928,129 @@ public class DeployerTest
   }
 
   @Test public void testSlowUnresponsiveSensorOnStop()
+      throws Exception
   {
-    // test deployer behavior when stopping and sensor won't respond to request to stop
+    URI deploymentURI = AllTests.getAbsoluteFixturePath().resolve("deployment/sensorsonly");
+    ControllerConfiguration cc = new ControllerConfiguration();
+    cc.setResourcePath(deploymentURI.getPath());
 
-    Assert.fail("Not Yet Implemented. See ORCJAVA-163");
+    Map<String, CommandBuilder> cmdBuilders = new HashMap<String, CommandBuilder>();
+    TestCommandBuilder testCmdBuilder = new TestCommandBuilder();
+    cmdBuilders.put("virtual", testCmdBuilder);
+    CommandFactory cf = new CommandFactory(cmdBuilders);
+
+    StatusCache cache = new StatusCache();
+
+    Deployer d = createDeployer(deployerName, cache, cc, cf, new Version20SensorBuilder());
+
+
+    d.softRestart();
+
+    testCmdBuilder.awaitReadCommand(
+        ReadCommand.POLLING_INTERVAL * 2, TimeUnit.MILLISECONDS
+    );
+    testCmdBuilder.awaitStatusCommand(
+        ReadCommand.POLLING_INTERVAL * 2, TimeUnit.MILLISECONDS
+    );
+
+    Assert.assertTrue(BrokenReadCommand.count == 1);
+    Assert.assertTrue(BrokenStatusCommand.count == 1);
+
+    Sensor sensor1 = d.getSensor(1);
+
+    Assert.assertNotNull("got null sensor", sensor1);
+    Assert.assertTrue(sensor1.getName().equals("Sensor 1"));
+    Assert.assertTrue(sensor1.getSensorID() == 1);
+    Assert.assertTrue(sensor1 instanceof SwitchSensor);
+    Assert.assertTrue(sensor1.isRunning());
+
+
+    Sensor sensor2 = d.getSensor(2);
+
+    Assert.assertNotNull(sensor2);
+    Assert.assertTrue(sensor2.getName().equals("Sensor 2"));
+    Assert.assertTrue(sensor2.getSensorID() == 2);
+    Assert.assertTrue(sensor2 instanceof LevelSensor);
+    Assert.assertTrue(sensor2.isRunning());
+
+
+    Sensor sensor3 = d.getSensor(3);
+
+    Assert.assertNotNull(sensor3);
+    Assert.assertTrue(sensor3.getName().equals("Sensor 3"));
+    Assert.assertTrue(sensor3.getSensorID() == 3);
+    Assert.assertTrue(sensor3 instanceof RangeSensor);
+    Assert.assertTrue(sensor3.isRunning());
+
+
+    Sensor sensor4 = d.getSensor(4);
+
+    Assert.assertNotNull(sensor4);
+    Assert.assertTrue(sensor4.getName().equals("Sensor 4"));
+    Assert.assertTrue(sensor4.getSensorID() == 4);
+    Assert.assertTrue(sensor4 instanceof StateSensor);
+    Assert.assertTrue(sensor4.isRunning());
+
+
+    deploymentURI = AllTests.getAbsoluteFixturePath().resolve("deployment/sensorsonly2");
+    cc.setResourcePath(deploymentURI.getPath());
+
+    d.softRestart();
+
+    Assert.assertFalse(sensor4.isRunning());
+    Assert.assertFalse(sensor3.isRunning());
+    Assert.assertFalse(sensor2.isRunning());
+    Assert.assertFalse(sensor1.isRunning());
+
+    Assert.assertTrue(d.getSensor(1) == null);
+    Assert.assertTrue(d.getSensor(2) == null);
+    Assert.assertTrue(d.getSensor(3) == null);
+    Assert.assertTrue(d.getSensor(4) == null);
+
+
+    Sensor sensor5 = d.getSensor(5);
+
+    Assert.assertNotNull("got null sensor", sensor5);
+    Assert.assertTrue(sensor5.getName().equals("Sensor 5"));
+    Assert.assertTrue(sensor5.getSensorID() == 5);
+    Assert.assertTrue(sensor5 instanceof StateSensor);
+    Assert.assertTrue(sensor5.isRunning());
+
+
+    Sensor sensor6 = d.getSensor(6);
+
+    Assert.assertNotNull(sensor6);
+    Assert.assertTrue(sensor6.getName().equals("Sensor 6"));
+    Assert.assertTrue(sensor6.getSensorID() == 6);
+    Assert.assertTrue(sensor6 instanceof RangeSensor);
+    Assert.assertTrue(sensor6.isRunning());
+
+
+    Sensor sensor7 = d.getSensor(7);
+
+    Assert.assertNotNull(sensor7);
+    Assert.assertTrue(sensor7.getName().equals("Sensor 7"));
+    Assert.assertTrue(sensor7.getSensorID() == 7);
+    Assert.assertTrue(sensor7 instanceof LevelSensor);
+    Assert.assertTrue(sensor7.isRunning());
+
+
+    Sensor sensor8 = d.getSensor(8);
+
+    Assert.assertNotNull(sensor8);
+    Assert.assertTrue(sensor8.getName().equals("Sensor 8"));
+    Assert.assertTrue(sensor8.getSensorID() == 8);
+    Assert.assertTrue(sensor8 instanceof SwitchSensor);
+    Assert.assertTrue(sensor8.isRunning());
+
+
+    Sensor sensor9 = d.getSensor(9);
+
+    Assert.assertNotNull(sensor9);
+    Assert.assertTrue(sensor9.getName().equals("Sensor 9"));
+    Assert.assertTrue(sensor9.getSensorID() == 9);
+    Assert.assertTrue(sensor9 instanceof StateSensor);
+    Assert.assertTrue(sensor9.isRunning());
   }
 
   @Test public void testRestartOnIncorrectXML()
@@ -1051,6 +1178,107 @@ public class DeployerTest
       catch (Exception e)
       {
       }
+    }
+  }
+
+  private static class TestCommandBuilder extends VirtualCommandBuilder
+  {
+    private static int count = 0;
+
+    public CyclicBarrier readCommandBarrier = new CyclicBarrier(2);
+    public CyclicBarrier statusCommandBarrier = new CyclicBarrier(2);
+
+    public int awaitReadCommand(long timeout, TimeUnit unit) throws BrokenBarrierException, InterruptedException, TimeoutException
+    {
+      return readCommandBarrier.await(timeout, unit);
+    }
+
+    public int awaitStatusCommand(long timeout, TimeUnit unit) throws BrokenBarrierException, InterruptedException, TimeoutException
+    {
+      return statusCommandBarrier.await(timeout, unit);
+    }
+
+    @Override public Command build(Element element)
+    {
+      ++count;
+
+      if (count == 1)
+      {
+        return new BrokenReadCommand(readCommandBarrier);
+      }
+
+      else if (count == 2)
+      {
+        return new BrokenStatusCommand(statusCommandBarrier);
+      }
+
+      return super.build(element);
+    }
+  }
+
+  private static class BrokenReadCommand extends ReadCommand
+  {
+    public static int count = 0;
+    private CyclicBarrier barrier;
+
+    public BrokenReadCommand(CyclicBarrier barrier)
+    {
+      this.barrier = barrier;
+      ++count;
+    }
+
+    @Override public String read(Sensor sensor)
+    {
+      try
+      {
+        barrier.await();
+        Thread.sleep(Long.MAX_VALUE);
+      }
+
+      catch (InterruptedException e)
+      {
+        Thread.currentThread().interrupt();
+      }
+
+      catch (BrokenBarrierException e)
+      {
+
+      }
+
+      return "";
+    }
+  }
+
+  private static class BrokenStatusCommand implements StatusCommand
+  {
+    public static int count = 0;
+    private CyclicBarrier barrier;
+
+    public BrokenStatusCommand(CyclicBarrier barrier)
+    {
+      this.barrier = barrier;
+      ++count;
+    }
+
+    @Override public String read(EnumSensorType sensorType, Map<String, String> sensorProperties)
+    {
+      try
+      {
+        barrier.await();
+        Thread.sleep(Long.MAX_VALUE);
+      }
+
+      catch (InterruptedException e)
+      {
+        Thread.currentThread().interrupt();
+      }
+
+      catch (BrokenBarrierException e)
+      {
+
+      }
+
+      return "";
     }
   }
 }
