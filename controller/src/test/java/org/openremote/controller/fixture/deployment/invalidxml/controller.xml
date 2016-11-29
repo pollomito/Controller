@@ -6,18 +6,6 @@
       <include type="command" ref="10" />
     </button>
 
-    <button id="100">
-      <include type="command" ref="10" />
-    </button>
-
-    <button id="2147483648">
-      <include type="command" ref="10" />
-    </button>
-
-    <button id="1">
-      <include type="command" ref="10" />
-    </button>
-
     <button id="101">
       <include type="command" ref="123456" />
     </button>
@@ -95,10 +83,6 @@
       <include type="command" ref="40" />
     </colorpicker>
 
-    <colorpicker id="400">
-      <include type="command" ref="40" />
-    </colorpicker>
-
     <colorpicker id="501">
       <include type="command" ref="123456" />
     </colorpicker>
@@ -144,11 +128,6 @@
     <command id = "30" protocol = "virtual">
       <property name = "address" value = "a"/>
       <property name = "command" value = "STATUS"/>
-    </command>
-
-    <command id = "40" protocol = "virtual">
-      <property name = "address" value = "a"/>
-      <property name = "command" value = "dim"/>
     </command>
 
     <command id = "40" protocol = "virtual">
