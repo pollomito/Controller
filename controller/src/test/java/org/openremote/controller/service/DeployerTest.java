@@ -1053,12 +1053,30 @@ public class DeployerTest
     Assert.assertTrue(sensor9.isRunning());
   }
 
-  @Test public void testRestartOnIncorrectXML()
+  @Test public void testRestartOnIncorrectXML() throws InitializationException
   {
-    // test restart behavior when the xml is structurally correct but
-    // semantically broken (such as linking to non-existent elements, etc).
+    URI deploymentURI = AllTests.getAbsoluteFixturePath().resolve("deployment/invalidxml");
 
-    Assert.fail("Not Yet Implemented. See ORCJAVA-164");   
+    Deployer d = createDeployer(deploymentURI);
+
+    d.softRestart();
+
+    Sensor sensor1 = d.getSensor(1);
+
+    Assert.assertNotNull("got null sensor", sensor1);
+    Assert.assertTrue(sensor1.getName().equals("Sensor 1"));
+    Assert.assertTrue(sensor1.getSensorID() == 1);
+    Assert.assertTrue(sensor1 instanceof SwitchSensor);
+    Assert.assertTrue(sensor1.isRunning());
+
+
+    Sensor sensor2 = d.getSensor(2);
+
+    Assert.assertNotNull("got null sensor", sensor2);
+    Assert.assertTrue(sensor2.getName().equals("Sensor 2"));
+    Assert.assertTrue(sensor2.getSensorID() == 2);
+    Assert.assertTrue(sensor2 instanceof LevelSensor);
+    Assert.assertTrue(sensor2.isRunning());
   }
 
 
