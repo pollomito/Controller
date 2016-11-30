@@ -22,6 +22,7 @@ package org.openremote.controller.service;
 
 import org.jdom.Element;
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.openremote.controller.ControllerConfiguration;
 import org.openremote.controller.command.Command;
@@ -920,9 +921,12 @@ public class DeployerTest
     executor.awaitTermination(500, TimeUnit.MILLISECONDS);
   }
 
+  @Ignore
   @Test public void testAutoAndRedeployment()
   {
     // These should be integration tests with external test container
+
+    // TODO : ORCJAVA-162
 
     Assert.fail("Not Yet Implemented. See ORCJAVA-162");  
   }
