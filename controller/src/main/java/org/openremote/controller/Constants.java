@@ -147,6 +147,8 @@ public class Constants
    */
   public final static String BEEHIVE_COMMAND_CHECKER_LOG_CATEGORY = INIT_LOG_CATEGORY + ".beehivecheckservice";
 
+  public final static String BEEHIVE_COMMAND_WEBSOCKET_LOG_CATEGORY = INIT_LOG_CATEGORY + ".websocket";
+
   /**
    * Specific subcategory of {@link #INIT_LOG_CATEGORY} that logs event processor initialization.
    */

@@ -34,7 +34,7 @@ import java.util.concurrent.TimeUnit;
 
 public class WebSocketClientHandler extends SimpleChannelInboundHandler<Object> {
 
-    private final static Logger log = Logger.getLogger(Constants.BEEHIVE_COMMAND_CHECKER_LOG_CATEGORY);
+    private final static Logger log = Logger.getLogger(Constants.BEEHIVE_COMMAND_WEBSOCKET_LOG_CATEGORY);
     private final WebSocketClientHandshaker handshaker;
     private CommandHandler commandHandler;
     private ChannelPromise handshakeFuture;

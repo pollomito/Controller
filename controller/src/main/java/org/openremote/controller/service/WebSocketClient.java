@@ -50,7 +50,7 @@ public class WebSocketClient {
 
    public final static int RECONNECT_DELAY = 30;
 
-   private final static Logger log = Logger.getLogger(Constants.BEEHIVE_COMMAND_CHECKER_LOG_CATEGORY);
+   private final static Logger log = Logger.getLogger(Constants.BEEHIVE_COMMAND_WEBSOCKET_LOG_CATEGORY);
 
 
    static void connect(Bootstrap b) {
@@ -58,7 +58,7 @@ public class WebSocketClient {
          @Override
          public void operationComplete(ChannelFuture future) throws Exception {
             if (future.cause() != null) {
-               log.error("Error connecting WS", future.cause());
+               log.error("Error connecting to CCS WS:"+ future.cause().getMessage() );
             }
          }
       });
