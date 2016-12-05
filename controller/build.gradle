@@ -145,6 +145,7 @@ startTestContainer.doFirst {
          */
         'openremote.sync.service.uri' : "$testWebServerBase/beehive/rest/",
         'openremote.remote.command.service.uri' : "$testWebServerBase/ccs/rest/",
+        'openremote.remote.command.service.ws.uri' : "$testWebServerBase/ccs/ws-commands/",
         'openremote.controller.id' : '1',
         'openremote.device.discovery.service.uri' : "$testWebServerBase/dds/rest/",
 

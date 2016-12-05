@@ -270,6 +270,21 @@ setBeehiveServiceConfigurations()
 
   fi
 
+  if [ -z "${BEEHIVE_REMOTE_SERVICE_WS_PATH}" ] ; then
+    BEEHIVE_REMOTE_SERVICE_PATH="ccs/ws-commands"
+
+  elif [ -n "${PRINT_VALUES}" ] ; then
+    printVariable BEEHIVE_REMOTE_SERVICE_PATH
+
+  fi
+
+  if [ -z "${BEEHIVE_REMOTE_SERVICE_WS_URI}" ] ; then
+    BEEHIVE_REMOTE_SERVICE_URI="$BEEHIVE_BASE_URI/$BEEHIVE_REMOTE_SERVICE_WS_PATH"
+
+  elif [ -n "${PRINT_VALUES}" ] ; then
+    printVariable BEEHIVE_REMOTE_SERVICE_WS_URI
+
+  fi
 
   # Beehive Sync Service Variables...
 
@@ -607,6 +622,11 @@ elif [ "$1" = "config" ] ; then
   echo ""
   echo "    Set to use custom URI for Beehive remote service. This variable will override both"
   echo "    BEEHIVE_BASE_URI and BEEHIVE_REMOTE_SERVICE_PATH settings."
+  echo ""
+  echo "  BEEHIVE_REMOTE_SERVICE_WS_URI:"
+  echo ""
+  echo "    Set to use custom URI for Beehive remote service websocket. This variable will override both"
+  echo "    BEEHIVE_BASE_URI and BEEHIVE_REMOTE_SERVICE_WS_PATH settings."
   echo ""
   echo ""
   echo "Beehive Device Discovery Service"

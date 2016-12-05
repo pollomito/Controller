@@ -182,6 +182,9 @@ rem have been set. Otherwise uses default values.
   if "%BEEHIVE_REMOTE_SERVICE_PATH%" == "" set BEEHIVE_REMOTE_SERVICE_PATH=ccs/rest/
   if "%BEEHIVE_REMOTE_SERVICE_URI%" == "" set BEEHIVE_REMOTE_SERVICE_URI=%BEEHIVE_BASE_URI%/%BEEHIVE_REMOTE_SERVICE_PATH%
 
+  if "%BEEHIVE_REMOTE_SERVICE_WS_PATH%" == "" set BEEHIVE_REMOTE_SERVICE_WS_PATH=ccs/ws-commands
+  if "%BEEHIVE_REMOTE_SERVICE_WS_URI%" == "" set BEEHIVE_REMOTE_SERVICE_WS_URI=%BEEHIVE_BASE_URI%/%BEEHIVE_REMOTE_SERVICE_WS_PATH%
+
   rem Beehive Sync Service Variables...
   if "%BEEHIVE_SYNC_SERVICE_PATH%" == "" set BEEHIVE_SYNC_SERVICE_PATH=beehive/rest/
   if "%BEEHIVE_SYNC_SERVICE_URI%" == "" set BEEHIVE_SYNC_SERVICE_URI=%BEEHIVE_BASE_URI%/%BEEHIVE_SYNC_SERVICE_PATH%
@@ -241,6 +244,7 @@ rem Execute Java with the applicable properties
  -Dopenremote.controller.startup.log.level="%CONTROLLER_STARTUP_LOG_LEVEL%"^
  -Dopenremote.controller.console.threshold="%CONTROLLER_CONSOLE_THRESHOLD%"^
  -Dopenremote.remote.command.service.uri="%BEEHIVE_REMOTE_SERVICE_URI%"^
+ -Dopenremote.remote.command.service.uri="%BEEHIVE_REMOTE_SERVICE_WS_URI%"^
  -Dopenremote.device.discovery.service.uri="%BEEHIVE_DEVICE_DISCOVERY_SERVICE_URI%"^
  -Dopenremote.sync.service.uri="%BEEHIVE_SYNC_SERVICE_URI%"^
  -Dopenremote.controller.id="%OPENREMOTE_CONTROLLER_ID%"^
@@ -472,6 +476,12 @@ goto end
   echo/
   echo     Set to use custom URI for Beehive remote service. This variable will override both
   echo     BEEHIVE_BASE_URI and BEEHIVE_REMOTE_SERVICE_PATH settings.
+  echo/
+  echo/
+  echo   BEEHIVE_REMOTE_SERVICE_WS_URI:
+  echo/
+  echo     Set to use custom URI for Beehive remote service websocket. This variable will override both
+  echo     BEEHIVE_BASE_URI and BEEHIVE_REMOTE_SERVICE_WS_PATH settings.
   echo/
   echo/
   echo Beehive Device Discovery Service

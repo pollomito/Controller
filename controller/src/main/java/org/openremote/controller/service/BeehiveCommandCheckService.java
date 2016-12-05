@@ -34,6 +34,8 @@ import java.util.Enumeration;
 
 public class BeehiveCommandCheckService {
 
+   private static Bootstrap bootstrap;
+
    public static String getMACAddresses() throws Exception {
       StringBuilder macs = new StringBuilder();
       Enumeration<NetworkInterface> enum1 = NetworkInterface.getNetworkInterfaces();
@@ -92,7 +94,7 @@ public class BeehiveCommandCheckService {
 
    public static void start(Deployer deployer, ControllerConfiguration config) {
       try {
-         Bootstrap bootstrap = WebSocketClient.configureBootstrap(new Bootstrap(), deployer, config);
+         bootstrap = WebSocketClient.configureBootstrap(new Bootstrap(), deployer, config);
          bootstrap.connect();
       } catch (URISyntaxException e) {
          log.error("Error starting WS",e);
@@ -100,6 +102,12 @@ public class BeehiveCommandCheckService {
          log.error("Error starting WS",e);
       } catch (Deployer.PasswordException e) {
          log.error("Error starting WS",e);
+      }
+   }
+
+   public static void stop() {
+      if (bootstrap != null) {
+         bootstrap.config().group().shutdownGracefully();
       }
    }
 

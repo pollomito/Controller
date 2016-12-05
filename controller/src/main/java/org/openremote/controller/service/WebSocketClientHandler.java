@@ -105,24 +105,26 @@ public class WebSocketClientHandler extends SimpleChannelInboundHandler<Object> 
 
     @Override
     public void channelUnregistered(final ChannelHandlerContext ctx) throws Exception {
-        log.info("Sleeping for: " + WebSocketClient.RECONNECT_DELAY + 's');
+        if (!ctx.executor().isShuttingDown()) {
+            log.info("Sleeping for: " + WebSocketClient.RECONNECT_DELAY + 's');
 
-        final EventLoop loop = ctx.channel().eventLoop();
-        loop.schedule(new Runnable() {
-            @Override
-            public void run() {
-                log.info("Reconnecting !");
-                try {
-                    WebSocketClient.connect(WebSocketClient.configureBootstrap(new Bootstrap(), loop, commandHandler.getDeployer(), commandHandler.getConfig()));
-                } catch (URISyntaxException e) {
-                    log.error("Error starting WS",e);
-                } catch (SSLException e) {
-                    log.error("Error starting WS",e);
-                } catch (Deployer.PasswordException e) {
-                    log.error("Error starting WS",e);
+            final EventLoop loop = ctx.channel().eventLoop();
+            loop.schedule(new Runnable() {
+                @Override
+                public void run() {
+                    log.info("Reconnecting !");
+                    try {
+                        WebSocketClient.connect(WebSocketClient.configureBootstrap(new Bootstrap(), loop, commandHandler.getDeployer(), commandHandler.getConfig()));
+                    } catch (URISyntaxException e) {
+                        log.error("Error starting WS", e);
+                    } catch (SSLException e) {
+                        log.error("Error starting WS", e);
+                    } catch (Deployer.PasswordException e) {
+                        log.error("Error starting WS", e);
+                    }
                 }
-            }
-        }, WebSocketClient.RECONNECT_DELAY, TimeUnit.SECONDS);
+            }, WebSocketClient.RECONNECT_DELAY, TimeUnit.SECONDS);
+        }
     }
 
 
