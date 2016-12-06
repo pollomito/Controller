@@ -39,6 +39,7 @@ import org.jdom.input.SAXBuilder;
 import org.jdom.output.XMLOutputter;
 import org.openremote.controller.ControllerConfiguration;
 import org.openremote.controller.command.CommandFactory;
+import org.openremote.controller.exception.ConfigurationException;
 import org.openremote.controller.exception.ControllerDefinitionNotFoundException;
 import org.openremote.controller.exception.InitializationException;
 import org.openremote.controller.exception.XMLParsingException;
@@ -60,6 +61,7 @@ import org.openremote.controller.utils.PathUtil;
  * @see DeviceProtocolBuilder
  *
  * @author <a href="mailto:juha@openremote.org">Juha Lindfors</a>
+ * @author <a href="mailto:rainer@openremote.org">Rainer Hitz</a>
  */
 public class Version20ModelBuilder extends AbstractModelBuilder
 {
@@ -220,10 +222,25 @@ public class Version20ModelBuilder extends AbstractModelBuilder
    */
   public static boolean checkControllerDefinitionExists(ControllerConfiguration config)
   {
-    final File file = getControllerDefinitionFile(config);
+    final File file;
 
     try
     {
+      file = getControllerDefinitionFile(config);
+    }
+
+    catch (ConfigurationException e)
+    {
+      log.error(
+          "Failed to read file ''{0}''.", e, CONTROLLER_XML
+      );
+
+      return false;
+    }
+
+    try
+    {
+
       // BEGIN PRIVILEGED CODE BLOCK ------------------------------------------------------------
 
       return AccessController.doPrivilegedWithCombiner(new PrivilegedAction<Boolean>()
@@ -257,8 +274,13 @@ public class Version20ModelBuilder extends AbstractModelBuilder
    *
    * @return  file representing an object model definition for a controller
    */
-  public static File getControllerDefinitionFile(ControllerConfiguration config)
+  public static File getControllerDefinitionFile(ControllerConfiguration config) throws ConfigurationException
   {
+    if (config.getResourcePath().isEmpty())
+    {
+      throw new ConfigurationException("Empty resource path configuration.");
+    }
+
     try
     {
       URI uri = new URI(config.getResourcePath());
@@ -874,7 +896,22 @@ public class Version20ModelBuilder extends AbstractModelBuilder
    */
   private long getControllerXMLTimeStamp()
   {
-    final File controllerXML = getControllerDefinitionFile(config);
+    final File controllerXML;
+
+    try
+    {
+      controllerXML = getControllerDefinitionFile(config);
+    }
+
+    catch (ConfigurationException e)
+    {
+      log.error(
+          "Failed to read timestamp of file ''{0}''.",
+          e, CONTROLLER_XML
+      );
+
+      return 0L;
+    }
 
     try
     {

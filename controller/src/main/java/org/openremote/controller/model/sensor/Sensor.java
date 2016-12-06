@@ -259,6 +259,13 @@ public abstract class Sensor
   protected Sensor(String name, int sensorID, StatusCache cache, EventProducer eventProducer, int commandID,
                    Map<String, String> sensorProperties, EnumSensorType sensorType)
   {
+    if (cache == null)
+    {
+      throw new IllegalArgumentException(
+          "Sensor implementation does not allow null device state cache."
+      );
+    }
+
     if (sensorType == null || eventProducer == null)
     {
       throw new IllegalArgumentException(

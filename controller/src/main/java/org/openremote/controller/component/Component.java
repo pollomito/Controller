@@ -28,6 +28,7 @@ import org.openremote.controller.protocol.EventProducer;
 import org.openremote.controller.protocol.Event;
 import org.openremote.controller.model.sensor.Sensor;
 import org.openremote.controller.service.ServiceContext;
+import org.openremote.controller.statuscache.StatusCache;
 
 /**
  * Super class of all components
@@ -102,7 +103,7 @@ public abstract class Component {
     {
       super("Init",
             Integer.MIN_VALUE,
-            null,
+            new StatusCache(),
             new EventProducer() {},
             Integer.MIN_VALUE,
             new HashMap<String, String>(0),

@@ -34,6 +34,7 @@ import org.openremote.controller.exception.ConversionException;
 import org.openremote.controller.command.CommandParameter;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.text.DecimalFormat;
 import java.math.BigDecimal;
@@ -443,6 +444,30 @@ class ApplicationProtocolDataUnit
 
   // Object Overrides -----------------------------------------------------------------------------
 
+  /**
+   * {@inheritDoc}
+   */
+  @Override public boolean equals(Object o)
+  {
+    if (o == null)
+      return false;
+
+    if (!(o instanceof ApplicationProtocolDataUnit))
+      return false;
+
+    ApplicationProtocolDataUnit apdu = (ApplicationProtocolDataUnit)o;
+
+    return Arrays.equals(apdu.datatype.getData(), this.datatype.getData()) &&
+           apdu.applicationLayerService.equals(this.applicationLayerService);
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override public int hashCode()
+  {
+    return Arrays.hashCode(datatype.getData()) ^ applicationLayerService.hashCode();
+  }
 
   /**
    * Returns a string representation of this APDU including the TPCI & APCI bits and data payload.

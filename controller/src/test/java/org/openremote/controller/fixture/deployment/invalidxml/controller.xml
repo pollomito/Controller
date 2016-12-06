@@ -1,0 +1,143 @@
+<openremote xmlns="http://www.openremote.org" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openremote.org ../../../../../config/controller-2.0-M6.xsd ">
+
+  <components>
+
+    <button id="100">
+      <include type="command" ref="10" />
+    </button>
+
+    <button id="101">
+      <include type="command" ref="123456" />
+    </button>
+
+    <slider id="200">
+      <setValue>
+        <include type="command" ref="40" />
+      </setValue>
+      <include type="sensor" ref="2" />
+    </slider>
+
+    <slider id="201">
+      <setValue>
+        <include type="command" ref="123456" />
+      </setValue>
+      <include type="sensor" ref="2" />
+    </slider>
+
+    <slider id="202">
+      <setValue>
+        <include type="command" ref="40" />
+      </setValue>
+      <include type="sensor" ref="123456" />
+    </slider>
+
+    <switch id="300">
+      <on>
+        <include type="command" ref="10" />
+      </on>
+      <off>
+        <include type="command" ref="20" />
+      </off>
+      <include type="sensor" ref="1" />
+    </switch>
+
+    <switch id="301">
+      <on>
+        <include type="command" ref="123456" />
+      </on>
+      <off>
+        <include type="command" ref="20" />
+      </off>
+      <include type="sensor" ref="1" />
+    </switch>
+
+    <switch id="302">
+      <on>
+        <include type="command" ref="10" />
+      </on>
+      <off>
+        <include type="command" ref="123456" />
+      </off>
+      <include type="sensor" ref="1" />
+    </switch>
+
+    <switch id="303">
+      <on>
+        <include type="command" ref="10" />
+      </on>
+      <off>
+        <include type="command" ref="20" />
+      </off>
+      <include type="sensor" ref="123456" />
+    </switch>
+
+    <label id="400">
+      <include type="sensor" ref="2" />
+    </label>
+
+    <label id="401">
+      <include type="sensor" ref="123456" />
+    </label>
+
+    <colorpicker id="500">
+      <include type="command" ref="40" />
+    </colorpicker>
+
+    <colorpicker id="501">
+      <include type="command" ref="123456" />
+    </colorpicker>
+
+  </components>
+
+  <sensors>
+
+    <sensor id = "1" name = "Sensor 1" type = "switch">
+      <include type = "command" ref = "30"/>
+    </sensor>
+
+    <sensor id = "2" name = "Sensor 2" type = "level">
+      <include type = "command" ref = "30"/>
+    </sensor>
+
+    <sensor id = "3" name = "Sensor 3" type = "switch">
+      <include type = "command" ref = "123456"/>
+    </sensor>
+
+    <sensor id = "4" name = "Sensor 4" type = "level">
+      <include type = "command" ref = "123456"/>
+    </sensor>
+
+    <sensor id = "5" name = "Sensor 5" type = "range">
+      <include type = "command" ref = "123456"/>
+    </sensor>
+
+  </sensors>
+
+  <commands>
+
+    <command id = "10" protocol = "virtual">
+      <property name = "address" value = "a"/>
+      <property name = "command" value = "on"/>
+    </command>
+
+    <command id = "20" protocol = "virtual">
+      <property name = "address" value = "a"/>
+      <property name = "command" value = "off"/>
+    </command>
+
+    <command id = "30" protocol = "virtual">
+      <property name = "address" value = "a"/>
+      <property name = "command" value = "STATUS"/>
+    </command>
+
+    <command id = "40" protocol = "virtual">
+      <property name = "address" value = "a"/>
+      <property name = "command" value = "dim"/>
+    </command>
+
+  </commands>
+
+  <config>
+  </config>
+
+</openremote>

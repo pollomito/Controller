@@ -100,6 +100,27 @@ class GroupValueWrite extends KNXCommand implements ExecutableCommand
   }
 
 
+  // Object Overrides -----------------------------------------------------------------------------
+
+  /**
+   * {@inheritDoc}
+   */
+  @Override public boolean equals(Object o)
+  {
+    if (o == null)
+      return false;
+
+    if (!(o instanceof GroupValueWrite))
+      return false;
+
+    GroupValueWrite gvw = (GroupValueWrite)o;
+
+    return gvw.getAddress().equals(this.getAddress()) &&
+           gvw.getDataPointType().equals(this.getDataPointType()) &&
+           gvw.getAPDU().equals(this.getAPDU());
+  }
+
+
   // Implements ExecutableCommand -----------------------------------------------------------------
 
   /**

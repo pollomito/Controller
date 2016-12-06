@@ -30,7 +30,8 @@ import org.openremote.controller.component.control.Control;
  * @author Handy.Wang 2009-10-15
  */
 public class Button extends Control {
-   
+
+   public static String BUTTON_XML_ELEMENT_NAME = "button";
 
    @Override
    protected List<String> getAvailableActions() {

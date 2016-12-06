@@ -32,6 +32,7 @@ import org.openremote.controller.component.EnumSensorType;
 import org.openremote.controller.model.sensor.Sensor;
 import org.openremote.controller.protocol.Event;
 import org.openremote.controller.protocol.EventProducer;
+import org.openremote.controller.statuscache.StatusCache;
 
 /**
  * Tests for UDPListenerCommand implementation.
@@ -148,7 +149,7 @@ public class UDPListenerCommandTest {
       private String lastUpdate;
       
       public SensorMock() {
-         super("Mock", 1, null, new EventProducer() {}, 1, null, EnumSensorType.CUSTOM);
+         super("Mock", 1, new StatusCache(), new EventProducer() {}, 1, null, EnumSensorType.CUSTOM);
       }
       
       @SuppressWarnings("rawtypes")

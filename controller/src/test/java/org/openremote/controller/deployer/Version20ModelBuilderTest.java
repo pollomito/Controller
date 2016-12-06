@@ -27,6 +27,7 @@ import org.jdom.Document;
 import org.junit.Test;
 import org.openremote.controller.ControllerConfiguration;
 import org.openremote.controller.command.CommandFactory;
+import org.openremote.controller.exception.ConfigurationException;
 import org.openremote.controller.exception.ControllerDefinitionNotFoundException;
 import org.openremote.controller.exception.XMLParsingException;
 import org.openremote.controller.model.xml.Version20SensorBuilder;
@@ -40,41 +41,37 @@ import org.openremote.controller.suite.AllTests;
  * TODO: ORCJAVA-285 -- complete the unit tests of this class
  *
  * @author <a href="mailto:juha@openremote.org">Juha Lindfors</a>
+ * @author <a href="mailto:rainer@openremote.org">Rainer Hitz</a>
  */
 public class Version20ModelBuilderTest
 {
   /**
-   * TODO : ORCJAVA-283
+   * Tests empty resource path configuration.
    *
-   * @throws Exception
+   * @throws ConfigurationException because of an invalid resource path.
    */
-  @Test public void testGetControllerDefinitionFileEmptyString() throws Exception
+  @Test (expected = ConfigurationException.class)
+  public void testGetControllerDefinitionFileEmptyString() throws Exception
   {
     ControllerConfiguration cc = new ControllerConfiguration();
     cc.setResourcePath("");
 
     File f = Version20ModelBuilder.getControllerDefinitionFile(cc);
-
-    Assert.fail("ORCJAVA-283 : Indicate configuration error with empty resource path configuration");
   }
 
   /**
-   * TODO : ORCJAVA-283
+   * Tests setting null as resource path.
    *
-   * @throws Exception
+   * @throws IllegalArgumentException because of an invalid resource path.
    */
-  @Test public void testGetControllerDefinitionFileNull() throws Exception
+  @Test (expected = IllegalArgumentException.class)
+  public void testGetControllerDefinitionFileNull() throws Exception
   {
     ControllerConfiguration cc = new ControllerConfiguration();
 
-    try
-    {
-      cc.setResourcePath(null);
-    }
-    catch (Throwable t)
-    {
-      Assert.fail("ORCJAVA-283: disallow null arg on cc.setResourcePath()");
-    }
+    cc.setResourcePath(null);
+
+    Assert.fail("Setting null as resource path didn't throw exception");
 
     File f = Version20ModelBuilder.getControllerDefinitionFile(cc);
   }

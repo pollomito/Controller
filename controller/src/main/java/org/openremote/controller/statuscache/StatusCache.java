@@ -162,6 +162,11 @@ public class StatusCache implements DeployerCommandListener, DeployerSensorListe
     //   Sensor references are handled there
     //                                                    [JPL]
 
+    if (sensor == null)
+    {
+      throw new IllegalArgumentException("Null sensor parameter is not allowed.");
+    }
+
     if (isShutdownInProcess)
     {
       return;
