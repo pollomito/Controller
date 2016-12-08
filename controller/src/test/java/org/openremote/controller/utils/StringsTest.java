@@ -30,6 +30,7 @@ import org.junit.Assert;
  *
  * @author <a href="mailto:juha@openremote.org">Juha Lindfors</a>
  * @author <a href="mailto:marcus@openremote.org">Marcus Redeker</a>
+ * @author <a href="mailto:rainer@openremote.org">Rainer Hitz</a>
  */
 public class StringsTest
 {
@@ -192,8 +193,8 @@ public class StringsTest
       // utility method above
 
       Assert.assertTrue(
-          "Expected 'SWİTCH', got '" + s2.toUpperCase() + "'",
-          s2.toUpperCase().equals("SWİTCH")
+          "Expected 'SW\u0130TCH', got '" + s2.toUpperCase() + "'",
+          s2.toUpperCase().equals("SW\u0130TCH")
       );
     }
 
@@ -237,8 +238,8 @@ public class StringsTest
       // utility method above
 
       Assert.assertTrue(
-          "Expected 'swıtch', got '" + s2.toLowerCase() + "'",
-          s2.toLowerCase().equals("swıtch")
+          "Expected 'sw\u0131tch', got '" + s2.toLowerCase() + "'",
+          s2.toLowerCase().equals("sw\u0131tch")
       );
     }
 

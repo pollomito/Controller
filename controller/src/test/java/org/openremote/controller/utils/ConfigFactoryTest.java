@@ -137,7 +137,7 @@ public class ConfigFactoryTest
 
     RoundRobinConfiguration rrc = new RoundRobinConfiguration();
 
-    //overrideConfigFromControllerXML(deployer, rrc);
+    overrideConfigFromControllerXML(deployer, rrc);
 
     assertEquals("controller1", rrc.getControllerApplicationName());
     assertEquals(true, rrc.getIsGroupMemberAutoDetectOn());
@@ -163,7 +163,7 @@ public class ConfigFactoryTest
 
     RoundRobinConfiguration rrc = new RoundRobinConfiguration();
 
-    //overrideConfigFromControllerXML(deployer, rrc);
+    overrideConfigFromControllerXML(deployer, rrc);
 
     assertEquals("controller2", rrc.getControllerApplicationName());
     assertEquals(false, rrc.getIsGroupMemberAutoDetectOn());

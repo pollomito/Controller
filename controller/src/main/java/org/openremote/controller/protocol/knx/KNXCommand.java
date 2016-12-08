@@ -253,6 +253,15 @@ abstract class KNXCommand implements Command
   // Object Overrides -----------------------------------------------------------------------------
 
   /**
+   * {@inheritDoc}
+   */
+  @Override public int hashCode()
+  {
+    return getAddress().hashCode();
+  }
+
+
+  /**
    * Returns a string representation of this command. Expected output is:
    *
    * <pre>{@code

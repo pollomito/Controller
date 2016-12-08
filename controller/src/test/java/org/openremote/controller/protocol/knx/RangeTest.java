@@ -50,7 +50,7 @@ public class RangeTest
   {
     builder = new KNXCommandBuilder(
         "127.0.0.1", 9999,
-        "org.openremote.controller.protocol.bus.DatagramSocketPhysicalBus"
+        "org.openremote.controller.protocol.port.DatagramSocketPort"
     );
   }
 

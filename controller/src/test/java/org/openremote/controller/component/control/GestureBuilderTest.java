@@ -29,6 +29,7 @@ import org.junit.Test;
 import org.openremote.controller.command.CommandFactory;
 import org.openremote.controller.component.control.gesture.Gesture;
 import org.openremote.controller.component.control.gesture.GestureBuilder;
+import org.openremote.controller.exception.XMLParsingException;
 import org.openremote.controller.service.Deployer;
 import org.openremote.controller.service.DeployerTest;
 import org.openremote.controller.suite.AllTests;
@@ -82,25 +83,19 @@ public class GestureBuilderTest
     // TODO : make test more complete -- assert associated commands, etc.
   }
 
-  @Test public void testGetGestureforInvalidGesture() throws Exception
+
+  @Test (expected = XMLParsingException.class)
+   public void testGetGestureforInvalidGesture() throws Exception
   {
     Element controlElement = deployer.queryElementById(9);
 
     Gesture g = (Gesture)builder.build(controlElement, "test");
-
-    Assert.assertNull(
-        "Expected null gesture (or exception) when building with wrong XML content", g
-    );
   }
 
-  @Test public void testBuildNullArg() throws Exception
+  @Test (expected = IllegalArgumentException.class)
+  public void testBuildNullArg() throws Exception
   {
     Gesture g = (Gesture)builder.build(null, "test");
-
-    Assert.assertNull(
-        "Expected null gesture (or exception) when building " +
-        "with non-existent element", g
-    );
   }
 
 

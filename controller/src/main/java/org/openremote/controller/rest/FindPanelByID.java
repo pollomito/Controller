@@ -66,54 +66,28 @@ public class FindPanelByID extends RESTAPI
   @Override protected void handleRequest(HttpServletRequest request, HttpServletResponse response)
   {
     String url = request.getRequestURL().toString().trim();
-    String regexp = "rest\\/panel\\/(.*)";
+    String regexp = "rest\\/panel\\/(.+)";
     Pattern pattern = Pattern.compile(regexp);
     Matcher matcher = pattern.matcher(url);
 
-    if (matcher.find())
-    {
-      try
-      {
-        String panelName = matcher.group(1);
-        String decodedPanelName = panelName;
-        decodedPanelName = URLDecoder.decode(panelName, "UTF-8");
+      if (matcher.find()) {
+          try {
+              String panelName = matcher.group(1);
+              String decodedPanelName = URLDecoder.decode(panelName, "UTF-8"); // TODO URLDecoder should not be used to decode URI path segments!
 
-        String panelXML = profileService.getProfileByPanelName(decodedPanelName);
+              String panelXML = profileService.getProfileByPanelName(decodedPanelName);
 
-        sendResponse(request, response, panelXML);
+              sendResponse(request, response, panelXML);
+          } catch (ControlCommandException e) {
+              logger.warn("Processing panel failed: " + e.getMessage(), e);
+              sendResponse(request, response, e.getErrorCode(), e.getMessage());
+          } catch (UnsupportedEncodingException e) {
+              logger.error(e.getMessage(), e);
+              sendResponse(request, response, 500, e.getMessage());
+          }
+      } else {
+          sendResponse(request, response, 400, "Bad REST Request, should be /rest/panel/{panelName}");
       }
-
-      catch (ControlCommandException e)
-      {
-        logger.error("failed to extract panel.xml for panel : " + e.getMessage(), e);
-
-        // TODO :
-        //   this might well break the JSON client code -- but can't know for sure cause chinese
-        //   are too effin dumb to write proper tests
-        //
-        // response.setStatus(e.getErrorCode());
-
-        sendResponse(request, response, e.getErrorCode(), e.getMessage());
-      }
-
-      catch (UnsupportedEncodingException e)
-      {
-        logger.error(e.getMessage(), e);
-
-        sendResponse(request, response, 400, e.getMessage());    // TODO : check API documentation   
-      }
-    }
-
-    else
-    {
-      // TODO :
-      //   this might well break the JSON client code -- but can't know for sure cause chinese
-      //   are too effin dumb to write proper tests
-      //
-      //response.setStatus(400);
-
-      sendResponse(request, response, 400, "Bad REST Request, should be /rest/panel/{panelName}");
-    }
   }
 
 }

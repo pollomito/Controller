@@ -349,12 +349,58 @@ public class StateSensorTest
   }
 
 
-  @Test public void testConstructorArgs()
+  @Test public void testConstructorArgs() throws Exception
   {
-    // TODO : test null args, etc
-    // TODO : make sure no NPE's on object methods (such as toString) because of null field values
+    StateSensor.DistinctStates states = new StateSensor.DistinctStates();
+    states.addState("foo");
+    states.addState("bar");
 
-    Assert.fail("Not Yet Implemented. See ORCJAVA-106 -- http://jira.openremote.org/browse/ORCJAVA-106");
+    StateSensor s1 = null;
+
+    try
+    {
+      s1 = new StateSensor("null cache", 1, null, new StateReadCommand("foo"), 1, states);
+
+      Assert.fail();
+    }
+
+    catch(IllegalArgumentException exc)
+    {
+      // expected
+    }
+
+
+    try
+    {
+      s1 = new StateSensor("null command", 1, cache, null, 1, states);
+
+      Assert.fail();
+    }
+
+    catch(IllegalArgumentException exc)
+    {
+      // expected
+    }
+
+
+    s1 = new StateSensor("null states", 30, cache, new MixedStateReadCommand("foo"), 1, null);
+    s1.setStrictStateMapping(false);
+
+    cache.registerSensor(s1);
+    s1.start();
+
+    Assert.assertTrue(s1.toString().contains("null states"));
+    Assert.assertTrue(getSensorValueFromCache(30).equals("foo"));
+
+
+    s1 = new StateSensor("null states strict", 31, cache, new MixedStateReadCommand("foo"), 1, null);
+    s1.setStrictStateMapping(true);
+
+    cache.registerSensor(s1);
+    s1.start();
+
+    Assert.assertTrue(s1.toString().contains("null states strict"));
+    Assert.assertTrue(getSensorValueFromCache(31).equals(Sensor.UNKNOWN_STATUS));
   }
 
 
@@ -391,12 +437,115 @@ public class StateSensorTest
 
 
 
-  @Test public void testMappingToNull()
+  @Test public void testMappingToNull() throws Exception
   {
+    StateSensor.DistinctStates states = new StateSensor.DistinctStates();
+    states.addStateMapping("0", "zero");
+    states.addStateMapping("1", "");
+    states.addStateMapping("2", "two");
+    states.addStateMapping(" ", "three");
+    states.addStateMapping("", "four");
 
-    // TODO : test cases where some map to nulls or empty strings...
+    MixedStateReadCommand readCommand = new MixedStateReadCommand("0", "1", "2", "", " ");
+    StateSensor s1 = new StateSensor("empty", 40, cache, readCommand, 1, states);
 
-    Assert.fail("Not Yet Implemented. See ORCJAVA-108 -- http://jira.openremote.org/browse/ORCJAVA-108");
+    cache.registerSensor(s1);
+    s1.start();
+
+    Assert.assertTrue(getSensorValueFromCache(40).equals("zero"));
+
+    Assert.assertTrue(s1.getSensorID() == 40);
+    Assert.assertTrue(s1.isPolling());
+    Assert.assertFalse(s1.isEventListener());
+    Assert.assertTrue(s1.getName().equals("empty"));
+    Assert.assertTrue(s1.getProperties().size() == 5);
+    Assert.assertTrue(s1.getProperties().keySet().contains("state-1"));
+    Assert.assertTrue(s1.getProperties().keySet().contains("state-2"));
+    Assert.assertTrue(s1.getProperties().keySet().contains("state-3"));
+    Assert.assertTrue(s1.getProperties().keySet().contains("state-4"));
+    Assert.assertTrue(s1.getProperties().keySet().contains("state-5"));
+    Assert.assertTrue(s1.getProperties().values().contains("0"));
+    Assert.assertTrue(s1.getProperties().values().contains("1"));
+    Assert.assertTrue(s1.getProperties().values().contains("2"));
+
+    readCommand.nextValue();
+
+    Assert.assertTrue(getSensorValueFromCache(40).equals(""));
+
+
+    readCommand.nextValue();
+
+    Assert.assertTrue(getSensorValueFromCache(40).equals("two"));
+
+
+    readCommand.nextValue();
+
+    Assert.assertTrue(getSensorValueFromCache(40).equals("four"));
+
+
+    readCommand.nextValue();
+
+    Assert.assertTrue(getSensorValueFromCache(40).equals("three"));
+
+
+
+    states = new StateSensor.DistinctStates();
+    states.addStateMapping("3", null);
+    states.addStateMapping("4", null);
+
+    readCommand = new MixedStateReadCommand("3", "4");
+    StateSensor s2 = new StateSensor("null mapping", 41, cache, readCommand, 2, states);
+
+    cache.registerSensor(s2);
+    s2.start();
+
+    Assert.assertTrue(getSensorValueFromCache(41).equals("3"));
+
+    Assert.assertTrue(s2.getSensorID() == 41);
+    Assert.assertTrue(s2.isPolling());
+    Assert.assertFalse(s2.isEventListener());
+    Assert.assertTrue(s2.getName().equals("null mapping"));
+    Assert.assertTrue(s2.getProperties().size() == 2);
+    Assert.assertTrue(s2.getProperties().keySet().contains("state-1"));
+    Assert.assertTrue(s2.getProperties().keySet().contains("state-2"));
+    Assert.assertTrue(s2.getProperties().values().contains("3"));
+    Assert.assertTrue(s2.getProperties().values().contains("4"));
+    Assert.assertTrue(s2.toString().contains("4"));
+
+    readCommand.nextValue();
+
+    Assert.assertTrue(getSensorValueFromCache(41).equals("4"));
+
+
+
+    states = new StateSensor.DistinctStates();
+    states.addStateMapping("0", "zero");
+    states.addStateMapping(null, "one");
+
+    Assert.assertTrue(states.hasState("0"));
+
+    readCommand = new MixedStateReadCommand("0", "1");
+    StateSensor s3 = new StateSensor("null mapping", 42, cache, readCommand, 3, states);
+
+    cache.registerSensor(s3);
+    s3.start();
+
+    Assert.assertTrue(getSensorValueFromCache(42).equals("zero"));
+
+    Assert.assertTrue(s3.getSensorID() == 42);
+    Assert.assertTrue(s3.isPolling());
+    Assert.assertFalse(s3.isEventListener());
+    Assert.assertTrue(s3.getName().equals("null mapping"));
+    Assert.assertTrue(s3.getProperties().size() == 2);
+    Assert.assertTrue(s3.getProperties().keySet().contains("state-1"));
+    Assert.assertTrue(s3.getProperties().keySet().contains("state-2"));
+    Assert.assertTrue(s3.getProperties().values().contains("0"));
+    Assert.assertTrue(s3.toString().contains("zero"));
+
+
+    readCommand.nextValue();
+
+    Assert.assertTrue(getSensorValueFromCache(42).equals(Sensor.UNKNOWN_STATUS));
   }
 
 
