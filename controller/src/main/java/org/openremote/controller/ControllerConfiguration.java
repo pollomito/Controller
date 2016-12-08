@@ -493,7 +493,11 @@ public class ControllerConfiguration extends Configuration
    */
   public void setResourceUploadAllowed(boolean resourceUpload)
   {
-    this.allowResourceUpload = resourceUpload;
+    if ("true".equals(System.getenv("DISABLE_RESOURCE_UPLOAD"))) {
+	this.allowResourceUpload = false;
+    } else {
+	this.allowResourceUpload = resourceUpload;
+    }
   }
 
 

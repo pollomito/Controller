@@ -16,7 +16,7 @@ The deployable WAR file can be found under `build/libs`.
 
 `./gradlew clean controller`
 
-The ZIP file can be found under `build/distributions`.
+The ZIP file can be found under `controller/build/distributions/`.
 
 ### Build and deploy with Docker
 
