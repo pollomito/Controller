@@ -476,7 +476,47 @@ public class EepF60201 implements EepTransceive
 
     else
     {
-      this.rockerStatus.updateSensor(sensor);
+      String status="N/A";
+      try{
+        if(rockerStatus.ordinalValue() == ROCKER_AI)
+        {
+          if(energyBowStatus.ordinalValue()==0){
+            status = "ROCKER_AI_0";
+          }else{
+            status = "ROCKER_AI";
+          }
+        }
+
+        else if(rockerStatus.ordinalValue() == ROCKER_AO)
+        {
+          if(energyBowStatus.ordinalValue()==0){
+            status = "ROCKER_AO_0";
+          }else{
+            status = "ROCKER_AO";
+          }
+        }
+
+        else if(rockerStatus.ordinalValue() == ROCKER_BI)
+        {
+          if(energyBowStatus.ordinalValue()==0){
+            status = "ROCKER_BI_0";
+          }else{
+            status = "ROCKER_BI";
+          }
+        }
+
+        else if(rockerStatus.ordinalValue() == ROCKER_BO)
+        {
+          if(energyBowStatus.ordinalValue()==0){
+            status = "ROCKER_BO_0";
+          }else{
+            status = "ROCKER_BO";
+          }
+        }
+      }finally{
+        sensor.update(status);
+      }
+      // this.rockerStatus.updateSensor(sensor);
     }
   }
 
