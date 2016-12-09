@@ -1801,6 +1801,7 @@ then
   execute.command("Smart.Start.(ON)");
   execute.command("Safety.Smart.(ON)");
   execute.command("Climate.Smart.(ON)");
+  execute.command("Climate.Vent.(ON)");
 end
 
 rule "-P61: turn all smart menus switch off"
@@ -1811,7 +1812,8 @@ when
   Event(source=="Light.Smart", value!="on")||
   Event(source=="Smart.Start", value!="on")||
   Event(source=="Safety.Smart", value!="on")||
-  Event(source=="Climate.Smart", value!="on")
+  Event(source=="Climate.Smart", value!="on")||
+  Event(source=="Climate.Vent", value!="on")
 )
 then
   execute.command("Menu.Smart.(OFF)");
@@ -1823,8 +1825,11 @@ when
   Event(source=="Smart.Start", value=="on")
   Event(source=="Safety.Smart", value=="on")
   Event(source=="Climate.Smart", value=="on")
+  Event(source=="Climate.Vent", value=="on")
 then
   execute.command("Menu.Smart.(ON)");
 end
+
+// menu end
 
 // blok61 for demo end
