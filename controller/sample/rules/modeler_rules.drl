@@ -1,0 +1,1830 @@
+package org.openremote.controller.protocol;
+
+import java.util.concurrent.*;
+import java.util.Date;
+import java.text.SimpleDateFormat;
+import java.io.*;
+import org.openremote.controller.model.event.*;
+import org.openremote.controller.utils.Logger;
+import org.openremote.controller.Constants;
+
+global org.openremote.controller.statuscache.CommandFacade execute;
+
+function void log(String msg)
+{
+  Logger.getLogger(Constants.RUNTIME_EVENTPROCESSOR_LOG_CATEGORY + ".drools").debug(msg);
+}
+
+declare Event
+  @role(event)
+end
+
+rule "-PSB: Init"
+salience 10
+then
+  execute.command("VR1.ET", _ReadFromFile("VR1.ET","--:--"));
+  execute.command("VR1.ET.inc", "OFF");
+  execute.command("VR1.ET.dec", "OFF");
+  execute.command("VETA.inc", "OFF");
+  execute.command("VETA.dec", "OFF");
+  execute.command("VETD.inc", "OFF");
+  execute.command("VETD.dec", "OFF");
+  execute.command("VR1.COMFORT",_ReadFromFile("VR1.COMFORT","20.0\u00B0"));
+  execute.command("VR1.COMFORT.inc","OFF");
+  execute.command("VR1.COMFORT.dec","OFF");
+  execute.command("VR1.TEMPERATURE","19.5\u00B0");
+  execute.command("VR1.TEMPERATURE.inc","OFF");
+  execute.command("VR1.TEMPERATURE.dec","OFF");
+  execute.command("VNEXTACTION",_ReadFromFile("VNEXTACTION","-")); // Earlier arrive with reset
+  execute.command("VPERSONSENSETIME","-");
+  execute.command("VLEAVES", "1.0"); 
+  execute.command("VSCORE", "0");
+  execute.command("VHEATINGSETPOINT", "16");
+  execute.command("VWINDOW","Closed");
+  execute.command("VADVICEDONE", "OFF");
+  execute.command("VSUMMER", "No");
+  execute.command("VADVICE", "You're doing great!");
+  execute.command("VACATION.inc", "OFF");
+  execute.command("VACATION.dec", "OFF");
+  execute.command("VACATION", _ReadFromFile("VACATION", "0"));
+  execute.command("VTOTALSCORE",_ReadFromFile("VTOTALSCORE", "0"));
+  execute.command("VLEVEL", _ReadFromFile("VLEVEL", "0"));
+  execute.command("VATA", _ReadFromFile("VATA","-"));
+  execute.command("VATD", _ReadFromFile("VATD","-"));
+  execute.command("VPRESENCE","No");
+  execute.command("GVconfig",_ReadFromFile("GVconfig", "OpenRemote"));
+  execute.command("GVtestsPassed",_ReadFromFile("GVtestsPassed", "0"));
+  execute.command("GVtestsFailed",_ReadFromFile("GVtestsFailed", "0"));
+  execute.command("VArrivalBackground", "on");
+  execute.command("VDepartureBackground", "off");
+end
+
+rule "PSB: Init ETA when empty"
+salience 9
+when
+  Event(source matches "VETA.*", $s: source, value=="")
+then
+  execute.command($s, _ReadFromFile($s, "09:00"));
+end
+
+rule "PSB: Init ETD when empty"
+salience 8
+when
+  Event(source matches "VETD.*", $s: source, value=="")
+then
+  execute.command($s, _ReadFromFile($s, "17:00"));
+end
+
+function void _WriteToFile(String fn, Object o){
+  String vl = o.toString();
+  PrintWriter writer = new PrintWriter(fn+".txt", "UTF-8");
+  writer.println(vl);
+  writer.close();
+}
+
+function String _ReadFromFile(String fn, String dft){
+  String result = dft;
+  try{
+    BufferedReader fr = new BufferedReader(new InputStreamReader(new FileInputStream(fn+".txt"), "UTF-8"));
+    try{
+      result = fr.readLine();
+    } finally {
+      fr.close();
+    }
+  } catch (IOException e) {
+    e.printStackTrace();
+  }
+  return(result);
+}
+
+rule "--PSB: store values"
+timer(int: 2s)
+when
+(
+  Event($s:source matches "VET.*", $v:value!="", eval(!_ReadFromFile($s,"").equals($v))) ||
+  Event($s:source=="VACATION",  $v:value, eval(!_ReadFromFile($s,"").equals($v))) ||
+  Event($s:source=="VTOTALSCORE", $v:value, eval(!_ReadFromFile($s,"").equals($v))) ||
+  Event($s:source=="VLEVEL", $v:value, eval(!_ReadFromFile($s,"").equals($v))) ||
+  Event($s:source=="VR1.COMFORT", $v:value, eval(!_ReadFromFile($s,"").equals($v))) ||
+  Event($s:source=="VATA", $v:value, eval(!_ReadFromFile($s,"").equals($v))) ||
+  Event($s:source=="VATD", $v:value, eval(!_ReadFromFile($s,"").equals($v))) ||
+  Event($s:source=="VNEXTACTION", $v:value, eval(!_ReadFromFile($s,"").equals($v))) ||
+  Event($s:source=="VR1.ET", $v:value, eval(!_ReadFromFile($s,"").equals($v))) ||
+  Event($s:source=="VETA", $v:value, eval(!_ReadFromFile($s,"").equals($v))) ||
+  Event($s:source=="VETD", $v:value, eval(!_ReadFromFile($s,"").equals($v))) ||
+  Event($s:source matches "^GV.*", $v:value, eval(!_ReadFromFile($s,"").equals($v)))
+)
+then                                                                                
+  log($s+" old value: "+_ReadFromFile($s,"||")+"; new value:"+$v.toString());                                        
+  _WriteToFile($s, $v);                                                             
+end
+
+function long _GetTime(Object o){
+  String mt = o.toString();
+  SimpleDateFormat sdf;
+  if(mt.length()==8){
+    sdf = new SimpleDateFormat("HH:mm:ss");
+  }else if(mt.length()==5){
+    sdf = new SimpleDateFormat("HH:mm");
+  }else{
+    return(0L);
+  }
+  Date date = null;
+  date = sdf.parse(mt);
+  return(date.getTime());
+}
+
+function boolean _TradingTimes(Object now, Object start, Object endt){
+  long _now = _GetTime(now);
+  long _start = _GetTime(start);
+  long _end = _GetTime(endt);
+  while(_start < _now){ _start += 86400000L; }
+  while(_end   < _now){ _end += 86400000L; }
+  return(_end <= _start);
+}
+
+function String _SetTime(long t){
+  SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
+  Date date = new Date(t);
+  return(sdf.format(date));
+}
+
+function String _ShiftTime(Object o, int min){
+  String mt = o.toString();
+  SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
+  Date date = null;
+  if(mt.substring(0,1).equals("-")){
+    date = new Date();
+    date.setTime(date.getTime()+60*60000);
+  }else{
+    date = sdf.parse(mt);
+    date.setTime(date.getTime()+min*60000);
+  }
+  return(sdf.format(date));
+}
+
+function Double _GetTemp(Object o){
+  String s = o.toString();
+  try{
+    if(s.length()>1){
+      return(Double.parseDouble(s.substring(0, s.length()-1)));
+    }else{
+      return(0.0);
+    }
+  } catch (NumberFormatException e) {
+    return(0.0);
+  }
+}
+
+function String _ShiftTemp(Object o, double sh){
+  String s = o.toString();
+  try{
+    Double t = Double.parseDouble(s.substring(0,s.length()-1)) + sh;
+    return(String.format("%.1f\u00B0",t));
+  } catch (NumberFormatException e) {
+    return("0.0\u00B0");
+  }
+}
+
+rule "-PSB: VR1.ET Inc"
+  timer(int:300ms) // debounce & protect double click
+when
+  Event(source == "VR1.ET", $v: value)
+  Event(source == "VR1.ET.inc" , value == "ON")
+then
+  execute.command("VR1.ET", _ShiftTime($v.toString(), 5));
+  execute.command("VR1.ET.inc", "off");
+  execute.command("VR1.ET.dec", "OFF");
+end
+
+rule "-PSB: VETA Inc"
+  timer(int:300ms) // debounce & protect double click
+when
+  Event(source == "VETA", $v: value)
+  Event(source == "VETA.inc" , value == "ON")
+then
+  execute.command("VETA", _ShiftTime($v.toString(), 5));
+  execute.command("VETA.inc", "off");
+  execute.command("VETA.dec", "OFF");
+end
+
+rule "-PSB: VETD Inc"
+  timer(int:300ms) // debounce & protect double click
+when
+  Event(source == "VETD", $v: value)
+  Event(source == "VETD.inc" , value == "ON")
+then
+  execute.command("VETD", _ShiftTime($v.toString(), 5));
+  execute.command("VETD.inc", "off");
+  execute.command("VETD.dec", "OFF");
+end
+
+rule "-PSB: VR1.ET Dec"
+  timer(int:300ms)
+when
+  Event(source == "VR1.ET", $v: value)
+  Event(source == "VR1.ET.dec" , value == "ON")
+then
+  execute.command("VR1.ET", _ShiftTime($v.toString(), -15));
+  execute.command("VR1.ET.inc", "OFF");
+  execute.command("VR1.ET.dec", "off");
+end
+
+rule "-PSB: VETA Dec"
+  timer(int:300ms)
+when
+  Event(source == "VETA", $v: value)
+  Event(source == "VETA.dec" , value == "ON")
+then
+  execute.command("VETA", _ShiftTime($v.toString(), -15));
+  execute.command("VETA.inc", "OFF");
+  execute.command("VETA.dec", "off");
+end
+
+rule "-PSB: VETD Dec"
+  timer(int:300ms)
+when
+  Event(source == "VETD", $v: value)
+  Event(source == "VETD.dec" , value == "ON")
+then
+  execute.command("VETD", _ShiftTime($v.toString(), -15));
+  execute.command("VETD.inc", "OFF");
+  execute.command("VETD.dec", "off");
+end
+
+rule "PSB: set departure time on manual VR1.ET change"
+  salience 10
+  timer(int: 300ms)
+when
+  Event(source == "VR1.ET", $v: value)
+(
+  Event(source == "VR1.ET.inc" , value == "ON") ||
+  Event(source == "VR1.ET.dec" , value == "ON") ||
+  Event(source == "VETD.inc", value == "ON") ||
+  Event(source == "VETD.dec", value == "ON")
+)
+  Event(source == "VNEXTACTION", value == "-")
+then
+  execute.command("VNEXTACTION", "Departure");
+end
+
+rule "-PSB: VR1.COMFORT inc"
+  timer(int:300ms)
+when
+  Event(source == "VR1.COMFORT", $v: value, eval(_GetTemp(value) < 24))
+  Event(source == "VR1.COMFORT.inc" , value == "ON")
+then
+  execute.command("VR1.COMFORT.inc","off");
+  execute.command("VR1.COMFORT.dec","OFF");
+  execute.command("VR1.COMFORT", _ShiftTemp($v.toString(), 0.5));
+end
+
+rule "-PSB: VR1.COMFORT dec"
+  timer(int:300ms)
+when
+  Event(source == "VR1.COMFORT", $v: value, eval(_GetTemp(value) > 18))
+  Event(source == "VR1.COMFORT.dec" , value == "ON")
+then
+  execute.command("VR1.COMFORT.inc","OFF");
+  execute.command("VR1.COMFORT.dec","off");
+  execute.command("VR1.COMFORT", _ShiftTemp($v.toString(), -0.5));
+end
+
+rule "-PSB: VR1.COMFORT INC/dec" // needed when change on the boundary
+  salience -10
+  timer(int:300ms)
+when
+  Event(source == "VR1.COMFORT.inc" , value == "ON")
+then
+  execute.command("VR1.COMFORT.inc","off");
+  execute.command("VR1.COMFORT.dec","OFF");
+end
+
+rule "-PSB: VR1.COMFORT inc/DEC" // needed when change on the boundary
+  salience -10
+  timer(int:300ms)
+when
+  Event(source == "VR1.COMFORT.dec" , value == "ON")
+then
+  execute.command("VR1.COMFORT.inc","OFF");
+  execute.command("VR1.COMFORT.dec","off");
+end
+
+rule "PSB: VR1.TEMPERATURE inc"
+  timer(int:300ms)
+when
+  Event(source=="VSUMMER", value=="No")
+  Event(source == "VR1.TEMPERATURE", $v: value, eval(_GetTemp(value) <26))
+  Event(source == "VR1.TEMPERATURE.inc" , value == "ON")
+then
+  execute.command("VR1.TEMPERATURE.inc","off");
+  execute.command("VR1.TEMPERATURE.dec","OFF"); // Do not increase change counter
+  execute.command("VR1.TEMPERATURE",   _ShiftTemp($v.toString(), 0.5));
+end
+
+rule "PSB: VR1.TEMPERATURE dec"
+  timer(int:300ms)
+when
+  Event(source=="VSUMMER", value=="No")
+  Event(source == "VR1.TEMPERATURE", $v: value, eval(_GetTemp(value) > 16)) // Lower temp limit
+  Event(source == "VR1.TEMPERATURE.dec" , value == "ON")
+then
+  execute.command("VR1.TEMPERATURE.inc","OFF");
+  execute.command("VR1.TEMPERATURE.dec","off");
+  execute.command("VR1.TEMPERATURE", _ShiftTemp($v.toString(), -0.5));
+end
+
+rule "PSB: VR1.TEMPERATURE INC/dec" // needed when on the boundary and in summer
+  salience -10
+  timer(int:300ms)
+when
+  Event(source == "VR1.TEMPERATURE.inc" , value == "ON")
+then
+  execute.command("VR1.TEMPERATURE.inc","off");
+  execute.command("VR1.TEMPERATURE.dec","OFF");
+end
+
+rule "PSB: VR1.TEMPERATURE inc/DEC" // needed when on the boundary and in summer
+  salience -10
+  timer(int:300ms)
+when
+  Event(source == "VR1.TEMPERATURE.dec" , value == "ON")
+then
+  execute.command("VR1.TEMPERATURE.inc","OFF");
+  execute.command("VR1.TEMPERATURE.dec","off");
+end
+
+rule "PSB: VR1.TEMPERATURE change summer"
+salience 10
+when
+  Event(source=="VSUMMER", value=="Yes")
+(
+  Event(source == "VR1.TEMPERATURE.inc" , $s: source, value == "ON") ||
+  Event(source == "VR1.TEMPERATURE.dec", $s: source, value == "ON")
+)
+then
+  execute.command($s, "OFF");
+end
+
+rule "PSB: set departure on manual TEMPERATURE change after expected attendance"
+salience 10
+  timer(int:300ms)
+when
+  Event(source=="VSUMMER", value=="No")
+  Event(source == "VR1.ET", $et: value)
+(
+  Event(source == "VR1.TEMPERATURE.inc" , value == "ON") ||
+  Event(source == "VR1.TEMPERATURE.dec" , value == "ON")
+)
+  Event(source == "VNEXTACTION", value == "-")
+then
+  // Set departure time when temp manually adjusted after leave
+  execute.command("VNEXTACTION", "Departure");
+  execute.command("VR1.ET", _ShiftTime($et.toString(), 60));
+  execute.command("VETD", _ShiftTime($et.toString(), 60));
+end
+
+rule "PSB: Move ETA to ET at midnight"
+when
+  Event(source=="TimerEEE", $e:value)
+  Event(source=="TimerHH",$h:value,eval(_GetTime(value) >= _GetTime("00:02"))) // Wait 2 minutes to be sure that $e is OK
+  Event(source matches ("VETA."+$e), eval(_GetTime(value) > _GetTime($h)), $va:value)
+  Event(source matches ("VETD."+$e), $vd: value)
+  Event(source=="VNEXTACTION", value=="-")
+  Event(source=="VACATION", eval(Integer.parseInt(value.toString())==0))
+then
+  execute.command("VR1.ET", $va.toString());
+  execute.command("VETA", $va.toString());
+  execute.command("VETD", $vd.toString());
+  execute.command("VNEXTACTION", "Arrive");
+end
+
+rule "Move ETA ETD for current day"
+when
+  Event(source=="TimerEEE", $e:value)
+  Event(source matches ("VETA."+$e), $va:value)
+  Event(source matches ("VETD."+$e), $vd: value)
+then
+  execute.command("VETA", $va.toString());
+  execute.command("VETD", $vd.toString());
+end
+
+rule "PSB: reset VATA"
+when
+  Event(source=="VNEXTACTION", value=="Arrive")
+then
+  execute.command("VATA","-");
+end
+
+rule "PSB: reset VATD"
+when
+  Event(source=="VATA",value=="-")
+then
+  execute.command("VATD","-");
+end
+
+rule "PSB: decrease vacation counter at midnight"
+when
+  $timer: Event(source=="TimerHH", eval(value.toString().substring(0,5).equals("00:00"))) // more reliable than timer(cron: )
+  Event(source=="VACATION", $v: value, eval(Integer.parseInt(value.toString())>0), this before $timer)
+then
+  execute.command("VACATION", Integer.parseInt($v.toString())-1);
+end
+
+rule "PSB: reset action at midnight"
+when
+  Event(source=="TimerHH", eval(value.toString().substring(0,5).equals("00:00"))) // more reliable than timer(cron: )
+then
+  execute.command("VR1.ET", "-");
+  execute.command("VNEXTACTION", "-");
+end
+
+rule "PSB: Move ETD to ET at arrive init"
+// This one is needed for cases when system is restart after arrive time
+when
+  Event(source=="TimerEEE",$e:value)
+  Event(source=="TimerHH",$h:value)
+  Event(source matches ("VETA."+$e), eval(_GetTime(value) <= _GetTime($h)), eval(value.toString().length()==5))
+  Event(source matches ("VETD."+$e), $vd:value, eval(value.toString().length()==5))
+//  Event(source=="VNEXTACTION", value=="-")
+  Event(source=="VR1.ET", value == "--:--")
+then
+   execute.command("VR1.ET", $vd.toString());
+   execute.command("VETD", $vd.toString());
+   execute.command("VNEXTACTION", "Departure");
+end
+
+rule "PSB: Move ETD to ET at arrive"
+when
+  Event(source=="TimerEEE",$e:value)
+  Event(source=="TimerHH",$h:value)
+  Event(source=="VNEXTACTION", value=="Arrive")
+  Event(source matches ("VETD."+$e), $vd:value)
+  Event(source=="VETA", value != "-", value != "--:--")
+  Event(source=="VETA", eval(_GetTime(value) < _GetTime($h)))
+  Event(source=="VACATION", eval(Integer.parseInt(value.toString())==0))
+then
+   execute.command("VR1.ET", $vd.toString());
+   execute.command("VNEXTACTION", "Departure");
+end
+
+rule "PSB: actual arrival time earlier when temperature increased and person detected"
+timer(int: 10s) // Prevent glitch at midnight reset
+when
+  // Before attendance schedule
+  Event(source=="TimerHH",$h:value)
+  Event(source=="VNEXTACTION", value=="Arrive")
+  // Temperature increased manually (higher than ECO)
+  Event(source=="VSUMMER", value=="No")
+  Event(source=="VR1.COMFORT", $vc: value)
+  Event(source=="VR1.TEMPERATURE", eval(_GetTemp(value) > java.lang.Math.max(_GetTemp($vc)-5.0, 16.0)))
+  // Person detected
+  Event(source=="VPERSONSENSE", value == "1")
+  Event(source=="VATA",value=="-")
+then
+  execute.command("VR1.ET", $h.toString().substring(0,5));
+end
+
+rule "-PSB: fetch actual arrival time"
+when
+  Event(source=="TimerHH", $h:value)
+  Event(source=="VATA", value == "-")
+  Event(source=="VNEXTACTION", value=="Departure")
+  Event(source=="VPERSONSENSE", value=="1")
+then
+  execute.command("VATA", $h.toString().substring(0,5));
+end
+
+rule "PSB: fetch earlier actual arrival time up to 30 min v02"
+when
+  Event(source=="TimerHH", $h:value, eval(_GetTime(value) >= _GetTime("04:30"))) // Earliest time of arrival is 4:30 AM
+  Event(source=="VATA", value == "-")
+  Event(source=="VNEXTACTION", value=="Arrive")
+  Event(source=="VPERSONSENSE", value=="1")
+  Event(source=="VETA", value != "-", value != "--:--")
+  Event(source=="VETA", eval(_GetTime(_ShiftTime(value,-30)) <= _GetTime($h)))
+then
+  execute.command("VATA", $h.toString().substring(0,5));
+end
+
+rule "PSB: Move - to ET at end of work"
+timer(int: 1s) // avoid racing
+when
+  Event(source=="TimerHH",$h:value)
+  Event(source=="VETD", value != "-", value != "--:--")
+  Event(source=="VETD", eval(_GetTime(value) < _GetTime($h)))
+  Event(source=="VNEXTACTION", value=="Departure")
+then
+  execute.command("VR1.ET", "-");
+  execute.command("VNEXTACTION", "-");
+end
+
+rule "PSB: Move - to ET on vacation"
+when
+  Event(source=="VACATION", eval(Integer.parseInt(value.toString())>0))
+then
+  execute.command("VR1.ET", "-");
+  execute.command("VNEXTACTION", "-");
+end
+
+rule "PSB: fetch actual departure time"
+when
+  Event(source=="VATA", value != "-")
+  Event(source=="VATD", value == "-")
+  Event(source=="VNEXTACTION", value=="-")
+  Event(source=="VPERSONSENSETIME", $v:value, eval(value.toString().length()>4))
+then
+  execute.command("VATD", $v.toString().substring(0,5));
+  execute.command("VPERSONSENSETIME","-");
+end
+
+rule "PSB: fetch later departure time"
+when
+  Event(source=="TimerEEE",$e:value)
+  Event(source=="VNEXTACTION", value=="-")
+  Event(source matches ("VETD."+$e), $vd:value)
+  Event(source=="VATA", value != "-")
+  Event(source=="VATD", value != "-")
+  Event(source=="VPERSONSENSETIME", $v:value, eval(value.toString().length()>4),
+                                              eval(_GetTime(value)<=_GetTime(_ShiftTime($vd,15))), // Till 15 min after scheduled departure
+                                              eval(_GetTime(value)<=_GetTime("23:55"))) 	      	 // Till 23:55 - does	not wrap on midnight
+  Event(source=="VACATION", eval(Integer.parseInt(value.toString())==0))
+then
+  execute.command("VATD", $v.toString().substring(0,5));
+  execute.command("VPERSONSENSETIME","-");
+end
+
+rule "PSB: adjust estimated times at midnight"
+when
+  Event(source=="TimerEEE", $e: value)
+  $timer: Event(source=="TimerHH", eval(value.toString().substring(0,5).equals("23:58"))) // more reliable than timer(cron: )
+  Event(source matches ("VETD."+$e), $ved:value, this before $timer) // Loop cut
+  Event(source matches ("VETA."+$e), $vea:value, this before $timer)
+  Event(source=="VATD", $vd:value, value!="-")
+  Event(source=="VATA", $va:value, value!="-")
+  Event(source=="VACATION", eval(Integer.parseInt(value.toString())==0))
+then
+  Double alpha = 2.0/(3+1); // 3 stays for 3 days exponential average
+  long nt = (long) (alpha*_GetTime($va) + (1-alpha)*_GetTime($vea));
+  execute.command("VETA."+$e.toString(), _SetTime(nt));
+  log("EA="+$vea.toString()+" AA="+$va.toString()+" NA="+ _SetTime(nt));
+  nt = (long) (alpha*_GetTime($vd) + (1-alpha)*_GetTime($ved));
+  execute.command("VETD."+$e.toString(), _SetTime(nt));
+  log("ED="+$ved.toString()+" AD="+$vd.toString()+" ND="+ _SetTime(nt));
+end
+
+rule "--PSB: move sense"
+when
+  Event($s:source=="FS.PIR", value=="on")
+  Event(source=="TimerHH", $h:value)
+then
+  log("Move sense on "+$s);
+  execute.command("VPERSONSENSETIME", $h.toString());
+end
+
+rule "-PSB: person sense"
+when
+  Event($s:source=="FS.PIR", value=="on")
+  Event(source=="VPERSONSENSE", value!="1")
+then
+  execute.command("VPERSONSENSE", "1");
+end
+
+rule "-PSB: no person sense"
+timer(int: 2s)
+when
+  Event(source=="FS.PIR", value!="on")
+  Event(source=="VPERSONSENSE", value!="0")
+then
+  execute.command("VPERSONSENSE", "0");
+end
+
+rule "-PSB: window open sense"
+when
+  Event(source=="FS.Window", value=="on")
+then
+  execute.command("VWINDOW","Open");
+end
+
+rule "-PSB: window closed sense"
+when
+  Event(source=="FS.Window", value=="off")
+then
+  execute.command("VWINDOW","Closed");
+end
+
+rule "--FS outside temperature sense"
+when
+  Event(source=="FS.Toutside", $v: value)
+then
+  execute.command("VOUTSIDE", $v.toString() );
+  log("Fake outside temperature: "+$v.toString() );
+end
+
+rule "--FS inside temperature sense"
+when
+  Event(source=="FS.Tinside", $v: value)
+then
+  log("Fake inside temperature: "+ $v.toString() );
+  execute.command("VROOMTEMPERATURE", $v.toString() );
+end
+
+rule "-PSB: Presence"
+when
+  Event(source == "VPERSONSENSE", value == "1")
+  Event(source=="VNEXTACTION", value=="Departure") // within expected attendance schedule
+then
+  execute.command("VPRESENCE","Yes");
+end
+
+rule "PSB: Absence when 30 min no movement"
+timer(int: 30m)
+when
+  Event(source == "VPERSONSENSE", value == "0")
+  Event(source=="VNEXTACTION", value=="Departure") // within expected attendance schedule
+then
+  execute.command("VPRESENCE","No");
+end
+
+rule "PSB: Absence  after 15 min v02"
+timer(int: 15m)
+when
+  Event(source == "VPERSONSENSE", value == "0")
+then
+  execute.command("VPRESENCE","No");
+end
+
+rule "PSB: Absence after scheduled presence time"
+when
+  Event(source=="VNEXTACTION", value!="Departure") // outsidse expected attendance schedule
+then
+  execute.command("VPRESENCE","No");
+end
+
+rule "-PSB: heating ECO"
+when
+(
+  Event(source=="VNEXTACTION", value!="Departure") || // outsidse expected attendance schedule
+  Event(source=="VSUMMER", value=="Yes")
+)
+then
+  execute.command("VHEATING","ECO");
+end
+
+rule "-PSB: heating Stand-by from ECO"
+when
+  Event(source=="VSUMMER", value=="No")
+  Event(source=="VNEXTACTION", value=="Departure") // within expected attendance schedule
+  Event(source=="VPRESENCE", value=="No")
+  Event(source=="VHEATING", value == "ECO")
+  Event(source=="VR1.COMFORT", $vc: value)
+then
+  execute.command("VR1.TEMPERATURE", $vc.toString());
+  execute.command("VHEATING", "Stand-by");
+end
+
+rule "-PSB: heating Stand-by from ECO preheating 30 min v02"
+when
+  Event(source=="VSUMMER", value=="No")
+  Event(source=="VNEXTACTION", value=="Arrive") // within expected attendance schedule
+  Event(source=="VHEATING", value == "ECO")
+  Event(source=="VR1.COMFORT", $vc: value)
+  
+  Event(source=="TimerHH", $h:value, eval(_GetTime(value) >= _GetTime("04:30"))) // Earliest time of arrival is 4:30 AM
+  Event(source=="VETA", value != "-", value != "--:--")
+  Event(source=="VETA", eval(_GetTime(_ShiftTime(value,-30)) <= _GetTime($h)))
+then
+  execute.command("VR1.TEMPERATURE", $vc.toString());
+  execute.command("VHEATING", "Stand-by");
+end
+
+rule "-PSB: heating Stand-by from Comfort"
+when
+  Event(source=="VSUMMER", value=="No")
+  Event(source=="VNEXTACTION", value=="Departure") // within expected attendance schedule
+  Event(source=="VPRESENCE", value=="No")
+  Event(source=="VHEATING", value == "Comfort")
+  Event(source=="VR1.COMFORT", $vc: value)
+  Event(source=="VR1.TEMPERATURE", value==$vc) // Only when no manual temperature increase
+then
+  execute.command("VHEATING","Stand-by");
+end
+
+rule "-PSB: heating Comfort on presence"
+when
+  Event(source=="VSUMMER", value=="No")
+  Event(source=="VPRESENCE", value=="Yes")
+  Event(source=="VR1.COMFORT", $v: value)
+then
+  execute.command("VHEATING","Comfort");
+  execute.command("VR1.TEMPERATURE", $v.toString());
+end
+
+rule "-PSB: heating Comfort on temperature increase"
+timer(int: 1s) // debounce
+when
+  Event(source=="VSUMMER", value=="No")
+  Event(source=="VR1.COMFORT", $vc: value)
+  Event(source=="VR1.TEMPERATURE", eval(_GetTemp(value) > _GetTemp($vc)))
+  Event(source=="VHEATING", value != "Comfort")
+then
+  execute.command("VHEATING","Comfort");
+end
+
+rule "-PSB: heating setpoint ECO"
+when
+  Event(source=="VSUMMER", value=="No")
+  Event(source=="VHEATING", value=="ECO")
+  Event(source=="VR1.COMFORT", $v: value)
+then
+  String s = $v.toString();
+  Double t;
+  try{
+    t = java.lang.Math.max(16.0, Double.parseDouble(s.substring(0,s.length()-1))-5); // 5 degrees below comfort
+  } catch (NumberFormatException e){
+    t = 16.0;
+  }
+  execute.command("VHEATINGSETPOINT", String.format("%.1f",t));
+  execute.command("VR1.TEMPERATURE", String.format("%.1f\u00B0",t));
+end
+
+rule "-PSB: heating setpoint ECO summer"
+when
+  Event(source=="VSUMMER", value=="Yes")
+  Event(source=="VHEATING", value=="ECO")
+  Event(source=="VR1.COMFORT", $v: value)
+then
+  String s = $v.toString();
+  Double t = java.lang.Math.max(16.0, Double.parseDouble(s.substring(0,s.length()-1))-5); // 5 degrees below comfort
+  execute.command("VHEATINGSETPOINT", String.format("%.1f",t));
+  execute.command("VR1.TEMPERATURE", "-");
+end
+
+rule "-PSB: heating setpoint Stand-by"
+when
+  Event(source=="VSUMMER", value=="No")
+  Event(source=="VHEATING", value=="Stand-by")
+  Event(source=="VR1.COMFORT", $v: value)
+  Event(source=="VR1.TEMPERATURE", value==$v) // When temperature changed manually keep it till ECO
+then
+  String s = $v.toString();
+  Double t = java.lang.Math.max(16.0, Double.parseDouble(s.substring(0,s.length()-1))-1); // 1 degree below comfort
+  execute.command("VHEATINGSETPOINT", String.format("%.1f",t));
+  execute.command("VR1.TEMPERATURE", s);
+end
+
+rule "-PSB: heating setpoint Comfort"
+timer(int: 1s) // avoid race between "VHEATING" & "VR1.TEMPERATURE"
+when
+  Event(source=="VSUMMER", value=="No")
+  Event(source=="VHEATING", value=="Comfort")
+  Event(source=="VR1.TEMPERATURE", $v: value) // set by rule "PSB: heating Comfort" to VR1.COMFORT or manually
+then
+  String s = $v.toString();
+  Double t = java.lang.Math.max(16.0, Double.parseDouble(s.substring(0,s.length()-1)));
+  execute.command("VHEATINGSETPOINT", String.format("%.1f",t));
+end
+
+rule "-PSB: leaves 0"
+when
+  Event(source=="VLEAVES", value=="0.0")
+then
+  execute.command("VLEAF1", "l0.png");
+  execute.command("VLEAF2", "l0.png");
+  execute.command("VLEAF3", "l0.png");
+end
+  
+rule "-PSB: leaves 0.5"
+when
+  Event(source=="VLEAVES", value=="0.5")
+then
+  execute.command("VLEAF1", "l1.png");
+  execute.command("VLEAF2", "l0.png");
+  execute.command("VLEAF3", "l0.png");
+end
+  
+rule "-PSB: leaves 1"
+when
+  Event(source=="VLEAVES", value=="1.0")
+then
+  execute.command("VLEAF1", "l2.png");
+  execute.command("VLEAF2", "l0.png");
+  execute.command("VLEAF3", "l0.png");
+end
+  
+rule "-PSB: leaves 1.5"
+when
+  Event(source=="VLEAVES", value=="1.5")
+then
+  execute.command("VLEAF1", "l2.png");
+  execute.command("VLEAF2", "l1.png");
+  execute.command("VLEAF3", "l0.png");
+end
+  
+rule "-PSB: leaves 2"
+when
+  Event(source=="VLEAVES", value=="2.0")
+then
+  execute.command("VLEAF1", "l2.png");
+  execute.command("VLEAF2", "l2.png");
+  execute.command("VLEAF3", "l0.png");
+end
+  
+rule "-PSB: leaves 2.5"
+when
+  Event(source=="VLEAVES", value=="2.5")
+then
+  execute.command("VLEAF1", "l2.png");
+  execute.command("VLEAF2", "l2.png");
+  execute.command("VLEAF3", "l1.png");
+end
+  
+rule "-PSB: leaves 3"
+when
+  Event(source=="VLEAVES", value=="3.0")
+then
+  execute.command("VLEAF1", "l2.png");
+  execute.command("VLEAF2", "l2.png");
+  execute.command("VLEAF3", "l2.png");
+end
+
+rule "-PSB: energy efficiency 1"
+when
+  Event(source=="VSUMMER", value=="No")
+  Event(source=="VHEATINGSETPOINT", eval(Double.parseDouble(value.toString()) >= 23)) // Comfort+
+  Event(source=="VHEATING", value!="ECO")  // needed because of race
+  Event(source=="VPRESENCE", value=="No")
+then
+  execute.command("VLEAVES", "0.0");
+  execute.command("VSCORE", 0);
+end
+
+rule "-PSB: energy efficiency 2"
+when
+  Event(source=="VSUMMER", value=="No")
+  Event(source=="VHEATINGSETPOINT", eval(Double.parseDouble(value.toString()) >= 23)) // Comfort+
+  Event(source=="VHEATING", value!="ECO")  // needed because of race
+  Event(source=="VPRESENCE", value=="Yes")
+  Event(source=="VWINDOW", value=="Open")
+then
+  execute.command("VLEAVES", "0.5");
+  execute.command("VSCORE", 0);
+end
+
+// v02
+rule "-PSB: energy efficiency 2-1 v02"
+when
+  Event(source=="VSUMMER", value=="No")
+  Event(source=="VWINDOW", value=="Open")
+  Event(source=="VHEATINGSETPOINT", eval(Double.parseDouble(value.toString()) < 23)) // Comfort, Comfort-, Comfort--
+  Event(source=="VHEATING", value!="ECO")  // needed because of race
+  Event(source=="VPRESENCE", value=="No")
+  Event(source=="VOUTSIDE", $t: value)
+  Event(source=="VR1.TEMPERATURE", eval(_GetTemp($t) < _GetTemp(value))) // Lower outside temperature
+then
+  execute.command("VLEAVES", "0.5");
+  execute.command("VSCORE", 0);
+end
+
+rule "-PSB: energy efficiency 2-2 v02"
+when
+  Event(source=="VSUMMER", value=="No")
+  Event(source=="VWINDOW", value=="Closed")
+  Event(source=="VHEATINGSETPOINT", eval(Double.parseDouble(value.toString()) >= 23)) // Comfort+
+  Event(source=="VHEATING", value!="ECO")  // needed because of race
+  Event(source=="VPRESENCE", value=="No")
+then
+  execute.command("VLEAVES", "0.5");
+  execute.command("VSCORE", 0);
+end
+
+rule "-PSB: energy efficiency 2-3 v02"
+when
+  Event(source=="VSUMMER", value=="No")
+  Event(source=="VWINDOW", value=="Closed")
+  Event(source=="VHEATINGSETPOINT", eval(Double.parseDouble(value.toString()) < 23), eval(Double.parseDouble(value.toString()) >= 18)) // Comfort, Comfort-, Comfort--, not eco
+  Event(source=="VHEATING", value!="ECO")  // needed because of race
+  Event(source=="VPRESENCE", value=="No")
+then
+  execute.command("VLEAVES", "1.0");
+  execute.command("VSCORE", 0);
+end
+// v02
+ 
+rule "-PSB: energy efficiency 3"
+when
+  Event(source=="VSUMMER", value=="No")
+  Event(source=="VHEATINGSETPOINT", eval(Double.parseDouble(value.toString()) >= 21), eval(Double.parseDouble(value.toString()) < 23)) // Comfort
+  Event(source=="VHEATING", value!="ECO")  // needed because of race
+  Event(source=="VPRESENCE", value=="No")
+then
+  execute.command("VLEAVES", "1.0");
+  execute.command("VSCORE", 0);
+end
+ 
+rule "-PSB: energy efficiency 4"
+when
+  Event(source=="VSUMMER", value=="No")
+  Event(source=="VWINDOW", value=="Open") // Added because otherwise it overrules efficiency 11
+  Event(source=="VHEATINGSETPOINT", eval(Double.parseDouble(value.toString()) >= 21), eval(Double.parseDouble(value.toString()) < 23)) // Comfort
+  Event(source=="VHEATING", value!="ECO")  // needed because of race
+  Event(source=="VPRESENCE", value=="Yes")
+then
+  execute.command("VLEAVES", "1.0");
+  execute.command("VSCORE", 0);
+end
+
+rule "-PSB: energy efficiency 5"
+when
+  Event(source=="VSUMMER", value=="No")
+  Event(source=="VHEATING", value=="Stand-by") 
+  Event(source=="VPRESENCE", value=="No")
+  Event(source=="VWINDOW", value=="Open")
+then
+  execute.command("VLEAVES", "1.0");
+  execute.command("VSCORE", 0);
+end
+ 
+rule "-PSB: energy efficiency 6"
+when
+  Event(source=="VSUMMER", value=="No")
+  Event(source=="VHEATINGSETPOINT", eval(Double.parseDouble(value.toString()) >= 23)) // Comfort+
+  Event(source=="VHEATING", value!="ECO")  // needed because of race
+  Event(source=="VPRESENCE", value=="Yes")
+  Event(source=="VWINDOW", value=="Open")
+then
+  execute.command("VLEAVES", "1.0");
+  execute.command("VSCORE", 0);
+end
+ 
+rule "-PSB: energy efficiency 7"
+when
+  Event(source=="VSUMMER", value=="No")
+  Event(source=="VWINDOW", value=="Open")
+  Event(source=="VHEATING", value=="Stand-by") 
+  Event(source=="VPRESENCE", value=="No")
+  Event(source=="VOUTSIDE", $t: value)
+  Event(source=="VR1.TEMPERATURE", eval(_GetTemp($t) < _GetTemp(value))) // Lower outside temperature
+then
+  execute.command("VLEAVES", "1.5");
+  execute.command("VSCORE", 1);
+end
+ 
+rule "-PSB: energy efficiency 8"
+when
+  Event(source=="VSUMMER", value=="No")
+  Event(source=="VWINDOW", value=="Open")
+  Event(source=="VHEATING", value=="ECO") 
+  Event(source=="VPRESENCE", value=="No")
+  Event(source=="VOUTSIDE", $t: value)
+  Event(source=="VR1.TEMPERATURE", eval(_GetTemp($t) < _GetTemp(value))) // Lower outside temperature
+then
+  execute.command("VLEAVES", "1.5");
+  execute.command("VSCORE", 1);
+end
+ 
+rule "-PSB: energy efficiency 9"
+when
+  Event(source=="VSUMMER", value=="No")
+  Event(source=="VWINDOW", value=="Closed")
+  Event(source=="VHEATINGSETPOINT", eval(Double.parseDouble(value.toString()) >= 23)) // Comfort+
+  Event(source=="VHEATING", value!="ECO")  // needed because of race
+  Event(source=="VPRESENCE", value=="Yes")
+then
+  execute.command("VLEAVES", "1.5");
+  execute.command("VSCORE", 1);
+end
+ 
+rule "-PSB: energy efficiency 10"
+when
+  Event(source=="VSUMMER", value=="No")
+  Event(source=="VWINDOW", value=="Open")
+  Event(source=="VHEATINGSETPOINT", eval(Double.parseDouble(value.toString()) >= 20), eval(Double.parseDouble(value.toString()) < 21)) // Comfort-
+  Event(source=="VHEATING", value!="ECO")  // needed because of race
+  Event(source=="VPRESENCE", value=="Yes")
+  Event(source=="VOUTSIDE", $t: value)
+  Event(source=="VR1.TEMPERATURE", eval(_GetTemp($t) < _GetTemp(value))) // Lower outside temperature
+then
+  execute.command("VLEAVES", "1.5");
+  execute.command("VSCORE", 1);
+end
+ 
+rule "-PSB: energy efficiency 11"
+when
+  Event(source=="VSUMMER", value=="No")
+  Event(source=="VWINDOW", value=="Closed")
+  Event(source=="VHEATINGSETPOINT", eval(Double.parseDouble(value.toString()) >= 21), eval(Double.parseDouble(value.toString()) < 23)) // Comfort
+  Event(source=="VHEATING", value!="ECO")  // needed because of race
+  Event(source=="VPRESENCE", value=="Yes")
+then
+  execute.command("VLEAVES", "2.0");
+  execute.command("VSCORE", 2);
+end
+ 
+rule "-PSB: energy efficiency 12 v02"
+when
+  Event(source=="VSUMMER", value=="No")
+  Event(source=="VWINDOW", value=="Closed")
+  Event(source=="VHEATINGSETPOINT", eval(Double.parseDouble(value.toString()) >= 20), eval(Double.parseDouble(value.toString()) < 21)) // Comfort-
+  Event(source=="VHEATING", value!="ECO")  // needed because of race
+  Event(source=="VPRESENCE", value=="Yes") // v02
+then
+  execute.command("VLEAVES", "2.5");
+  execute.command("VSCORE", 3);
+end
+ 
+rule "-PSB: energy efficiency 13"
+when
+  Event(source=="VSUMMER", value=="No")
+  Event(source=="VWINDOW", value=="Open")
+  Event(source=="VHEATINGSETPOINT", eval(Double.parseDouble(value.toString()) < 20)) // Comfort--
+  Event(source=="VHEATING", value!="ECO")  // needed because of race
+  Event(source=="VPRESENCE", value=="Yes")
+  Event(source=="VOUTSIDE", $t: value)
+  Event(source=="VR1.TEMPERATURE", eval(_GetTemp($t) >= _GetTemp(value))) // Higher outside temperature
+then
+  execute.command("VLEAVES", "3.0");
+  execute.command("VSCORE", 4);
+end
+
+rule "-PSB: energy efficiency 14"
+when
+  Event(source=="VSUMMER", value=="No")
+  Event(source=="VWINDOW", value=="Closed")
+  Event(source=="VHEATING", value=="ECO") 
+  Event(source=="VPRESENCE", value=="No")
+then
+  execute.command("VLEAVES", "3.0");
+  execute.command("VSCORE", 4);
+end
+
+rule "-PSB: energy efficiency 15"
+when
+  Event(source=="VSUMMER", value=="No")
+  Event(source=="VWINDOW", value=="Closed")
+  Event(source=="VHEATINGSETPOINT", eval(Double.parseDouble(value.toString()) < 20)) // Comfort--
+  Event(source=="VPRESENCE", value=="Yes") // No important IMHO
+then
+  execute.command("VLEAVES", "3.0");
+  execute.command("VSCORE", 4);
+end
+
+rule "-PSB: energy efficiency Summer"
+when
+  Event(source=="VSUMMER", value=="Yes")
+then
+  execute.command("VLEAVES", "3.0");
+  execute.command("VSCORE", 4);
+end
+
+rule "--PSB: increase total score every 15m"
+when
+  $timer: Event(source=="TimerHH", eval(Integer.parseInt(value.toString().substring(3,5)) % 15 == 0)) // more reliable than timer(cron: )
+  Event(source=="VSCORE", $s: value)
+  Event(source=="VTOTALSCORE", $ts: value, this before $timer)
+then
+  execute.command("VTOTALSCORE", Integer.parseInt($ts.toString())+Integer.parseInt($s.toString()));
+end
+
+rule "PSB: reward"
+when
+  $ts: Event(source=="VTOTALSCORE", $s: value, eval(Integer.parseInt(value.toString()) >= 1000))
+  Event(source=="VLEVEL", $l: value, this before $ts)
+then
+  Integer i = Integer.parseInt($s.toString());
+  execute.command("VTOTALSCORE", i-1000); // Reset score
+  execute.command("VLEVEL", Integer.parseInt($l.toString())+1);
+end
+
+rule "--PSB: display totalscore"
+when
+  Event(source=="VTOTALSCORE", $ts: value)
+then
+   execute.command("VTOTALSCOREdisp", $ts+" / 1000");
+end
+
+rule "PSB: summer"
+timer(int: 1h)
+when
+  Event(source=="VR1.COMFORT", $sp: value)
+  Event(source=="VOUTSIDE", value!="", eval(_GetTemp($sp) <= _GetTemp(value) )) // Outside temp higher than set point
+  Event(source=="VOUTSIDE", $o:value) // Only for logging
+  Event(source=="VSUMMER", value!="Yes")
+then
+  log("Summer is ON; outside="+$o.toString());
+  execute.command("VSUMMER", "Yes");
+end
+
+rule "PSB: no summer"
+timer(int: 1h)
+when
+  Event(source=="VR1.COMFORT", $sp: value)
+  Event(source=="VOUTSIDE", value!="", eval(_GetTemp($sp) > _GetTemp(value) )) // Outside temp lower than set point
+  Event(source=="VOUTSIDE", $o:value) // Only for logging
+  Event(source=="VSUMMER", value!="No")
+then
+  log("Summer is OFF; outside="+$o.toString());
+  execute.command("VSUMMER", "No");
+end
+
+rule "-PSB: advice 1"
+when
+  Event(source=="VWINDOW", value=="Open")
+  Event(source=="VSUMMER", value=="No")
+  Event(source=="VHEATINGSETPOINT", $sp: value)
+  Event(source=="VOUTSIDE", value!="", eval(Double.parseDouble($sp.toString()) > _GetTemp(value) )) // Outside temp lower than set point
+then
+  execute.command("VADVICE", "It's more energy efficient to close the windows when it is colder outside than it is inside");
+  execute.command("VADVICEDONE", "OFF");
+  insert(new AdviceGiven("It's more energy efficient to close the windows when it is colder outside than it is inside"));
+end
+
+rule "-PSB: advice 1 done"
+when
+  Event(source=="VHEATINGSETPOINT", $sp: value)
+(
+  Event(source=="VWINDOW", value=="Closed") ||
+  Event(source=="VOUTSIDE", value!="", eval(Double.parseDouble($sp.toString()) <= _GetTemp(value) )) // Outside temp lower than set point
+)
+  Event(source=="VADVICE",eval(value.toString().substring(0,9).equals("It's more")))
+then
+  execute.command("VADVICE", "You're doing great!");
+  execute.command("VADVICEDONE", "OFF");
+end
+
+rule "-PSB: advice 2"
+when
+  Event(source=="VSUMMER", value=="No")
+  Event(source=="VR1.COMFORT", eval(_GetTemp(value) > 20.5)) // Average is 20 hardcoded or from sensor?
+then
+  execute.command("VADVICE", "Your comfort temperature is set higher than average. You can adjust it on the settings page.");
+  execute.command("VADVICEDONE", "OFF");
+  insert(new AdviceGiven("Your comfort temperature is set higher than average. You can adjust it on the settings page."));
+end
+
+rule "-PSB: advice 2 done"
+when
+  Event(source=="VR1.COMFORT", eval(_GetTemp(value) <= 20.5)) // Average is 20 hardcoded or from sensor?
+  Event(source=="VADVICE",eval(value.toString().substring(0,12).equals("Your comfort")))
+then
+  execute.command("VADVICE", "You're doing great!");
+  execute.command("VADVICEDONE", "OFF");
+end
+
+rule "-PSB: advice 3"
+when
+// irregular attendence
+then
+  execute.command("VADVICEDONE", "OFF");
+end
+ 
+rule "-PSB: advice 4"
+when
+(
+  Event(source=="VADVICEDONE", value=="ON") ||
+  Event(source=="VSUMMER", value=="Yes")
+)
+then
+  execute.command("VADVICE", "You're doing great!");
+  execute.command("VADVICEDONE", "OFF");
+  insert(new AdviceGiven("You're doing great!"));
+end
+
+declare AdviceGiven
+  @role(event)
+  @expires(10m)
+  advice : String
+end
+
+rule "-PSB: vacation inc"
+  timer(int:300ms)
+when
+  Event(source=="VACATION", $v: value)
+  Event(source=="VACATION.inc", value=="ON")
+then
+  execute.command("VACATION", Integer.parseInt($v.toString())+1);
+  execute.command("VACATION.inc", "OFF");
+end
+
+rule "-PSB: vacation dec"
+  timer(int:300ms)
+when
+  Event(source=="VACATION", $v: value, eval(Integer.parseInt(value.toString()) > 0))
+  Event(source=="VACATION.dec", value=="ON")
+then
+  execute.command("VACATION", Integer.parseInt($v.toString())-1);
+  execute.command("VACATION.dec", "OFF");
+end
+
+rule "-PSB: vacation inc/dec" // needed so the ON value does not hang
+  salience -10
+  timer(int:300ms)
+when
+  Event(source matches "VACATION...c", $s: source, value=="ON")
+then
+  execute.command($s, "OFF");
+end
+
+// New StrijpS 2016
+
+rule "-PSB16: Full Timer"
+when
+  Event(source=="TimerEEEE", $EEEE:value)
+  Event(source=="Timerd", $d: value)
+  Event(source=="TimerMMM", $MMM:value)
+then
+  execute.command("VTimer", $EEEE.toString()+" "+$d.toString()+" "+$MMM.toString()+". I will be:");
+end
+
+rule "-PSB16: background arrival on"
+when
+  Event(source=="TimerHH", $h:value)
+  Event(source=="VETA", eval(_GetTime(value) > _GetTime($h)) )
+  Event(source=="VArrivalBackground", value!="on")
+then
+  execute.command("VArrivalBackground", "on");
+end
+
+rule "-PSB16: background departure on"
+when
+  Event(source=="TimerHH", $h:value)
+  Event(source=="VETD", eval(_GetTime(value) > _GetTime($h)) )
+  Event(source=="VDepartureBackground", value!="on")
+then
+  execute.command("VDepartureBackground", "on");
+end
+
+rule "-PSB16: background arrival off"
+when
+  Event(source=="TimerHH", $h:value)
+  Event(source=="VETA", eval(_GetTime(value) <= _GetTime($h)) )
+  Event(source=="VArrivalBackground", value!="off")
+then
+  execute.command("VArrivalBackground", "off");
+end
+
+rule "-PSB16: background departure off"
+when
+  Event(source=="TimerHH", $h:value)
+  Event(source=="VETD", eval(_GetTime(value) <= _GetTime($h)) )
+  Event(source=="VDepartureBackground", value!="off")
+then
+  execute.command("VDepartureBackground", "off");
+end
+
+// PID controller start
+
+rule "-PID: init"
+then
+  execute.command("GV.PID.Kp",_ReadFromFile("GV.PID.Kp", "0.6"));
+  execute.command("GV.PID.Ki",_ReadFromFile("GV.PID.Ki", "0.2"));
+  execute.command("GV.PID.Kd",_ReadFromFile("GV.PID.Kd", "0.1"));
+  execute.command("GV.PID.Db",_ReadFromFile("GV.PID.Db", "0.0"));
+  execute.command("GV.PID.Sp",_ReadFromFile("GV.PID.Sp", "1.0"));
+end
+
+// PID UI
+
+rule "-PID: increase Kp"
+  timer(int:300ms)
+when
+  Event(source=="GV.PID.Kp", $v: value)
+  Event($s:source=="PID.kp.inc", value=="ON")
+then
+  execute.command("GV.PID.Kp", String.format("%.1f", Double.parseDouble($v.toString())+0.1) );
+  execute.command($s, "off");
+end
+
+rule "-PID: decrease Kp"
+  timer(int:300ms)
+when
+  Event(source=="GV.PID.Kp", $v: value)
+  Event($s:source=="PID.kp.dec", value=="ON")
+then
+  execute.command("GV.PID.Kp", String.format("%.1f", Double.parseDouble($v.toString())-0.1) );
+  execute.command($s, "off");
+end
+
+rule "-PID: increase Ki"
+  timer(int:300ms)
+when
+  Event(source=="GV.PID.Ki", $v: value)
+  Event($s:source=="PID.ki.inc", value=="ON")
+then
+  execute.command("GV.PID.Ki", String.format("%.1f", Double.parseDouble($v.toString())+0.1) );
+  execute.command($s, "off");
+end
+
+rule "-PID: decrease Ki"
+  timer(int:300ms)
+when
+  Event(source=="GV.PID.Ki", $v: value)
+  Event($s:source=="PID.ki.dec", value=="ON")
+then
+  execute.command("GV.PID.Ki", String.format("%.1f", Double.parseDouble($v.toString())-0.1) );
+  execute.command($s, "off");
+end
+
+rule "-PID: increase Kd"
+  timer(int:300ms)
+when
+  Event(source=="GV.PID.Kd", $v: value)
+  Event($s:source=="PID.kd.inc", value=="ON")
+then
+  execute.command("GV.PID.Kd", String.format("%.1f", Double.parseDouble($v.toString())+0.1) );
+  execute.command($s, "off");
+end
+
+rule "-PID: decrease Kd"
+  timer(int:300ms)
+when
+  Event(source=="GV.PID.Kd", $v: value)
+  Event($s:source=="PID.kd.dec", value=="ON")
+then
+  execute.command("GV.PID.Kd", String.format("%.1f", Double.parseDouble($v.toString())-0.1) );
+  execute.command($s, "off");
+end
+
+rule "-PID: increase Db"
+  timer(int:300ms)
+when
+  Event(source=="GV.PID.Db", $v: value)
+  Event($s:source=="PID.db.inc", value=="ON")
+then
+  execute.command("GV.PID.Db", String.format("%.1f", Double.parseDouble($v.toString())+0.1) );
+  execute.command($s, "off");
+end
+
+rule "-PID: decrease Db"
+  timer(int:300ms)
+when
+  Event(source=="GV.PID.Db", $v: value)
+  Event($s:source=="PID.db.dec", value=="ON")
+then
+  execute.command("GV.PID.Db", String.format("%.1f", Double.parseDouble($v.toString())-0.1) );
+  execute.command($s, "off");
+end
+
+rule "-PID: increase Sp"
+  timer(int:300ms)
+when
+  Event(source=="GV.PID.Sp", $v: value)
+  Event($s:source=="PID.sp.inc", value=="ON")
+then
+  execute.command("GV.PID.Sp", String.format("%.1f", Double.parseDouble($v.toString())+0.5) );
+  execute.command($s, "off");
+end
+
+rule "-PID: decrease Sp"
+  timer(int:300ms)
+when
+  Event(source=="GV.PID.Sp", $v: value)
+  Event($s:source=="PID.sp.dec", value=="ON")
+then
+  execute.command("GV.PID.Sp", String.format("%.1f", Double.parseDouble($v.toString())-0.5) );
+  execute.command($s, "off");
+end
+
+rule "-PID: reset inc/dec"
+  salience -10
+  timer(int: 1s)
+when
+  Event($s: source matches "^PID......c$", value!="off")
+then
+  execute.command($s, "off");
+end
+
+// PID algorithm
+
+declare PIDVars
+// Input==Output;
+  output: double
+  iterm: double
+  prevInput: double
+  outMin: double
+  outMax: double
+  active: Boolean
+end
+
+rule "PID: algo init"
+then
+  PIDVars pv = new PIDVars();
+  pv.setActive(true);
+  pv.setOutMax(100);
+  pv.setOutMin(-100);
+  insert(pv);
+end
+
+rule "--PID: compute"
+  timer(int: 0 1s)
+when
+  $pv: PIDVars(active==true)
+  Event(source=="GV.PID.Kp", $kp: value)
+  Event(source=="GV.PID.Ki", $ki: value)
+  Event(source=="GV.PID.Kd", $kd: value)
+  Event(source=="GV.PID.Sp", $sp: value)
+  Event(source=="GV.PID.Db", $db: value)
+then
+  double error = Double.parseDouble($sp.toString() ) - $pv.getOutput();
+  double kp = Double.parseDouble($kp.toString());
+  double ki = Double.parseDouble($ki.toString()); // * sample time in sec
+  double kd = Double.parseDouble($kd.toString()); // / sample time in sec
+  double sp = Double.parseDouble($sp.toString());
+  double db = Double.parseDouble($db.toString());
+
+  double iterm = $pv.getIterm() + (ki * error); 
+  if(iterm > $pv.getOutMax() ) iterm = $pv.getOutMax();
+  else if(iterm < $pv.getOutMin() ) iterm = $pv.getOutMin();
+  $pv.setIterm( iterm );
+
+  //double dInput = (Input - lastInput);
+  double dInput = ($pv.getOutput() - $pv.getPrevInput() );
+  $pv.setPrevInput($pv.getOutput());
+ 
+  // Compute PID Output
+  double output = kp * error + $pv.getIterm()- kd * dInput;
+  if(output > $pv.getOutMax()) output = $pv.getOutMax();
+  else if(output < $pv.getOutMin()) output = $pv.getOutMin();
+  $pv.setOutput(output);
+
+  execute.command("PID.Se", String.format("%.4f",  error) );
+  execute.command("PID.Output", String.format("%.4f", output) );
+//  log($pv.toString() + " error: "+String.format("%f", Double.parseDouble($sp.toString() ) - $pv.getOutput()));
+end
+
+// PID end
+
+// Fake sensors start
+
+rule "Fake sensors init"
+then
+  execute.command("FS.Toutside", "15\u00B0");
+  execute.command("FS.Tinside", "19.5\u00B0");
+  execute.command("FS.PIR.(OFF)", "off");
+  execute.command("FS.Window.(OFF)", "off");
+end
+
+rule "--Fake sensors Toutside inc"
+  timer(int:300ms)
+when
+  Event(source == "FS.Toutside", $v: value, eval(_GetTemp(value) < 50))
+  Event(source == "FS.Toutside.inc" , value == "on")
+then
+  execute.command("FS.Toutside.inc","off");
+  execute.command("FS.Toutside", _ShiftTemp($v.toString(), 0.1));
+end
+
+rule "--Fake sensors Toutside dec"
+  timer(int:300ms)
+when
+  Event(source == "FS.Toutside", $v: value, eval(_GetTemp(value) > -40))
+  Event(source == "FS.Toutside.dec" , value == "on")
+then
+  execute.command("FS.Toutside.dec","off");
+  execute.command("FS.Toutside", _ShiftTemp($v.toString(), -0.1));
+end
+
+rule "--Fake sensors Tinside inc"
+  timer(int:300ms)
+when
+  Event(source == "FS.Tinside", $v: value, eval(_GetTemp(value) < 40))
+  Event(source == "FS.Tinside.inc" , value == "on")
+then
+  execute.command("FS.Tinside.inc","off");
+  execute.command("FS.Tinside", _ShiftTemp($v.toString(), 0.1));
+end
+
+rule "--Fake sensors Tinside dec"
+  timer(int:300ms)
+when
+  Event(source == "FS.Tinside", $v: value, eval(_GetTemp(value) > 0))
+  Event(source == "FS.Tinside.dec" , value == "on")
+then
+  execute.command("FS.Tinside.dec","off");
+  execute.command("FS.Tinside", _ShiftTemp($v.toString(), -0.1));
+end
+
+rule "--Fake sensors PIR off"
+  timer(int: 2s)
+when
+  Event(source=="FS.PIR", value=="on")
+then
+  execute.command("FS.PIR.(OFF)", "off");
+end
+
+// Fake sensors end
+
+// blok61 for demo start
+
+// Light
+
+rule "--B61: only one light scene 1"
+when
+  Event(source=="Light.Scene2", value=="on")||
+  Event(source=="Light.Scene3", value=="on")||
+  Event(source=="Light.Scene4", value=="on")
+then
+  execute.command("Light.Scene1.(OFF)", "off");
+end
+
+rule "--B61: only one light scene 2"
+when
+  Event(source=="Light.Scene1", value=="on")||
+  Event(source=="Light.Scene3", value=="on")||
+  Event(source=="Light.Scene4", value=="on")
+then
+  execute.command("Light.Scene2.(OFF)", "off");
+end
+
+rule "--B61: only one light scene 3"
+when
+  Event(source=="Light.Scene1", value=="on")||
+  Event(source=="Light.Scene2", value=="on")||
+  Event(source=="Light.Scene4", value=="on")
+then
+  execute.command("Light.Scene3.(OFF)", "off");
+end
+
+rule "--B61: only one light scene 4"
+when
+  Event(source=="Light.Scene1", value=="on")||
+  Event(source=="Light.Scene2", value=="on")||
+  Event(source=="Light.Scene3", value=="on")
+then
+  execute.command("Light.Scene4.(OFF)", "off");
+end
+
+rule "-B61: only one light scene init"
+timer(int: 2s)
+when
+  Event(source=="Light.Scene1", value=="off")
+  Event(source=="Light.Scene2", value=="off")
+  Event(source=="Light.Scene3", value=="off")
+  Event(source=="Light.Scene4", value=="off")
+then
+  execute.command("Light.Scene1.(ON)", "on");
+end
+
+rule "-B61: smart light morning"
+timer(int: 1s)
+when
+  $ls: Event(source=="Light.Smart", value=="on")
+  Event(source=="VETA", $a:value)
+  Event(source=="VETD", $d:value)
+  Event(source=="TimerHH", _TradingTimes(value, $a, $d))
+  Event(source=="Light.Scene1", value=="off")
+then
+  execute.command("Light.Scene1.(ON)", "on");
+end
+
+rule "-P61: smart light night"
+timer(int: 1s)
+when
+  $ls: Event(source=="Light.Smart", value=="on")
+  Event(source=="VETA", $a: value)
+  Event(source=="VETD", $d: value)
+  Event(source=="TimerHH", _TradingTimes(value, $d, $a))
+  Event(source=="Light.Scene4", value=="off")
+then
+  execute.command("Light.Scene4.(ON)");
+end
+
+/*
+// Problematic rule with race conditions. Better to switch it off always manually because lights can be turned on also by smart, which in turn will turn off smart. Ugly.
+rule "-B61: turn smart light off on manual entry"
+when
+(
+  $e:Event(source=="Light.Scene1", value=="on")||
+  $e:Event(source=="Light.Scene2", value=="on")||
+  $e:Event(source=="Light.Scene3", value=="on")||
+  $e:Event(source=="Light.Scene4", value=="on")
+)
+  Event(source=="Light.Smart", value=="on", this before $e) // Switches off on itself, but it will always switch on light 
+then
+  execute.command("Light.Smart.(OFF)", "off");
+end
+*/
+
+rule "-P61: vacation evening lights on"
+when
+  Event(source=="VACATION", eval(Integer.parseInt(value.toString())>0) )
+  Event(source=="VETA", $a: value)
+  Event(source=="VETD", $d: value)
+  Event(source=="TimerHH", _TradingTimes(value, $d, $a))
+  Event(source=="Light.Scene4", value=="off")
+then
+  execute.command("Light.Scene4.(ON)");
+end
+
+rule "-P61: vacation evening lights off"
+when
+  Event(source=="VACATION", eval(Integer.parseInt(value.toString())>0) )
+  Event(source=="VETA", $a: value)
+  Event(source=="VETD", $d: value)
+  Event(source=="TimerHH", _TradingTimes(value, $a, $d))
+  Event(source=="Light.Scene4", value=="on")
+then
+  execute.command("Light.Scene4.(OFF)");
+end
+
+// Start
+
+rule "-P61: smart times on"
+when
+  Event(source=="Smart.Start", value=="on")
+  Event(source=="VETA", $v: value)
+then
+  execute.command("Smart.Start.Time", $v.toString() );
+end
+
+rule "-P61: smart times off"
+when
+  Event(source=="Smart.Start", value!="on")
+  Event(source=="VETA", $v: value)
+then
+  execute.command("Smart.Start.Time", " " );
+end
+
+// Safety
+
+rule "-P61: alarm off"
+when
+  Event(source=="Safety.Alarm", value=="off")
+then
+  execute.command("Safety.Alarm.Image", "off");
+end
+
+rule "-P61: alarm on"
+when
+  Event(source=="Safety.Alarm", value=="on")
+(
+  Event(source=="FS.PIR", value=="on")||
+  Event(source=="FS.Window", value=="on")
+)
+then
+  execute.command("Safety.Alarm.Image", "on");
+end
+
+rule "-P61: smart alarm off"
+when
+  Event(source=="Safety.Smart", value=="on")
+  Event(source=="VETA", $a:value)
+  Event(source=="VETD", $d:value)
+  Event(source=="TimerHH", _TradingTimes(value, $a, $d))
+  Event(source=="Safety.Alarm", value=="on")
+then
+  execute.command("Safety.Alarm.(OFF)");
+end
+
+rule "-P61: smart alarm on"
+when
+  Event(source=="Safety.Smart", value=="on")
+  Event(source=="VETA", $a:value)
+  Event(source=="VETD", $d:value)
+  Event(source=="TimerHH", _TradingTimes(value, $d, $a))
+  Event(source=="Safety.Alarm", value=="off")
+then
+  execute.command("Safety.Alarm.(ON)");
+end
+
+rule "--P61: vacation alarm on"
+timer(cron: 0 * * * * ?)
+when
+  Event(source=="VACATION", eval(Integer.parseInt(value.toString())>0) )
+then
+  execute.command("Safety.Alarm.(ON)");
+end
+
+// Climate
+
+rule "-P61: climate temp init"
+then
+  execute.command("Climate.Day.Temp", "20.5\u00B0");
+  execute.command("Climate.Night.Temp", "16.5\u00B0");
+end
+
+rule "-P61: climate smart vent on morning"
+when
+  Event(source=="Climate.Vent", value=="on")
+  Event(source=="VETA", $a:value)
+  Event(source=="VETD", $d:value)
+  Event(source=="TimerHH", _TradingTimes(value, $a, $d))
+then
+  execute.command("Climate.Vent.State", "low");
+end
+
+rule "-P61: climate smart vent on night"
+when
+  Event(source=="Climate.Vent", value=="on")
+  Event(source=="VETA", $a:value)
+  Event(source=="VETD", $d:value)
+  Event(source=="TimerHH", _TradingTimes(value, $d, $a))
+then
+  execute.command("Climate.Vent.State", "off");
+end
+
+rule "-P61: climate smart vent off"
+when
+  Event(source=="Climate.Vent", value=="off")
+then
+  execute.command("Climate.Vent.State", " ");
+end
+
+rule "-P61: smart climate day on"
+when
+  Event(source=="Climate.Smart", value=="on")
+  Event(source=="VETA", $a:value)
+  Event(source=="VETD", $d:value)
+  Event(source=="TimerHH", _TradingTimes(value, $a, $d))
+  Event(source=="VACATION", eval(Integer.parseInt(value.toString())==0) )
+then
+  execute.command("Climate.Day.(ON)"); 
+end
+
+rule "-P61: smart climate night on"
+when
+  Event(source=="Climate.Smart", value=="on")
+  Event(source=="VETA", $a:value)
+  Event(source=="VETD", $d:value)
+  Event(source=="TimerHH", _TradingTimes(value, $d, $a))
+  Event(source=="VACATION", eval(Integer.parseInt(value.toString())==0) )
+then
+  execute.command("Climate.Night.(ON)"); 
+end
+
+rule "-P61: climate day on"
+when
+  Event(source=="Climate.Day", value=="on")
+  Event(source=="Climate.Day.Temp", $v: value)
+  Event(source=="VACATION", eval(Integer.parseInt(value.toString())==0) )
+then
+  execute.command("Climate.Night.(OFF)"); 
+  execute.command("VR1.COMFORT", $v.toString() ); 
+end
+
+rule "-P61: climate night on"
+when
+  Event(source=="Climate.Night", value=="on")
+  Event(source=="Climate.Night.Temp", $v: value)
+  Event(source=="VACATION", eval(Integer.parseInt(value.toString())==0) )
+then
+  execute.command("Climate.Day.(OFF)"); 
+  execute.command("VR1.COMFORT", $v.toString() );  
+end
+
+rule "-P61: smart climate off on manual comfort change"
+salience 10
+when
+  Event(source == "VR1.COMFORT.inc" , value == "ON")||
+  Event(source == "VR1.COMFORT.dec" , value == "ON")
+then
+  execute.command("Climate.Smart.(OFF)");
+end
+
+rule "--P61: vacation temperature low"
+timer(cron: 10 * * * * ?)
+when
+  Event(source=="VACATION", eval(Integer.parseInt(value.toString())>0) )
+then
+  execute.command("Climate.Night.(OFF)"); 
+  execute.command("Climate.Day.(OFF)"); 
+  execute.command("VR1.COMFORT", "10.0\u00B0");
+end
+
+// Menu
+
+rule "-P61: turn all smart menus on"
+when
+  Event(source=="Menu.Smart", value=="on")
+then
+  execute.command("Light.Smart.(ON)");
+  execute.command("Smart.Start.(ON)");
+  execute.command("Safety.Smart.(ON)");
+  execute.command("Climate.Smart.(ON)");
+end
+
+rule "-P61: turn all smart menus switch off"
+timer(int: 1s)
+when
+  Event(source=="Menu.Smart", value=="on")
+(
+  Event(source=="Light.Smart", value!="on")||
+  Event(source=="Smart.Start", value!="on")||
+  Event(source=="Safety.Smart", value!="on")||
+  Event(source=="Climate.Smart", value!="on")
+)
+then
+  execute.command("Menu.Smart.(OFF)");
+end
+
+rule "-P61: turn smart menus switch on"
+when
+  Event(source=="Light.Smart", value=="on")
+  Event(source=="Smart.Start", value=="on")
+  Event(source=="Safety.Smart", value=="on")
+  Event(source=="Climate.Smart", value=="on")
+then
+  execute.command("Menu.Smart.(ON)");
+end
+
+// blok61 for demo end
