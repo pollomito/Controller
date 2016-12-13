@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <openremote xmlns="http://www.openremote.org" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openremote.org http://www.openremote.org/schemas/panel.xsd">
   <panels>
-    <panel id="2480" name="Config-iPhone5">
-      <include type="group" ref="2481" />
-      <include type="group" ref="2484" />
+    <panel id="2585" name="Config-SamsungS6">
+      <include type="group" ref="2589" />
+      <include type="group" ref="2612" />
     </panel>
     <panel id="2266" name="iPhone5">
       <include type="group" ref="2267" />
@@ -12,14 +12,6 @@
       <include type="group" ref="2272" />
       <include type="group" ref="2273" />
       <include type="group" ref="2274" />
-    </panel>
-    <panel id="1369" name="iPhone6">
-      <include type="group" ref="1383" />
-      <include type="group" ref="1370" />
-      <include type="group" ref="1384" />
-      <include type="group" ref="1385" />
-      <include type="group" ref="1386" />
-      <include type="group" ref="1387" />
     </panel>
     <panel id="1365" name="iPhone6Plus">
       <include type="group" ref="1366" />
@@ -37,236 +29,244 @@
       <include type="group" ref="1376" />
       <include type="group" ref="1377" />
     </panel>
-    <panel id="2585" name="Config-SamsungS6">
-      <include type="group" ref="2589" />
-      <include type="group" ref="2612" />
+    <panel id="2480" name="Config-iPhone5">
+      <include type="group" ref="2481" />
+      <include type="group" ref="2484" />
+    </panel>
+    <panel id="1369" name="iPhone6">
+      <include type="group" ref="1383" />
+      <include type="group" ref="1370" />
+      <include type="group" ref="1384" />
+      <include type="group" ref="1385" />
+      <include type="group" ref="1386" />
+      <include type="group" ref="1387" />
     </panel>
   </panels>
   <screens>
-    <screen id="2486" name="i5Sensors">
+    <screen id="2591" name="SamsungS6CfgSensors">
       <background fillScreen="true">
-        <image src="iPhone5ConfigSensor25.jpg" />
+        <image src="CFGSamsung1.jpg" />
       </background>
-      <absolute left="4" top="55" width="150" height="50">
-        <label id="2487" fontSize="14" color="#333333" text="Sensors" />
+      <absolute left="-3" top="1596" width="1000" height="80">
+        <label id="2599" fontSize="62" color="#333333" text="T - outside" />
       </absolute>
-      <absolute left="163" top="55" width="150" height="50">
-        <label id="2488" fontSize="14" color="#333333" text="PID config" />
+      <absolute left="-23" top="1386" width="1000" height="80">
+        <label id="2604" fontSize="62" color="#333333" text="T - inside" />
       </absolute>
-      <absolute left="-39" top="3" width="350" height="50">
-        <label id="2489" fontSize="20" color="#FFFFFF" text="Smart 61 Configuration" />
+      <absolute left="102" top="325" width="506" height="80">
+        <label id="2592" fontSize="62" color="#333333" text="Sensors" />
       </absolute>
-      <absolute left="254" top="207" width="35" height="21">
-        <switch id="2490">
+      <absolute left="-30" top="76" width="1500" height="100">
+        <label id="2594" fontSize="88" color="#FFFFFF" text="Home Configuration" />
+      </absolute>
+      <absolute left="716" top="325" width="719" height="80">
+        <label id="2593" fontSize="62" color="#333333" text="PID config" />
+      </absolute>
+      <absolute left="717" top="258" width="714" height="214">
+        <button id="2605" name="">
+          <default>
+            <image src="empty.png" />
+          </default>
+          <navigate toGroup="2612" toScreen="2614" />
+        </button>
+      </absolute>
+      <absolute left="60" top="943" width="1000" height="80">
+        <label id="2597" fontSize="62" color="#333333" text="Window Sensor" />
+      </absolute>
+      <absolute left="1146" top="939" width="166" height="89">
+        <switch id="2595">
           <link type="sensor" ref="358549">
-            <state name="on" value="iPhone5switch16.png" />
-            <state name="off" value="iPhone5switch17.png" />
+            <state name="on" value="SliderOnSamsung6.png" />
+            <state name="off" value="SliderOffSamsung6.png" />
           </link>
         </switch>
       </absolute>
-      <absolute left="85" top="121" width="150" height="30">
-        <label id="2491" fontSize="14" color="#808080" text="Safety" />
+      <absolute left="1146" top="733" width="166" height="89">
+        <switch id="2608">
+          <link type="sensor" ref="358548">
+            <state name="on" value="SliderOnSamsung6.png" />
+            <state name="off" value="SliderOffSamsung6.png" />
+          </link>
+        </switch>
       </absolute>
-      <absolute left="53" top="203" width="150" height="30">
-        <label id="2492" fontSize="14" color="#333333" text="Window Sensor" />
+      <absolute left="69" top="737" width="1000" height="80">
+        <label id="2609" fontSize="62" color="#333333" text="Presence Sensor" />
       </absolute>
-      <absolute left="85" top="267" width="150" height="30">
-        <label id="2493" fontSize="14" color="#808080" text="Climate" />
+      <absolute left="220" top="559" width="1000" height="80">
+        <label id="2596" fontSize="62" color="#808080" text="Safety" />
       </absolute>
-      <absolute left="41" top="350" width="150" height="30">
-        <label id="2494" fontSize="14" color="#333333" text="T - outside" />
+      <absolute left="220" top="1212" width="1000" height="80">
+        <label id="2598" fontSize="62" color="#808080" text="Climate" />
       </absolute>
-      <absolute left="187" top="348" width="35" height="35">
-        <button id="2495" name="" hasControlCommand="true" repeat="true">
-          <default>
-            <image src="empty.png" />
-          </default>
-        </button>
-      </absolute>
-      <absolute left="187" top="302" width="35" height="35">
-        <button id="2496" name="" hasControlCommand="true" repeat="true">
-          <default>
-            <image src="empty.png" />
-          </default>
-        </button>
-      </absolute>
-      <absolute left="262" top="301" width="35" height="35">
-        <button id="2497" name="" hasControlCommand="true" repeat="true">
-          <default>
-            <image src="empty.png" />
-          </default>
-        </button>
-      </absolute>
-      <absolute left="261" top="349" width="35" height="35">
-        <button id="2498" name="" hasControlCommand="true" repeat="true">
-          <default>
-            <image src="empty.png" />
-          </default>
-        </button>
-      </absolute>
-      <absolute left="36" top="303" width="150" height="30">
-        <label id="2499" fontSize="14" color="#333333" text="T - inside" />
-      </absolute>
-      <absolute left="158" top="54" width="159" height="50">
-        <button id="2500" name="">
-          <default>
-            <image src="empty.png" />
-          </default>
-          <navigate toGroup="2484" toScreen="2508" />
-        </button>
-      </absolute>
-      <absolute left="217" top="303" width="50" height="30">
-        <label id="2501" fontSize="14" color="#333333" text="5.5">
+      <absolute left="961" top="1386" width="250" height="80">
+        <label id="2606" fontSize="62" color="#333333" text="5.5">
           <link type="sensor" ref="358545" />
         </label>
       </absolute>
-      <absolute left="217" top="350" width="50" height="30">
-        <label id="2502" fontSize="14" color="#333333" text="5.5">
+      <absolute left="961" top="1596" width="250" height="80">
+        <label id="2607" fontSize="62" color="#333333" text="5.5">
           <link type="sensor" ref="358542" />
         </label>
       </absolute>
-      <absolute left="254" top="163" width="35" height="21">
-        <switch id="2503">
-          <link type="sensor" ref="358548">
-            <state name="on" value="iPhone5switch16.png" />
-            <state name="off" value="iPhone5switch17.png" />
-          </link>
-        </switch>
+      <absolute left="1178" top="1360" width="150" height="150">
+        <button id="2602" name="" hasControlCommand="true" repeat="true">
+          <default>
+            <image src="empty.png" />
+          </default>
+        </button>
       </absolute>
-      <absolute left="55" top="159" width="150" height="30">
-        <label id="2504" fontSize="14" color="#333333" text="Presence Sensor" />
+      <absolute left="842" top="1574" width="150" height="150">
+        <button id="2600" name="" hasControlCommand="true" repeat="true">
+          <default>
+            <image src="empty.png" />
+          </default>
+        </button>
+      </absolute>
+      <absolute left="1178" top="1574" width="150" height="150">
+        <button id="2603" name="" hasControlCommand="true">
+          <default>
+            <image src="empty.png" />
+          </default>
+        </button>
+      </absolute>
+      <absolute left="842" top="1360" width="150" height="150">
+        <button id="2601" name="" hasControlCommand="true" repeat="true">
+          <default>
+            <image src="empty.png" />
+          </default>
+        </button>
       </absolute>
     </screen>
-    <screen id="2508" name="i5PID">
+    <screen id="2614" name="SamsungS6CfgPID">
       <background fillScreen="true">
-        <image src="iPhone5ConfigSettings26.jpg" />
+        <image src="CFGSamsung2.jpg" />
       </background>
-      <absolute left="4" top="55" width="150" height="50">
-        <label id="2509" fontSize="14" color="#333333" text="Sensors" />
+      <absolute left="-30" top="76" width="1500" height="100">
+        <label id="2617" fontSize="88" color="#FFFFFF" text="Home Configuration" />
       </absolute>
-      <absolute left="163" top="55" width="150" height="50">
-        <label id="2510" fontSize="14" color="#333333" text="PID config" />
+      <absolute left="220" top="559" width="1000" height="80">
+        <label id="2618" fontSize="62" color="#808080" text="PID Configuration" />
       </absolute>
-      <absolute left="-39" top="3" width="350" height="50">
-        <label id="2511" fontSize="20" color="#FFFFFF" text="Smart 61 Configuration" />
+      <absolute left="716" top="325" width="719" height="80">
+        <label id="2616" fontSize="62" color="#333333" text="PID config" />
       </absolute>
-      <absolute left="85" top="121" width="150" height="30">
-        <label id="2512" fontSize="14" color="#808080" text="PID Configuration" />
+      <absolute left="102" top="325" width="506" height="80">
+        <label id="2615" fontSize="62" color="#333333" text="Sensors" />
       </absolute>
-      <absolute left="47" top="237" width="150" height="30">
-        <label id="2513" fontSize="14" color="#333333" text="Derivative Gain Kd" />
+      <absolute left="2" top="256" width="728" height="216">
+        <button id="2631" name="">
+          <default>
+            <image src="empty.png" />
+          </default>
+          <navigate toGroup="2589" toScreen="2591" />
+        </button>
       </absolute>
-      <absolute left="37" top="198" width="150" height="30">
-        <label id="2514" fontSize="14" color="#333333" text="Integral Gain Ki" />
-      </absolute>
-      <absolute left="262" top="236" width="35" height="35">
-        <button id="2515" name="" hasControlCommand="true" repeat="true">
+      <absolute left="1177" top="708" width="150" height="150">
+        <button id="2627" name="" hasControlCommand="true" repeat="true">
           <default>
             <image src="empty.png" />
           </default>
         </button>
       </absolute>
-      <absolute left="262" top="275" width="35" height="35">
-        <button id="2516" name="" hasControlCommand="true" repeat="true">
+      <absolute left="1177" top="889" width="150" height="150">
+        <button id="2628" name="" hasControlCommand="true" repeat="true">
           <default>
             <image src="empty.png" />
           </default>
         </button>
       </absolute>
-      <absolute left="187" top="196" width="35" height="35">
-        <button id="2517" name="" hasControlCommand="true" repeat="true">
+      <absolute left="1178" top="1065" width="150" height="150">
+        <button id="2621" name="" hasControlCommand="true" repeat="true">
           <default>
             <image src="empty.png" />
           </default>
         </button>
       </absolute>
-      <absolute left="186" top="236" width="35" height="35">
-        <button id="2518" name="" hasControlCommand="true" repeat="true">
+      <absolute left="1179" top="1245" width="150" height="150">
+        <button id="2622" name="" hasControlCommand="true" repeat="true">
           <default>
             <image src="empty.png" />
           </default>
         </button>
       </absolute>
-      <absolute left="187" top="276" width="35" height="35">
-        <button id="2519" name="" hasControlCommand="true" repeat="true">
+      <absolute left="841" top="883" width="150" height="150">
+        <button id="2623" name="" hasControlCommand="true" repeat="true">
           <default>
             <image src="empty.png" />
           </default>
         </button>
       </absolute>
-      <absolute left="187" top="157" width="35" height="35">
-        <button id="2520" name="" hasControlCommand="true" repeat="true">
+      <absolute left="839" top="1062" width="150" height="150">
+        <button id="2624" name="" hasControlCommand="true" repeat="true">
           <default>
             <image src="empty.png" />
           </default>
         </button>
       </absolute>
-      <absolute left="262" top="156" width="35" height="35">
-        <button id="2521" name="" hasControlCommand="true" repeat="true">
+      <absolute left="841" top="1247" width="150" height="150">
+        <button id="2625" name="" hasControlCommand="true" repeat="true">
           <default>
             <image src="empty.png" />
           </default>
         </button>
       </absolute>
-      <absolute left="261" top="197" width="35" height="35">
-        <button id="2522" name="" hasControlCommand="true" repeat="true">
+      <absolute left="840" top="706" width="150" height="150">
+        <button id="2626" name="" hasControlCommand="true" repeat="true">
           <default>
             <image src="empty.png" />
           </default>
         </button>
       </absolute>
-      <absolute left="48" top="158" width="150" height="30">
-        <label id="2523" fontSize="14" color="#333333" text="Proportion Gain Kp" />
-      </absolute>
-      <absolute left="23" top="277" width="140" height="30">
-        <label id="2524" fontSize="14" color="#333333" text="Set Point" />
-      </absolute>
-      <absolute left="0" top="56" width="163" height="50">
-        <button id="2525" name="">
-          <default>
-            <image src="empty.png" />
-          </default>
-          <navigate toGroup="2481" toScreen="2486" />
-        </button>
-      </absolute>
-      <absolute left="217" top="158" width="50" height="30">
-        <label id="2526" fontSize="14" color="#333333" text="5.5">
-          <link type="sensor" ref="358538" />
-        </label>
-      </absolute>
-      <absolute left="217" top="197" width="50" height="30">
-        <label id="2527" fontSize="14" color="#333333" text="5.5">
+      <absolute left="961" top="920" width="250" height="80">
+        <label id="2633" fontSize="62" color="#333333" text="5.5">
           <link type="sensor" ref="358534" />
         </label>
       </absolute>
-      <absolute left="217" top="277" width="50" height="30">
-        <label id="2528" fontSize="14" color="#333333" text="5.5">
+      <absolute left="961" top="1099" width="250" height="80">
+        <label id="2636" fontSize="62" color="#333333" text="5.5">
           <link type="sensor" ref="358531" />
         </label>
       </absolute>
-      <absolute left="217" top="366" width="50" height="30">
-        <label id="2529" fontSize="14" color="#333333" text="5.5">
-          <link type="sensor" ref="358529" />
-        </label>
-      </absolute>
-      <absolute left="218" top="237" width="50" height="30">
-        <label id="2530" fontSize="14" color="#333333" text="5.5">
+      <absolute left="961" top="1279" width="250" height="80">
+        <label id="2634" fontSize="62" color="#333333" text="5.5">
           <link type="sensor" ref="358541" />
         </label>
       </absolute>
-      <absolute left="33" top="366" width="197" height="30">
-        <label id="2531" fontSize="14" color="#333333" text="Steady State Error SE" />
+      <absolute left="961" top="739" width="250" height="80">
+        <label id="2632" fontSize="62" color="#333333" text="5.5">
+          <link type="sensor" ref="358538" />
+        </label>
       </absolute>
-      <absolute left="12" top="406" width="150" height="30">
-        <label id="2532" fontSize="14" color="#333333" text="Output" />
+      <absolute left="1" top="739" width="1100" height="80">
+        <label id="2629" fontSize="62" color="#333333" text="Proportion Gain Kp" />
       </absolute>
-      <absolute left="217" top="406" width="50" height="30">
-        <label id="2533" fontSize="14" color="#333333" text="5.5">
+      <absolute left="8" top="920" width="1000" height="80">
+        <label id="2620" fontSize="62" color="#333333" text="Integral Gain Ki" />
+      </absolute>
+      <absolute left="-4" top="1279" width="1100" height="80">
+        <label id="2619" fontSize="62" color="#333333" text="Derivative Gain Kd" />
+      </absolute>
+      <absolute left="-82" top="1099" width="1000" height="80">
+        <label id="2630" fontSize="62" color="#333333" text="Set Point" />
+      </absolute>
+      <absolute left="-54" top="1676" width="1300" height="80">
+        <label id="2637" fontSize="62" color="#333333" text="Steady State Error SE" />
+      </absolute>
+      <absolute left="163" top="1855" width="500" height="80">
+        <label id="2638" fontSize="62" color="#333333" text="Output" />
+      </absolute>
+      <absolute left="961" top="1855" width="250" height="80">
+        <label id="2639" fontSize="62" color="#333333" text="5.5">
           <link type="sensor" ref="358532" />
         </label>
       </absolute>
-      <absolute left="85" top="336" width="150" height="30">
-        <label id="2534" fontSize="14" color="#808080" text="Output" />
+      <absolute left="961" top="1676" width="250" height="80">
+        <label id="2635" fontSize="62" color="#333333" text="5.5">
+          <link type="sensor" ref="358529" />
+        </label>
+      </absolute>
+      <absolute left="320" top="1528" width="800" height="80">
+        <label id="2640" fontSize="62" color="#808080" text="Output" />
       </absolute>
     </screen>
     <screen id="2276" name="i5Light">
@@ -1207,946 +1207,6 @@
       </absolute>
       <absolute left="259" top="103" width="40" height="40">
         <button id="2422" name="" hasControlCommand="true" repeat="true">
-          <default>
-            <image src="empty.png" />
-          </default>
-        </button>
-      </absolute>
-    </screen>
-    <screen id="1703" name="i6Light">
-      <background fillScreen="true">
-        <image src="BGi61.jpg" />
-      </background>
-      <absolute left="5" top="3" width="60" height="60">
-        <button id="1704" name="">
-          <default>
-            <image src="empty.png" />
-          </default>
-          <pressed>
-            <image src="empty.png" />
-          </pressed>
-          <navigate toGroup="1386" toScreen="1815" />
-        </button>
-      </absolute>
-      <absolute left="311" top="3" width="60" height="60">
-        <button id="1705" name="">
-          <default>
-            <image src="empty.png" />
-          </default>
-          <pressed>
-            <image src="empty.png" />
-          </pressed>
-          <navigate toGroup="1387" toScreen="2107" />
-        </button>
-      </absolute>
-      <absolute left="7" top="79" width="80" height="30">
-        <label id="1710" fontSize="17" color="#333333" text="Light" />
-      </absolute>
-      <absolute left="99" top="79" width="80" height="30">
-        <label id="1711" fontSize="17" color="#808080" text="Start" />
-      </absolute>
-      <absolute left="286" top="79" width="80" height="30">
-        <label id="1713" fontSize="17" color="#808080" text="Climate" />
-      </absolute>
-      <absolute left="26" top="8" width="150" height="50">
-        <label id="1714" fontSize="24" color="#FFFFFF" text="Home" />
-      </absolute>
-      <absolute left="198" top="272" width="94" height="88">
-        <switch id="1715">
-          <link type="sensor" ref="364340">
-            <state name="on" value="iPhone5bg18.jpg" />
-            <state name="off" value="iPhone5bg19.jpg" />
-          </link>
-        </switch>
-      </absolute>
-      <absolute left="198" top="382" width="94" height="88">
-        <switch id="1716">
-          <link type="sensor" ref="364342">
-            <state name="on" value="iPhone5bg18.jpg" />
-            <state name="off" value="iPhone5bg19.jpg" />
-          </link>
-        </switch>
-      </absolute>
-      <absolute left="87" top="228" width="200" height="30">
-        <label id="1719" fontSize="17" color="#808080" text="Lighting Scenes" />
-      </absolute>
-      <absolute left="54" top="148" width="200" height="50">
-        <label id="1720" fontSize="17" color="#333333" text="Smart - Lighting" />
-      </absolute>
-      <absolute left="292" top="161" width="45" height="25">
-        <switch id="1721">
-          <link type="sensor" ref="364338">
-            <state name="on" value="SliderOniPlus.png" />
-            <state name="off" value="SliderOffiPlus.png" />
-          </link>
-        </switch>
-      </absolute>
-      <absolute left="195" top="301" width="100" height="30">
-        <label id="1723" fontSize="17" color="#FFFFFF" text="Away" />
-      </absolute>
-      <absolute left="195" top="411" width="100" height="30">
-        <label id="1725" fontSize="17" color="#FFFFFF" text="Night" />
-      </absolute>
-      <absolute left="193" top="79" width="80" height="30">
-        <label id="1712" fontSize="17" color="#808080" text="Safety" />
-      </absolute>
-      <absolute left="2" top="69" width="83" height="50">
-        <button id="1709" name="">
-          <default>
-            <image src="empty.png" />
-          </default>
-          <pressed>
-            <image src="empty.png" />
-          </pressed>
-        </button>
-      </absolute>
-      <absolute left="93" top="69" width="94" height="50">
-        <button id="1706" name="">
-          <default>
-            <image src="empty.png" />
-          </default>
-          <pressed>
-            <image src="empty.png" />
-          </pressed>
-          <navigate toGroup="1370" toScreen="1729" />
-        </button>
-      </absolute>
-      <absolute left="187" top="70" width="94" height="50">
-        <button id="1707" name="">
-          <default>
-            <image src="empty.png" />
-          </default>
-          <pressed>
-            <image src="empty.png" />
-          </pressed>
-          <navigate toGroup="1384" toScreen="1760" />
-        </button>
-      </absolute>
-      <absolute left="281" top="70" width="90" height="50">
-        <button id="1708" name="">
-          <default>
-            <image src="empty.png" />
-          </default>
-          <pressed>
-            <image src="empty.png" />
-          </pressed>
-          <navigate toGroup="1385" toScreen="1781" />
-        </button>
-      </absolute>
-      <absolute left="83" top="382" width="94" height="88">
-        <switch id="1717">
-          <link type="sensor" ref="364341">
-            <state name="on" value="iPhone5bg18.jpg" />
-            <state name="off" value="iPhone5bg19.jpg" />
-          </link>
-        </switch>
-      </absolute>
-      <absolute left="83" top="272" width="94" height="88">
-        <switch id="1718">
-          <link type="sensor" ref="364339">
-            <state name="on" value="iPhone5bg18.jpg" />
-            <state name="off" value="iPhone5bg19.jpg" />
-          </link>
-        </switch>
-      </absolute>
-      <absolute left="80" top="411" width="100" height="30">
-        <label id="1724" fontSize="17" color="#FFFFFF" text="Evening" />
-      </absolute>
-      <absolute left="80" top="301" width="100" height="30">
-        <label id="1722" fontSize="17" color="#FFFFFF" text="Morning" />
-      </absolute>
-    </screen>
-    <screen id="1729" name="i6Start">
-      <background fillScreen="true">
-        <image src="BGi62.jpg" />
-      </background>
-      <absolute left="5" top="3" width="60" height="60">
-        <button id="1730" name="">
-          <default>
-            <image src="empty.png" />
-          </default>
-          <pressed>
-            <image src="empty.png" />
-          </pressed>
-          <navigate toGroup="1386" toScreen="1815" />
-        </button>
-      </absolute>
-      <absolute left="311" top="3" width="60" height="60">
-        <button id="1731" name="">
-          <default>
-            <image src="empty.png" />
-          </default>
-          <pressed>
-            <image src="empty.png" />
-          </pressed>
-          <navigate toGroup="1387" toScreen="2107" />
-        </button>
-      </absolute>
-      <absolute left="87" top="56" width="72" height="50">
-        <button id="1732" name="">
-          <default>
-            <image src="empty.png" />
-          </default>
-          <pressed>
-            <image src="empty.png" />
-          </pressed>
-        </button>
-      </absolute>
-      <absolute left="7" top="79" width="80" height="30">
-        <label id="1736" fontSize="17" color="#808080" text="Light" />
-      </absolute>
-      <absolute left="99" top="79" width="80" height="30">
-        <label id="1737" fontSize="17" color="#333333" text="Start" />
-      </absolute>
-      <absolute left="193" top="79" width="80" height="30">
-        <label id="1738" fontSize="17" color="#808080" text="Safety" />
-      </absolute>
-      <absolute left="286" top="79" width="80" height="30">
-        <label id="1739" fontSize="17" color="#808080" text="Climate" />
-      </absolute>
-      <absolute left="26" top="8" width="150" height="50">
-        <label id="1740" fontSize="24" color="#FFFFFF" text="Home" />
-      </absolute>
-      <absolute left="292" top="161" width="45" height="25">
-        <switch id="1741">
-          <link type="sensor" ref="364345">
-            <state name="on" value="SliderOniPlus.png" />
-            <state name="off" value="SliderOffiPlus.png" />
-          </link>
-        </switch>
-      </absolute>
-      <absolute left="292" top="271" width="45" height="25">
-        <switch id="1742">
-          <link type="sensor" ref="364344">
-            <state name="on" value="SliderOniPlus.png" />
-            <state name="off" value="SliderOffiPlus.png" />
-          </link>
-        </switch>
-      </absolute>
-      <absolute left="292" top="331" width="45" height="25">
-        <switch id="1743">
-          <link type="sensor" ref="364343">
-            <state name="on" value="SliderOniPlus.png" />
-            <state name="off" value="SliderOffiPlus.png" />
-          </link>
-        </switch>
-      </absolute>
-      <absolute left="53" top="148" width="227" height="50">
-        <label id="1744" fontSize="17" color="#333333" text="Smart - Smart Start" />
-      </absolute>
-      <absolute left="76" top="228" width="223" height="30">
-        <label id="1745" fontSize="17" color="#808080" text="Smart Start Devices" />
-      </absolute>
-      <absolute left="60" top="267" width="150" height="30">
-        <label id="1746" fontSize="17" color="#333333" text="Dishwasher" />
-      </absolute>
-      <absolute left="69" top="328" width="150" height="30">
-        <label id="1747" fontSize="17" color="#333333" text="Coffee-maker" />
-      </absolute>
-      <absolute left="87" top="395" width="200" height="30">
-        <label id="1748" fontSize="17" color="#808080" text="Energy Monitor" />
-      </absolute>
-      <absolute left="29" top="419" width="100" height="25">
-        <label id="1749" fontSize="14" color="#333333" text="1.4 kW" />
-      </absolute>
-      <absolute left="29" top="511" width="100" height="25">
-        <label id="1750" fontSize="14" color="#333333" text="0.0 kW" />
-      </absolute>
-      <absolute left="137" top="474" width="100" height="25">
-        <label id="1751" fontSize="14" color="#333333" text="0.9 kW" />
-      </absolute>
-      <absolute left="244" top="511" width="100" height="25">
-        <label id="1752" fontSize="14" color="#333333" text="0.9 kW" />
-      </absolute>
-      <absolute left="29" top="436" width="100" height="25">
-        <label id="1753" fontSize="12" color="#808080" text="Solar" />
-      </absolute>
-      <absolute left="244" top="529" width="100" height="25">
-        <label id="1754" fontSize="12" color="#808080" text="Battery" />
-      </absolute>
-      <absolute left="137" top="492" width="100" height="25">
-        <label id="1755" fontSize="12" color="#808080" text="Usage" />
-      </absolute>
-      <absolute left="29" top="529" width="100" height="25">
-        <label id="1756" fontSize="12" color="#808080" text="Mains Power" />
-      </absolute>
-      <absolute left="2" top="68" width="88" height="50">
-        <button id="1735" name="">
-          <default>
-            <image src="empty.png" />
-          </default>
-          <pressed>
-            <image src="empty.png" />
-          </pressed>
-          <navigate toGroup="1383" toScreen="1703" />
-        </button>
-      </absolute>
-      <absolute left="186" top="70" width="90" height="50">
-        <button id="1733" name="">
-          <default>
-            <image src="empty.png" />
-          </default>
-          <pressed>
-            <image src="empty.png" />
-          </pressed>
-          <navigate toGroup="1384" toScreen="1760" />
-        </button>
-      </absolute>
-      <absolute left="282" top="69" width="88" height="50">
-        <button id="1734" name="">
-          <default>
-            <image src="empty.png" />
-          </default>
-          <pressed>
-            <image src="empty.png" />
-          </pressed>
-          <navigate toGroup="1385" toScreen="1781" />
-        </button>
-      </absolute>
-      <absolute left="209" top="267" width="100" height="30">
-        <label id="2650" fontSize="17" color="#808080" text="8:56">
-          <link type="sensor" ref="365672" />
-        </label>
-      </absolute>
-      <absolute left="209" top="328" width="100" height="30">
-        <label id="2652" fontSize="17" color="#808080" text="8:12">
-          <link type="sensor" ref="365672" />
-        </label>
-      </absolute>
-    </screen>
-    <screen id="1760" name="i6Safety">
-      <background fillScreen="true">
-        <image src="BGi63.jpg" />
-      </background>
-      <absolute left="4" top="3" width="60" height="60">
-        <button id="1761" name="">
-          <default>
-            <image src="empty.png" />
-          </default>
-          <pressed>
-            <image src="empty.png" />
-          </pressed>
-          <navigate toGroup="1386" toScreen="1815" />
-        </button>
-      </absolute>
-      <absolute left="311" top="3" width="60" height="60">
-        <button id="1762" name="">
-          <default>
-            <image src="empty.png" />
-          </default>
-          <pressed>
-            <image src="empty.png" />
-          </pressed>
-          <navigate toGroup="1387" toScreen="2107" />
-        </button>
-      </absolute>
-      <absolute left="7" top="79" width="80" height="30">
-        <label id="1767" fontSize="17" color="#808080" text="Light" />
-      </absolute>
-      <absolute left="99" top="79" width="80" height="30">
-        <label id="1768" fontSize="17" color="#808080" text="Start" />
-      </absolute>
-      <absolute left="193" top="79" width="80" height="30">
-        <label id="1769" fontSize="17" color="#333333" text="Safety" />
-      </absolute>
-      <absolute left="286" top="79" width="80" height="30">
-        <label id="1770" fontSize="17" color="#808080" text="Climate" />
-      </absolute>
-      <absolute left="26" top="8" width="150" height="50">
-        <label id="1771" fontSize="24" color="#FFFFFF" text="Home" />
-      </absolute>
-      <absolute left="50" top="397" width="150" height="50">
-        <label id="1776" fontSize="17" color="#333333" text="Windows" />
-      </absolute>
-      <absolute left="255" top="407" width="100" height="30">
-        <label id="1777" fontSize="17" color="#333333" text="Open">
-          <link type="sensor" ref="358496">
-            <state name="Closed" value="Closed" />
-            <state name="Open" value="Open" />
-          </link>
-        </label>
-      </absolute>
-      <absolute left="2" top="69" width="87" height="50">
-        <button id="1766" name="">
-          <default>
-            <image src="empty.png" />
-          </default>
-          <pressed>
-            <image src="empty.png" />
-          </pressed>
-          <navigate toGroup="1383" toScreen="1703" />
-        </button>
-      </absolute>
-      <absolute left="90" top="68" width="100" height="50">
-        <button id="1763" name="">
-          <default>
-            <image src="empty.png" />
-          </default>
-          <pressed>
-            <image src="empty.png" />
-          </pressed>
-          <navigate toGroup="1370" toScreen="1729" />
-        </button>
-      </absolute>
-      <absolute left="194" top="69" width="77" height="50">
-        <button id="1764" name="">
-          <default>
-            <image src="empty.png" />
-          </default>
-          <pressed>
-            <image src="empty.png" />
-          </pressed>
-        </button>
-      </absolute>
-      <absolute left="278" top="69" width="93" height="50">
-        <button id="1765" name="">
-          <default>
-            <image src="empty.png" />
-          </default>
-          <pressed>
-            <image src="empty.png" />
-          </pressed>
-          <navigate toGroup="1385" toScreen="1781" />
-        </button>
-      </absolute>
-      <absolute left="165" top="338" width="45" height="25">
-        <switch id="1775">
-          <link type="sensor" ref="364346">
-            <state name="on" value="SliderOniPlus.png" />
-            <state name="off" value="SliderOffiPlus.png" />
-          </link>
-        </switch>
-      </absolute>
-      <absolute left="112" top="227" width="150" height="30">
-        <label id="1773" fontSize="17" color="#808080" text="Alarm" />
-      </absolute>
-      <absolute left="47" top="148" width="200" height="50">
-        <label id="1772" fontSize="17" color="#333333" text="Smart - Safety" />
-      </absolute>
-      <absolute left="292" top="161" width="45" height="25">
-        <switch id="1774">
-          <link type="sensor" ref="364347">
-            <state name="on" value="SliderOniPlus.png" />
-            <state name="off" value="SliderOffiPlus.png" />
-          </link>
-        </switch>
-      </absolute>
-      <absolute left="178" top="283" width="19" height="19">
-        <image id="2654" src="Eyesmall.png">
-          <link type="sensor" ref="365673">
-            <state name="on" value="Eyesmall.png" />
-            <state name="off" value="empty.png" />
-          </link>
-        </image>
-      </absolute>
-    </screen>
-    <screen id="1781" name="i6Climate">
-      <background fillScreen="true">
-        <image src="BGi641.jpg" />
-      </background>
-      <absolute left="6" top="3" width="60" height="60">
-        <button id="1782" name="">
-          <default>
-            <image src="empty.png" />
-          </default>
-          <pressed>
-            <image src="empty.png" />
-          </pressed>
-          <navigate toGroup="1386" toScreen="1815" />
-        </button>
-      </absolute>
-      <absolute left="312" top="3" width="60" height="60">
-        <button id="1783" name="">
-          <default>
-            <image src="empty.png" />
-          </default>
-          <pressed>
-            <image src="empty.png" />
-          </pressed>
-          <navigate toGroup="1387" toScreen="2107" />
-        </button>
-      </absolute>
-      <absolute left="7" top="79" width="80" height="30">
-        <label id="1788" fontSize="17" color="#808080" text="Light" />
-      </absolute>
-      <absolute left="193" top="79" width="80" height="30">
-        <label id="1790" fontSize="17" color="#808080" text="Safety" />
-      </absolute>
-      <absolute left="286" top="79" width="80" height="30">
-        <label id="1791" fontSize="17" color="#333333" text="Climate" />
-      </absolute>
-      <absolute left="26" top="8" width="150" height="50">
-        <label id="1792" fontSize="24" color="#FFFFFF" text="Home" />
-      </absolute>
-      <absolute left="248" top="240" width="50" height="20">
-        <label id="1795" fontSize="17" color="#FFFFFF" text="Set" />
-      </absolute>
-      <absolute left="227" top="259" width="130" height="50">
-        <label id="1796" fontSize="36" color="#FFFFFF" text="20.0">
-          <link type="sensor" ref="358494" />
-        </label>
-      </absolute>
-      <absolute left="-11" top="255" width="236" height="80">
-        <label id="1797" fontSize="60" color="#333333" text="18.0">
-          <link type="sensor" ref="358500" />
-        </label>
-      </absolute>
-      <absolute left="221" top="447" width="50" height="20">
-        <label id="1798" fontSize="17" color="#808080" text="21">
-          <link type="sensor" ref="365674" />
-        </label>
-      </absolute>
-      <absolute left="221" top="497" width="50" height="20">
-        <label id="1799" fontSize="17" color="#808080" text="18">
-          <link type="sensor" ref="365675" />
-        </label>
-      </absolute>
-      <absolute left="52" top="447" width="100" height="20">
-        <label id="1800" fontSize="17" color="#333333" text="Day" />
-      </absolute>
-      <absolute left="57" top="497" width="100" height="20">
-        <label id="1801" fontSize="17" color="#333333" text="Night" />
-      </absolute>
-      <absolute left="88" top="401" width="198" height="30">
-        <label id="1804" fontSize="17" color="#808080" text="Heating scenes" />
-      </absolute>
-      <absolute left="112" top="557" width="150" height="30">
-        <label id="1805" fontSize="17" color="#808080" text="Ventilation" />
-      </absolute>
-      <absolute left="221" top="596" width="50" height="20">
-        <label id="1807" fontSize="17" color="#808080" text="Home">
-          <link type="sensor" ref="365676" />
-        </label>
-      </absolute>
-      <absolute left="281" top="621" width="69" height="20">
-        <label id="1808" fontSize="17" color="#333333" text="Smart" />
-      </absolute>
-      <absolute left="6" top="68" width="80" height="50">
-        <button id="1787" name="">
-          <default>
-            <image src="empty.png" />
-          </default>
-          <pressed>
-            <image src="empty.png" />
-          </pressed>
-          <navigate toGroup="1383" toScreen="1703" />
-        </button>
-      </absolute>
-      <absolute left="93" top="69" width="91" height="50">
-        <button id="1784" name="">
-          <default>
-            <image src="empty.png" />
-          </default>
-          <pressed>
-            <image src="empty.png" />
-          </pressed>
-          <navigate toGroup="1370" toScreen="1729" />
-        </button>
-      </absolute>
-      <absolute left="99" top="79" width="80" height="30">
-        <label id="1789" fontSize="17" color="#808080" text="Start" />
-      </absolute>
-      <absolute left="183" top="69" width="94" height="50">
-        <button id="1785" name="">
-          <default>
-            <image src="empty.png" />
-          </default>
-          <pressed>
-            <image src="empty.png" />
-          </pressed>
-          <navigate toGroup="1384" toScreen="1760" />
-        </button>
-      </absolute>
-      <absolute left="278" top="68" width="91" height="50">
-        <button id="1786" name="">
-          <default>
-            <image src="empty.png" />
-          </default>
-          <pressed>
-            <image src="empty.png" />
-          </pressed>
-        </button>
-      </absolute>
-      <absolute left="292" top="161" width="45" height="25">
-        <switch id="1794">
-          <link type="sensor" ref="364348">
-            <state name="on" value="SliderOniPlus.png" />
-            <state name="off" value="SliderOffiPlus.png" />
-          </link>
-        </switch>
-      </absolute>
-      <absolute left="44" top="148" width="215" height="50">
-        <label id="1793" fontSize="17" color="#333333" text="Smart - Climate" />
-      </absolute>
-      <absolute left="207" top="306" width="65" height="57">
-        <button id="1811" name="" hasControlCommand="true" repeat="true">
-          <default>
-            <image src="empty.png" />
-          </default>
-        </button>
-      </absolute>
-      <absolute left="270" top="307" width="72" height="58">
-        <button id="1810" name="" hasControlCommand="true" repeat="true">
-          <default>
-            <image src="empty.png" />
-          </default>
-        </button>
-      </absolute>
-      <absolute left="292" top="445" width="45" height="25">
-        <switch id="1802">
-          <link type="sensor" ref="364349">
-            <state name="on" value="SliderOniPlus.png" />
-            <state name="off" value="SliderOffiPlus.png" />
-          </link>
-        </switch>
-      </absolute>
-      <absolute left="292" top="495" width="45" height="25">
-        <switch id="1803">
-          <link type="sensor" ref="364350">
-            <state name="on" value="SliderOniPlus.png" />
-            <state name="off" value="SliderOffiPlus.png" />
-          </link>
-        </switch>
-      </absolute>
-      <absolute left="292" top="594" width="45" height="25">
-        <switch id="1809">
-          <link type="sensor" ref="364351">
-            <state name="on" value="SliderOniPlus.png" />
-            <state name="off" value="SliderOffiPlus.png" />
-          </link>
-        </switch>
-      </absolute>
-      <absolute left="48" top="596" width="200" height="20">
-        <label id="1806" fontSize="17" color="#333333" text="Auto-ventilation" />
-      </absolute>
-    </screen>
-    <screen id="1815" name="i6Menu">
-      <background fillScreen="true">
-        <image src="BGi65.jpg" />
-      </background>
-      <absolute left="4" top="3" width="60" height="60">
-        <button id="1816" name="">
-          <default>
-            <image src="empty.png" />
-          </default>
-          <pressed>
-            <image src="empty.png" />
-          </pressed>
-          <navigate toGroup="1383" toScreen="1703" />
-        </button>
-      </absolute>
-      <absolute left="311" top="3" width="60" height="60">
-        <button id="1817" name="">
-          <default>
-            <image src="empty.png" />
-          </default>
-          <pressed>
-            <image src="empty.png" />
-          </pressed>
-          <navigate toGroup="1387" toScreen="2107" />
-        </button>
-      </absolute>
-      <absolute left="26" top="8" width="150" height="50">
-        <label id="1818" fontSize="24" color="#FFFFFF" text="Home" />
-      </absolute>
-      <absolute left="1" top="160" width="100" height="20">
-        <label id="1819" fontSize="17" color="#333333" text="Light" />
-      </absolute>
-      <absolute left="-5" top="90" width="150" height="20">
-        <label id="1820" fontSize="17" color="#000000" text="Full Smart " />
-      </absolute>
-      <absolute left="0" top="207" width="100" height="20">
-        <label id="1821" fontSize="17" color="#333333" text="Start" />
-      </absolute>
-      <absolute left="10" top="303" width="100" height="20">
-        <label id="1822" fontSize="17" color="#333333" text="Climate" />
-      </absolute>
-      <absolute left="7" top="255" width="100" height="20">
-        <label id="1823" fontSize="17" color="#333333" text="Safety" />
-      </absolute>
-      <absolute left="13" top="377" width="100" height="20">
-        <label id="1824" fontSize="17" color="#333333" text="Account" />
-      </absolute>
-      <absolute left="11" top="421" width="100" height="20">
-        <label id="1825" fontSize="17" color="#333333" text="Log out" />
-      </absolute>
-      <absolute left="3" top="149" width="284" height="41">
-        <button id="1827" name="">
-          <default>
-            <image src="empty.png" />
-          </default>
-        </button>
-      </absolute>
-      <absolute left="3" top="195" width="284" height="41">
-        <button id="1828" name="">
-          <default>
-            <image src="empty.png" />
-          </default>
-        </button>
-      </absolute>
-      <absolute left="3" top="244" width="284" height="41">
-        <button id="1829" name="">
-          <default>
-            <image src="empty.png" />
-          </default>
-        </button>
-      </absolute>
-      <absolute left="3" top="291" width="284" height="41">
-        <button id="1830" name="">
-          <default>
-            <image src="empty.png" />
-          </default>
-        </button>
-      </absolute>
-      <absolute left="230" top="88" width="45" height="25">
-        <switch id="1826">
-          <link type="sensor" ref="364354">
-            <state name="on" value="SliderOniPlus.png" />
-            <state name="off" value="SliderOffiPlus.png" />
-          </link>
-        </switch>
-      </absolute>
-      <absolute left="296" top="67" width="75" height="595">
-        <button id="2672" name="">
-          <default>
-            <image src="empty.png" />
-          </default>
-          <navigate toGroup="1383" toScreen="1703" />
-        </button>
-      </absolute>
-    </screen>
-    <screen id="2107" name="i6Settings">
-      <background fillScreen="true">
-        <image src="BGi66.jpg" />
-      </background>
-      <grid left="28" top="314" width="319" height="315" rows="7" cols="5">
-        <cell x="1" y="3" rowspan="1" colspan="1">
-          <label id="2123" fontSize="14" color="#333333" text="07:14">
-            <link type="sensor" ref="358447" />
-          </label>
-        </cell>
-        <cell x="2" y="0" rowspan="1" colspan="1">
-          <label id="2124" fontSize="14" color="#C0C0C0" text="08:29">
-            <link type="sensor" ref="358448" />
-          </label>
-        </cell>
-        <cell x="3" y="1" rowspan="1" colspan="1">
-          <label id="2125" fontSize="14" color="#C0C0C0" text="17:33">
-            <link type="sensor" ref="358475" />
-          </label>
-        </cell>
-        <cell x="4" y="2" rowspan="1" colspan="1">
-          <label id="2126" fontSize="14" color="#333333" text="23:39">
-            <link type="sensor" ref="358449" />
-          </label>
-        </cell>
-        <cell x="1" y="5" rowspan="1" colspan="1">
-          <label id="2128" fontSize="14" color="#333333" text="09:02">
-            <link type="sensor" ref="358459" />
-          </label>
-        </cell>
-        <cell x="1" y="4" rowspan="1" colspan="1">
-          <label id="2129" fontSize="14" color="#333333" text="07:09">
-            <link type="sensor" ref="358443" />
-          </label>
-        </cell>
-        <cell x="4" y="3" rowspan="1" colspan="1">
-          <label id="2130" fontSize="14" color="#333333" text="23:48">
-            <link type="sensor" ref="358472" />
-          </label>
-        </cell>
-        <cell x="1" y="2" rowspan="1" colspan="1">
-          <label id="2134" fontSize="14" color="#333333" text="07:01">
-            <link type="sensor" ref="358477" />
-          </label>
-        </cell>
-        <cell x="3" y="2" rowspan="1" colspan="1">
-          <label id="2135" fontSize="14" color="#C0C0C0" text="17:31">
-            <link type="sensor" ref="358449" />
-          </label>
-        </cell>
-        <cell x="3" y="3" rowspan="1" colspan="1">
-          <label id="2136" fontSize="14" color="#C0C0C0" text="17:27">
-            <link type="sensor" ref="358472" />
-          </label>
-        </cell>
-        <cell x="2" y="1" rowspan="1" colspan="1">
-          <label id="2138" fontSize="14" color="#C0C0C0" text="08:17">
-            <link type="sensor" ref="358481" />
-          </label>
-        </cell>
-        <cell x="2" y="2" rowspan="1" colspan="1">
-          <label id="2139" fontSize="14" color="#C0C0C0" text="08:21">
-            <link type="sensor" ref="358477" />
-          </label>
-        </cell>
-        <cell x="2" y="3" rowspan="1" colspan="1">
-          <label id="2140" fontSize="14" color="#C0C0C0" text="08:24">
-            <link type="sensor" ref="358447" />
-          </label>
-        </cell>
-        <cell x="0" y="0" rowspan="1" colspan="1">
-          <label id="2143" fontSize="14" color="#FFFFFF" text="Mon" />
-        </cell>
-        <cell x="0" y="1" rowspan="1" colspan="1">
-          <label id="2144" fontSize="14" color="#FFFFFF" text="Tue" />
-        </cell>
-        <cell x="0" y="2" rowspan="1" colspan="1">
-          <label id="2145" fontSize="14" color="#FFFFFF" text="Wed" />
-        </cell>
-        <cell x="0" y="3" rowspan="1" colspan="1">
-          <label id="2146" fontSize="14" color="#FFFFFF" text="Thu" />
-        </cell>
-        <cell x="0" y="4" rowspan="1" colspan="1">
-          <label id="2147" fontSize="14" color="#FFFFFF" text="Fri" />
-        </cell>
-        <cell x="0" y="5" rowspan="1" colspan="1">
-          <label id="2148" fontSize="14" color="#FFFFFF" text="Sat" />
-        </cell>
-        <cell x="1" y="0" rowspan="1" colspan="1">
-          <label id="2150" fontSize="14" color="#333333" text="07:06">
-            <link type="sensor" ref="358448" />
-          </label>
-        </cell>
-        <cell x="1" y="1" rowspan="1" colspan="1">
-          <label id="2151" fontSize="14" color="#333333" text="07:11">
-            <link type="sensor" ref="358481" />
-          </label>
-        </cell>
-        <cell x="3" y="0" rowspan="1" colspan="1">
-          <label id="2152" fontSize="14" color="#C0C0C0" text="17:18">
-            <link type="sensor" ref="358446" />
-          </label>
-        </cell>
-        <cell x="4" y="0" rowspan="1" colspan="1">
-          <label id="2153" fontSize="14" color="#333333" text="23:42">
-            <link type="sensor" ref="358446" />
-          </label>
-        </cell>
-        <cell x="4" y="1" rowspan="1" colspan="1">
-          <label id="2157" fontSize="14" color="#333333" text="23:52">
-            <link type="sensor" ref="358475" />
-          </label>
-        </cell>
-        <cell x="3" y="4" rowspan="1" colspan="1">
-          <label id="2137" fontSize="14" color="#C0C0C0" text="16:05">
-            <link type="sensor" ref="358479" />
-          </label>
-        </cell>
-        <cell x="4" y="4" rowspan="1" colspan="1">
-          <label id="2131" fontSize="14" color="#333333" text="00:55">
-            <link type="sensor" ref="358479" />
-          </label>
-        </cell>
-        <cell x="2" y="4" rowspan="1" colspan="1">
-          <label id="2141" fontSize="14" color="#C0C0C0" text="08:25">
-            <link type="sensor" ref="358443" />
-          </label>
-        </cell>
-        <cell x="2" y="5" rowspan="1" colspan="1">
-          <label id="2154" fontSize="14" color="#C0C0C0" text="13:52">
-            <link type="sensor" ref="358459" />
-          </label>
-        </cell>
-        <cell x="2" y="6" rowspan="1" colspan="1">
-          <label id="2155" fontSize="14" color="#C0C0C0" text="14:21">
-            <link type="sensor" ref="358463" />
-          </label>
-        </cell>
-        <cell x="1" y="6" rowspan="1" colspan="1">
-          <label id="2127" fontSize="14" color="#333333" text="09:27">
-            <link type="sensor" ref="358463" />
-          </label>
-        </cell>
-        <cell x="0" y="6" rowspan="1" colspan="1">
-          <label id="2149" fontSize="14" color="#FFFFFF" text="Sun" />
-        </cell>
-        <cell x="3" y="6" rowspan="1" colspan="1">
-          <label id="2156" fontSize="14" color="#C0C0C0" text="17:18">
-            <link type="sensor" ref="358442" />
-          </label>
-        </cell>
-        <cell x="4" y="6" rowspan="1" colspan="1">
-          <label id="2133" fontSize="14" color="#333333" text="23:42">
-            <link type="sensor" ref="358442" />
-          </label>
-        </cell>
-        <cell x="4" y="5" rowspan="1" colspan="1">
-          <label id="2132" fontSize="14" color="#333333" text="01:15">
-            <link type="sensor" ref="358471" />
-          </label>
-        </cell>
-        <cell x="3" y="5" rowspan="1" colspan="1">
-          <label id="2142" fontSize="14" color="#C0C0C0" text="17:18">
-            <link type="sensor" ref="358471" />
-          </label>
-        </cell>
-      </grid>
-      <absolute left="2" top="3" width="60" height="60">
-        <button id="2108" name="">
-          <default>
-            <image src="empty.png" />
-          </default>
-          <pressed>
-            <image src="empty.png" />
-          </pressed>
-          <navigate toGroup="1383" toScreen="1703" />
-        </button>
-      </absolute>
-      <absolute left="263" top="3" width="50" height="50">
-        <button id="2109" name="">
-          <default>
-            <image src="empty.png" />
-          </default>
-          <pressed>
-            <image src="empty.png" />
-          </pressed>
-        </button>
-      </absolute>
-      <absolute left="26" top="8" width="150" height="50">
-        <label id="2110" fontSize="24" color="#FFFFFF" text="Home" />
-      </absolute>
-      <absolute left="19" top="254" width="350" height="30">
-        <label id="2111" fontSize="17" color="#808080" text="Current predicted weekschedule:" />
-      </absolute>
-      <absolute left="86" top="89" width="202" height="30">
-        <label id="2112" fontSize="17" color="#808080" text="Vacation Settings" />
-      </absolute>
-      <absolute left="47" top="131" width="200" height="30">
-        <label id="2113" fontSize="17" color="#333333" text="Number of days" />
-      </absolute>
-      <absolute left="258" top="131" width="50" height="30">
-        <label id="2114" fontSize="17" color="#808080" text="0">
-          <link type="sensor" ref="358452" />
-        </label>
-      </absolute>
-      <absolute left="50" top="175" width="220" height="30">
-        <label id="2115" fontSize="17" color="#333333" text="Notification number" />
-      </absolute>
-      <absolute left="237" top="175" width="120" height="30">
-        <label id="2116" fontSize="17" color="#808080" text="0625312689" />
-      </absolute>
-      <absolute left="95" top="291" width="60" height="20">
-        <label id="2117" fontSize="14" color="#FFFFFF" text="Mrng" />
-      </absolute>
-      <absolute left="158" top="291" width="60" height="20">
-        <label id="2118" fontSize="14" color="#FFFFFF" text="Away" />
-      </absolute>
-      <absolute left="221" top="291" width="60" height="20">
-        <label id="2119" fontSize="14" color="#FFFFFF" text="Eve" />
-      </absolute>
-      <absolute left="285" top="291" width="60" height="20">
-        <label id="2120" fontSize="14" color="#FFFFFF" text="Night" />
-      </absolute>
-      <absolute left="218" top="124" width="40" height="40">
-        <button id="2121" name="" hasControlCommand="true" repeat="true">
-          <default>
-            <image src="empty.png" />
-          </default>
-        </button>
-      </absolute>
-      <absolute left="306" top="125" width="40" height="40">
-        <button id="2122" name="" hasControlCommand="true" repeat="true">
           <default>
             <image src="empty.png" />
           </default>
@@ -3991,239 +3051,1179 @@
         <label id="2008" fontSize="62" color="#808080" text="0625312689" />
       </absolute>
     </screen>
-    <screen id="2591" name="SamsungS6CfgSensors">
+    <screen id="2486" name="i5Sensors">
       <background fillScreen="true">
-        <image src="CFGSamsung1.jpg" />
+        <image src="iPhone5ConfigSensor25.jpg" />
       </background>
-      <absolute left="-3" top="1596" width="1000" height="80">
-        <label id="2599" fontSize="62" color="#333333" text="T - outside" />
+      <absolute left="4" top="55" width="150" height="50">
+        <label id="2487" fontSize="14" color="#333333" text="Sensors" />
       </absolute>
-      <absolute left="-23" top="1386" width="1000" height="80">
-        <label id="2604" fontSize="62" color="#333333" text="T - inside" />
+      <absolute left="163" top="55" width="150" height="50">
+        <label id="2488" fontSize="14" color="#333333" text="PID config" />
       </absolute>
-      <absolute left="102" top="325" width="506" height="80">
-        <label id="2592" fontSize="62" color="#333333" text="Sensors" />
+      <absolute left="-39" top="3" width="350" height="50">
+        <label id="2489" fontSize="20" color="#FFFFFF" text="Smart 61 Configuration" />
       </absolute>
-      <absolute left="-30" top="76" width="1500" height="100">
-        <label id="2594" fontSize="88" color="#FFFFFF" text="Home Configuration" />
+      <absolute left="254" top="207" width="35" height="21">
+        <switch id="2490">
+          <link type="sensor" ref="358549">
+            <state name="on" value="iPhone5switch16.png" />
+            <state name="off" value="iPhone5switch17.png" />
+          </link>
+        </switch>
       </absolute>
-      <absolute left="716" top="325" width="719" height="80">
-        <label id="2593" fontSize="62" color="#333333" text="PID config" />
+      <absolute left="85" top="121" width="150" height="30">
+        <label id="2491" fontSize="14" color="#808080" text="Safety" />
       </absolute>
-      <absolute left="717" top="258" width="714" height="214">
-        <button id="2605" name="">
+      <absolute left="53" top="203" width="150" height="30">
+        <label id="2492" fontSize="14" color="#333333" text="Window Sensor" />
+      </absolute>
+      <absolute left="85" top="267" width="150" height="30">
+        <label id="2493" fontSize="14" color="#808080" text="Climate" />
+      </absolute>
+      <absolute left="41" top="350" width="150" height="30">
+        <label id="2494" fontSize="14" color="#333333" text="T - outside" />
+      </absolute>
+      <absolute left="187" top="348" width="35" height="35">
+        <button id="2495" name="" hasControlCommand="true" repeat="true">
           <default>
             <image src="empty.png" />
           </default>
-          <navigate toGroup="2612" toScreen="2614" />
         </button>
       </absolute>
-      <absolute left="60" top="943" width="1000" height="80">
-        <label id="2597" fontSize="62" color="#333333" text="Window Sensor" />
+      <absolute left="187" top="302" width="35" height="35">
+        <button id="2496" name="" hasControlCommand="true" repeat="true">
+          <default>
+            <image src="empty.png" />
+          </default>
+        </button>
       </absolute>
-      <absolute left="1146" top="939" width="166" height="89">
-        <switch id="2595">
-          <link type="sensor" ref="358549">
-            <state name="on" value="SliderOnSamsung6.png" />
-            <state name="off" value="SliderOffSamsung6.png" />
-          </link>
-        </switch>
+      <absolute left="262" top="301" width="35" height="35">
+        <button id="2497" name="" hasControlCommand="true" repeat="true">
+          <default>
+            <image src="empty.png" />
+          </default>
+        </button>
       </absolute>
-      <absolute left="1146" top="733" width="166" height="89">
-        <switch id="2608">
-          <link type="sensor" ref="358548">
-            <state name="on" value="SliderOnSamsung6.png" />
-            <state name="off" value="SliderOffSamsung6.png" />
-          </link>
-        </switch>
+      <absolute left="261" top="349" width="35" height="35">
+        <button id="2498" name="" hasControlCommand="true" repeat="true">
+          <default>
+            <image src="empty.png" />
+          </default>
+        </button>
       </absolute>
-      <absolute left="69" top="737" width="1000" height="80">
-        <label id="2609" fontSize="62" color="#333333" text="Presence Sensor" />
+      <absolute left="36" top="303" width="150" height="30">
+        <label id="2499" fontSize="14" color="#333333" text="T - inside" />
       </absolute>
-      <absolute left="220" top="559" width="1000" height="80">
-        <label id="2596" fontSize="62" color="#808080" text="Safety" />
+      <absolute left="158" top="54" width="159" height="50">
+        <button id="2500" name="">
+          <default>
+            <image src="empty.png" />
+          </default>
+          <navigate toGroup="2484" toScreen="2508" />
+        </button>
       </absolute>
-      <absolute left="220" top="1212" width="1000" height="80">
-        <label id="2598" fontSize="62" color="#808080" text="Climate" />
-      </absolute>
-      <absolute left="961" top="1386" width="250" height="80">
-        <label id="2606" fontSize="62" color="#333333" text="5.5">
+      <absolute left="217" top="303" width="50" height="30">
+        <label id="2501" fontSize="14" color="#333333" text="5.5">
           <link type="sensor" ref="358545" />
         </label>
       </absolute>
-      <absolute left="961" top="1596" width="250" height="80">
-        <label id="2607" fontSize="62" color="#333333" text="5.5">
+      <absolute left="217" top="350" width="50" height="30">
+        <label id="2502" fontSize="14" color="#333333" text="5.5">
           <link type="sensor" ref="358542" />
         </label>
       </absolute>
-      <absolute left="1178" top="1360" width="150" height="150">
-        <button id="2602" name="" hasControlCommand="true" repeat="true">
-          <default>
-            <image src="empty.png" />
-          </default>
-        </button>
+      <absolute left="254" top="163" width="35" height="21">
+        <switch id="2503">
+          <link type="sensor" ref="358548">
+            <state name="on" value="iPhone5switch16.png" />
+            <state name="off" value="iPhone5switch17.png" />
+          </link>
+        </switch>
       </absolute>
-      <absolute left="842" top="1574" width="150" height="150">
-        <button id="2600" name="" hasControlCommand="true" repeat="true">
-          <default>
-            <image src="empty.png" />
-          </default>
-        </button>
-      </absolute>
-      <absolute left="1178" top="1574" width="150" height="150">
-        <button id="2603" name="" hasControlCommand="true">
-          <default>
-            <image src="empty.png" />
-          </default>
-        </button>
-      </absolute>
-      <absolute left="842" top="1360" width="150" height="150">
-        <button id="2601" name="" hasControlCommand="true" repeat="true">
-          <default>
-            <image src="empty.png" />
-          </default>
-        </button>
+      <absolute left="55" top="159" width="150" height="30">
+        <label id="2504" fontSize="14" color="#333333" text="Presence Sensor" />
       </absolute>
     </screen>
-    <screen id="2614" name="SamsungS6CfgPID">
+    <screen id="2508" name="i5PID">
       <background fillScreen="true">
-        <image src="CFGSamsung2.jpg" />
+        <image src="iPhone5ConfigSettings26.jpg" />
       </background>
-      <absolute left="-30" top="76" width="1500" height="100">
-        <label id="2617" fontSize="88" color="#FFFFFF" text="Home Configuration" />
+      <absolute left="4" top="55" width="150" height="50">
+        <label id="2509" fontSize="14" color="#333333" text="Sensors" />
       </absolute>
-      <absolute left="220" top="559" width="1000" height="80">
-        <label id="2618" fontSize="62" color="#808080" text="PID Configuration" />
+      <absolute left="163" top="55" width="150" height="50">
+        <label id="2510" fontSize="14" color="#333333" text="PID config" />
       </absolute>
-      <absolute left="716" top="325" width="719" height="80">
-        <label id="2616" fontSize="62" color="#333333" text="PID config" />
+      <absolute left="-39" top="3" width="350" height="50">
+        <label id="2511" fontSize="20" color="#FFFFFF" text="Smart 61 Configuration" />
       </absolute>
-      <absolute left="102" top="325" width="506" height="80">
-        <label id="2615" fontSize="62" color="#333333" text="Sensors" />
+      <absolute left="85" top="121" width="150" height="30">
+        <label id="2512" fontSize="14" color="#808080" text="PID Configuration" />
       </absolute>
-      <absolute left="2" top="256" width="728" height="216">
-        <button id="2631" name="">
-          <default>
-            <image src="empty.png" />
-          </default>
-          <navigate toGroup="2589" toScreen="2591" />
-        </button>
+      <absolute left="47" top="237" width="150" height="30">
+        <label id="2513" fontSize="14" color="#333333" text="Derivative Gain Kd" />
       </absolute>
-      <absolute left="1177" top="708" width="150" height="150">
-        <button id="2627" name="" hasControlCommand="true" repeat="true">
-          <default>
-            <image src="empty.png" />
-          </default>
-        </button>
+      <absolute left="37" top="198" width="150" height="30">
+        <label id="2514" fontSize="14" color="#333333" text="Integral Gain Ki" />
       </absolute>
-      <absolute left="1177" top="889" width="150" height="150">
-        <button id="2628" name="" hasControlCommand="true" repeat="true">
+      <absolute left="262" top="236" width="35" height="35">
+        <button id="2515" name="" hasControlCommand="true" repeat="true">
           <default>
             <image src="empty.png" />
           </default>
         </button>
       </absolute>
-      <absolute left="1178" top="1065" width="150" height="150">
-        <button id="2621" name="" hasControlCommand="true" repeat="true">
+      <absolute left="262" top="275" width="35" height="35">
+        <button id="2516" name="" hasControlCommand="true" repeat="true">
           <default>
             <image src="empty.png" />
           </default>
         </button>
       </absolute>
-      <absolute left="1179" top="1245" width="150" height="150">
-        <button id="2622" name="" hasControlCommand="true" repeat="true">
+      <absolute left="187" top="196" width="35" height="35">
+        <button id="2517" name="" hasControlCommand="true" repeat="true">
           <default>
             <image src="empty.png" />
           </default>
         </button>
       </absolute>
-      <absolute left="841" top="883" width="150" height="150">
-        <button id="2623" name="" hasControlCommand="true" repeat="true">
+      <absolute left="186" top="236" width="35" height="35">
+        <button id="2518" name="" hasControlCommand="true" repeat="true">
           <default>
             <image src="empty.png" />
           </default>
         </button>
       </absolute>
-      <absolute left="839" top="1062" width="150" height="150">
-        <button id="2624" name="" hasControlCommand="true" repeat="true">
+      <absolute left="187" top="276" width="35" height="35">
+        <button id="2519" name="" hasControlCommand="true" repeat="true">
           <default>
             <image src="empty.png" />
           </default>
         </button>
       </absolute>
-      <absolute left="841" top="1247" width="150" height="150">
-        <button id="2625" name="" hasControlCommand="true" repeat="true">
+      <absolute left="187" top="157" width="35" height="35">
+        <button id="2520" name="" hasControlCommand="true" repeat="true">
           <default>
             <image src="empty.png" />
           </default>
         </button>
       </absolute>
-      <absolute left="840" top="706" width="150" height="150">
-        <button id="2626" name="" hasControlCommand="true" repeat="true">
+      <absolute left="262" top="156" width="35" height="35">
+        <button id="2521" name="" hasControlCommand="true" repeat="true">
           <default>
             <image src="empty.png" />
           </default>
         </button>
       </absolute>
-      <absolute left="961" top="920" width="250" height="80">
-        <label id="2633" fontSize="62" color="#333333" text="5.5">
-          <link type="sensor" ref="358534" />
-        </label>
+      <absolute left="261" top="197" width="35" height="35">
+        <button id="2522" name="" hasControlCommand="true" repeat="true">
+          <default>
+            <image src="empty.png" />
+          </default>
+        </button>
       </absolute>
-      <absolute left="961" top="1099" width="250" height="80">
-        <label id="2636" fontSize="62" color="#333333" text="5.5">
-          <link type="sensor" ref="358531" />
-        </label>
+      <absolute left="48" top="158" width="150" height="30">
+        <label id="2523" fontSize="14" color="#333333" text="Proportion Gain Kp" />
       </absolute>
-      <absolute left="961" top="1279" width="250" height="80">
-        <label id="2634" fontSize="62" color="#333333" text="5.5">
-          <link type="sensor" ref="358541" />
-        </label>
+      <absolute left="23" top="277" width="140" height="30">
+        <label id="2524" fontSize="14" color="#333333" text="Set Point" />
       </absolute>
-      <absolute left="961" top="739" width="250" height="80">
-        <label id="2632" fontSize="62" color="#333333" text="5.5">
+      <absolute left="0" top="56" width="163" height="50">
+        <button id="2525" name="">
+          <default>
+            <image src="empty.png" />
+          </default>
+          <navigate toGroup="2481" toScreen="2486" />
+        </button>
+      </absolute>
+      <absolute left="217" top="158" width="50" height="30">
+        <label id="2526" fontSize="14" color="#333333" text="5.5">
           <link type="sensor" ref="358538" />
         </label>
       </absolute>
-      <absolute left="1" top="739" width="1100" height="80">
-        <label id="2629" fontSize="62" color="#333333" text="Proportion Gain Kp" />
-      </absolute>
-      <absolute left="8" top="920" width="1000" height="80">
-        <label id="2620" fontSize="62" color="#333333" text="Integral Gain Ki" />
-      </absolute>
-      <absolute left="-4" top="1279" width="1100" height="80">
-        <label id="2619" fontSize="62" color="#333333" text="Derivative Gain Kd" />
-      </absolute>
-      <absolute left="-82" top="1099" width="1000" height="80">
-        <label id="2630" fontSize="62" color="#333333" text="Set Point" />
-      </absolute>
-      <absolute left="-54" top="1676" width="1300" height="80">
-        <label id="2637" fontSize="62" color="#333333" text="Steady State Error SE" />
-      </absolute>
-      <absolute left="163" top="1855" width="500" height="80">
-        <label id="2638" fontSize="62" color="#333333" text="Output" />
-      </absolute>
-      <absolute left="961" top="1855" width="250" height="80">
-        <label id="2639" fontSize="62" color="#333333" text="5.5">
-          <link type="sensor" ref="358532" />
+      <absolute left="217" top="197" width="50" height="30">
+        <label id="2527" fontSize="14" color="#333333" text="5.5">
+          <link type="sensor" ref="358534" />
         </label>
       </absolute>
-      <absolute left="961" top="1676" width="250" height="80">
-        <label id="2635" fontSize="62" color="#333333" text="5.5">
+      <absolute left="217" top="277" width="50" height="30">
+        <label id="2528" fontSize="14" color="#333333" text="5.5">
+          <link type="sensor" ref="358531" />
+        </label>
+      </absolute>
+      <absolute left="217" top="366" width="50" height="30">
+        <label id="2529" fontSize="14" color="#333333" text="5.5">
           <link type="sensor" ref="358529" />
         </label>
       </absolute>
-      <absolute left="320" top="1528" width="800" height="80">
-        <label id="2640" fontSize="62" color="#808080" text="Output" />
+      <absolute left="218" top="237" width="50" height="30">
+        <label id="2530" fontSize="14" color="#333333" text="5.5">
+          <link type="sensor" ref="358541" />
+        </label>
+      </absolute>
+      <absolute left="33" top="366" width="197" height="30">
+        <label id="2531" fontSize="14" color="#333333" text="Steady State Error SE" />
+      </absolute>
+      <absolute left="12" top="406" width="150" height="30">
+        <label id="2532" fontSize="14" color="#333333" text="Output" />
+      </absolute>
+      <absolute left="217" top="406" width="50" height="30">
+        <label id="2533" fontSize="14" color="#333333" text="5.5">
+          <link type="sensor" ref="358532" />
+        </label>
+      </absolute>
+      <absolute left="85" top="336" width="150" height="30">
+        <label id="2534" fontSize="14" color="#808080" text="Output" />
+      </absolute>
+    </screen>
+    <screen id="1703" name="i6Light">
+      <background fillScreen="true">
+        <image src="BGi61.jpg" />
+      </background>
+      <absolute left="5" top="3" width="60" height="60">
+        <button id="1704" name="">
+          <default>
+            <image src="empty.png" />
+          </default>
+          <pressed>
+            <image src="empty.png" />
+          </pressed>
+          <navigate toGroup="1386" toScreen="1815" />
+        </button>
+      </absolute>
+      <absolute left="311" top="3" width="60" height="60">
+        <button id="1705" name="">
+          <default>
+            <image src="empty.png" />
+          </default>
+          <pressed>
+            <image src="empty.png" />
+          </pressed>
+          <navigate toGroup="1387" toScreen="2107" />
+        </button>
+      </absolute>
+      <absolute left="7" top="79" width="80" height="30">
+        <label id="1710" fontSize="17" color="#333333" text="Light" />
+      </absolute>
+      <absolute left="99" top="79" width="80" height="30">
+        <label id="1711" fontSize="17" color="#808080" text="Start" />
+      </absolute>
+      <absolute left="286" top="79" width="80" height="30">
+        <label id="1713" fontSize="17" color="#808080" text="Climate" />
+      </absolute>
+      <absolute left="26" top="8" width="150" height="50">
+        <label id="1714" fontSize="24" color="#FFFFFF" text="Home" />
+      </absolute>
+      <absolute left="198" top="272" width="94" height="88">
+        <switch id="1715">
+          <link type="sensor" ref="364340">
+            <state name="on" value="iPhone5bg18.jpg" />
+            <state name="off" value="iPhone5bg19.jpg" />
+          </link>
+        </switch>
+      </absolute>
+      <absolute left="198" top="382" width="94" height="88">
+        <switch id="1716">
+          <link type="sensor" ref="364342">
+            <state name="on" value="iPhone5bg18.jpg" />
+            <state name="off" value="iPhone5bg19.jpg" />
+          </link>
+        </switch>
+      </absolute>
+      <absolute left="87" top="228" width="200" height="30">
+        <label id="1719" fontSize="17" color="#808080" text="Lighting Scenes" />
+      </absolute>
+      <absolute left="54" top="148" width="200" height="50">
+        <label id="1720" fontSize="17" color="#333333" text="Smart - Lighting" />
+      </absolute>
+      <absolute left="292" top="161" width="45" height="25">
+        <switch id="1721">
+          <link type="sensor" ref="364338">
+            <state name="on" value="SliderOniPlus.png" />
+            <state name="off" value="SliderOffiPlus.png" />
+          </link>
+        </switch>
+      </absolute>
+      <absolute left="195" top="301" width="100" height="30">
+        <label id="1723" fontSize="17" color="#FFFFFF" text="Away" />
+      </absolute>
+      <absolute left="195" top="411" width="100" height="30">
+        <label id="1725" fontSize="17" color="#FFFFFF" text="Night" />
+      </absolute>
+      <absolute left="193" top="79" width="80" height="30">
+        <label id="1712" fontSize="17" color="#808080" text="Safety" />
+      </absolute>
+      <absolute left="2" top="69" width="83" height="50">
+        <button id="1709" name="">
+          <default>
+            <image src="empty.png" />
+          </default>
+          <pressed>
+            <image src="empty.png" />
+          </pressed>
+        </button>
+      </absolute>
+      <absolute left="93" top="69" width="94" height="50">
+        <button id="1706" name="">
+          <default>
+            <image src="empty.png" />
+          </default>
+          <pressed>
+            <image src="empty.png" />
+          </pressed>
+          <navigate toGroup="1370" toScreen="1729" />
+        </button>
+      </absolute>
+      <absolute left="187" top="70" width="94" height="50">
+        <button id="1707" name="">
+          <default>
+            <image src="empty.png" />
+          </default>
+          <pressed>
+            <image src="empty.png" />
+          </pressed>
+          <navigate toGroup="1384" toScreen="1760" />
+        </button>
+      </absolute>
+      <absolute left="281" top="70" width="90" height="50">
+        <button id="1708" name="">
+          <default>
+            <image src="empty.png" />
+          </default>
+          <pressed>
+            <image src="empty.png" />
+          </pressed>
+          <navigate toGroup="1385" toScreen="1781" />
+        </button>
+      </absolute>
+      <absolute left="83" top="382" width="94" height="88">
+        <switch id="1717">
+          <link type="sensor" ref="364341">
+            <state name="on" value="iPhone5bg18.jpg" />
+            <state name="off" value="iPhone5bg19.jpg" />
+          </link>
+        </switch>
+      </absolute>
+      <absolute left="83" top="272" width="94" height="88">
+        <switch id="1718">
+          <link type="sensor" ref="364339">
+            <state name="on" value="iPhone5bg18.jpg" />
+            <state name="off" value="iPhone5bg19.jpg" />
+          </link>
+        </switch>
+      </absolute>
+      <absolute left="80" top="411" width="100" height="30">
+        <label id="1724" fontSize="17" color="#FFFFFF" text="Evening" />
+      </absolute>
+      <absolute left="80" top="301" width="100" height="30">
+        <label id="1722" fontSize="17" color="#FFFFFF" text="Morning" />
+      </absolute>
+    </screen>
+    <screen id="1729" name="i6Start">
+      <background fillScreen="true">
+        <image src="BGi62.jpg" />
+      </background>
+      <absolute left="5" top="3" width="60" height="60">
+        <button id="1730" name="">
+          <default>
+            <image src="empty.png" />
+          </default>
+          <pressed>
+            <image src="empty.png" />
+          </pressed>
+          <navigate toGroup="1386" toScreen="1815" />
+        </button>
+      </absolute>
+      <absolute left="311" top="3" width="60" height="60">
+        <button id="1731" name="">
+          <default>
+            <image src="empty.png" />
+          </default>
+          <pressed>
+            <image src="empty.png" />
+          </pressed>
+          <navigate toGroup="1387" toScreen="2107" />
+        </button>
+      </absolute>
+      <absolute left="87" top="56" width="72" height="50">
+        <button id="1732" name="">
+          <default>
+            <image src="empty.png" />
+          </default>
+          <pressed>
+            <image src="empty.png" />
+          </pressed>
+        </button>
+      </absolute>
+      <absolute left="7" top="79" width="80" height="30">
+        <label id="1736" fontSize="17" color="#808080" text="Light" />
+      </absolute>
+      <absolute left="99" top="79" width="80" height="30">
+        <label id="1737" fontSize="17" color="#333333" text="Start" />
+      </absolute>
+      <absolute left="193" top="79" width="80" height="30">
+        <label id="1738" fontSize="17" color="#808080" text="Safety" />
+      </absolute>
+      <absolute left="286" top="79" width="80" height="30">
+        <label id="1739" fontSize="17" color="#808080" text="Climate" />
+      </absolute>
+      <absolute left="26" top="8" width="150" height="50">
+        <label id="1740" fontSize="24" color="#FFFFFF" text="Home" />
+      </absolute>
+      <absolute left="292" top="161" width="45" height="25">
+        <switch id="1741">
+          <link type="sensor" ref="364345">
+            <state name="on" value="SliderOniPlus.png" />
+            <state name="off" value="SliderOffiPlus.png" />
+          </link>
+        </switch>
+      </absolute>
+      <absolute left="292" top="271" width="45" height="25">
+        <switch id="1742">
+          <link type="sensor" ref="364344">
+            <state name="on" value="SliderOniPlus.png" />
+            <state name="off" value="SliderOffiPlus.png" />
+          </link>
+        </switch>
+      </absolute>
+      <absolute left="292" top="331" width="45" height="25">
+        <switch id="1743">
+          <link type="sensor" ref="364343">
+            <state name="on" value="SliderOniPlus.png" />
+            <state name="off" value="SliderOffiPlus.png" />
+          </link>
+        </switch>
+      </absolute>
+      <absolute left="53" top="148" width="227" height="50">
+        <label id="1744" fontSize="17" color="#333333" text="Smart - Smart Start" />
+      </absolute>
+      <absolute left="76" top="228" width="223" height="30">
+        <label id="1745" fontSize="17" color="#808080" text="Smart Start Devices" />
+      </absolute>
+      <absolute left="60" top="267" width="150" height="30">
+        <label id="1746" fontSize="17" color="#333333" text="Dishwasher" />
+      </absolute>
+      <absolute left="69" top="328" width="150" height="30">
+        <label id="1747" fontSize="17" color="#333333" text="Coffee-maker" />
+      </absolute>
+      <absolute left="87" top="395" width="200" height="30">
+        <label id="1748" fontSize="17" color="#808080" text="Energy Monitor" />
+      </absolute>
+      <absolute left="29" top="419" width="100" height="25">
+        <label id="1749" fontSize="14" color="#333333" text="1.4 kW" />
+      </absolute>
+      <absolute left="29" top="511" width="100" height="25">
+        <label id="1750" fontSize="14" color="#333333" text="0.0 kW" />
+      </absolute>
+      <absolute left="137" top="474" width="100" height="25">
+        <label id="1751" fontSize="14" color="#333333" text="0.9 kW" />
+      </absolute>
+      <absolute left="244" top="511" width="100" height="25">
+        <label id="1752" fontSize="14" color="#333333" text="0.9 kW" />
+      </absolute>
+      <absolute left="29" top="436" width="100" height="25">
+        <label id="1753" fontSize="12" color="#808080" text="Solar" />
+      </absolute>
+      <absolute left="244" top="529" width="100" height="25">
+        <label id="1754" fontSize="12" color="#808080" text="Battery" />
+      </absolute>
+      <absolute left="137" top="492" width="100" height="25">
+        <label id="1755" fontSize="12" color="#808080" text="Usage" />
+      </absolute>
+      <absolute left="29" top="529" width="100" height="25">
+        <label id="1756" fontSize="12" color="#808080" text="Mains Power" />
+      </absolute>
+      <absolute left="2" top="68" width="88" height="50">
+        <button id="1735" name="">
+          <default>
+            <image src="empty.png" />
+          </default>
+          <pressed>
+            <image src="empty.png" />
+          </pressed>
+          <navigate toGroup="1383" toScreen="1703" />
+        </button>
+      </absolute>
+      <absolute left="186" top="70" width="90" height="50">
+        <button id="1733" name="">
+          <default>
+            <image src="empty.png" />
+          </default>
+          <pressed>
+            <image src="empty.png" />
+          </pressed>
+          <navigate toGroup="1384" toScreen="1760" />
+        </button>
+      </absolute>
+      <absolute left="282" top="69" width="88" height="50">
+        <button id="1734" name="">
+          <default>
+            <image src="empty.png" />
+          </default>
+          <pressed>
+            <image src="empty.png" />
+          </pressed>
+          <navigate toGroup="1385" toScreen="1781" />
+        </button>
+      </absolute>
+      <absolute left="209" top="267" width="100" height="30">
+        <label id="2650" fontSize="17" color="#808080" text="8:56">
+          <link type="sensor" ref="365672" />
+        </label>
+      </absolute>
+      <absolute left="209" top="328" width="100" height="30">
+        <label id="2652" fontSize="17" color="#808080" text="8:12">
+          <link type="sensor" ref="365672" />
+        </label>
+      </absolute>
+    </screen>
+    <screen id="1760" name="i6Safety">
+      <background fillScreen="true">
+        <image src="BGi63.jpg" />
+      </background>
+      <absolute left="4" top="3" width="60" height="60">
+        <button id="1761" name="">
+          <default>
+            <image src="empty.png" />
+          </default>
+          <pressed>
+            <image src="empty.png" />
+          </pressed>
+          <navigate toGroup="1386" toScreen="1815" />
+        </button>
+      </absolute>
+      <absolute left="311" top="3" width="60" height="60">
+        <button id="1762" name="">
+          <default>
+            <image src="empty.png" />
+          </default>
+          <pressed>
+            <image src="empty.png" />
+          </pressed>
+          <navigate toGroup="1387" toScreen="2107" />
+        </button>
+      </absolute>
+      <absolute left="7" top="79" width="80" height="30">
+        <label id="1767" fontSize="17" color="#808080" text="Light" />
+      </absolute>
+      <absolute left="99" top="79" width="80" height="30">
+        <label id="1768" fontSize="17" color="#808080" text="Start" />
+      </absolute>
+      <absolute left="193" top="79" width="80" height="30">
+        <label id="1769" fontSize="17" color="#333333" text="Safety" />
+      </absolute>
+      <absolute left="286" top="79" width="80" height="30">
+        <label id="1770" fontSize="17" color="#808080" text="Climate" />
+      </absolute>
+      <absolute left="26" top="8" width="150" height="50">
+        <label id="1771" fontSize="24" color="#FFFFFF" text="Home" />
+      </absolute>
+      <absolute left="50" top="397" width="150" height="50">
+        <label id="1776" fontSize="17" color="#333333" text="Windows" />
+      </absolute>
+      <absolute left="255" top="407" width="100" height="30">
+        <label id="1777" fontSize="17" color="#333333" text="Open">
+          <link type="sensor" ref="358496">
+            <state name="Closed" value="Closed" />
+            <state name="Open" value="Open" />
+          </link>
+        </label>
+      </absolute>
+      <absolute left="2" top="69" width="87" height="50">
+        <button id="1766" name="">
+          <default>
+            <image src="empty.png" />
+          </default>
+          <pressed>
+            <image src="empty.png" />
+          </pressed>
+          <navigate toGroup="1383" toScreen="1703" />
+        </button>
+      </absolute>
+      <absolute left="90" top="68" width="100" height="50">
+        <button id="1763" name="">
+          <default>
+            <image src="empty.png" />
+          </default>
+          <pressed>
+            <image src="empty.png" />
+          </pressed>
+          <navigate toGroup="1370" toScreen="1729" />
+        </button>
+      </absolute>
+      <absolute left="194" top="69" width="77" height="50">
+        <button id="1764" name="">
+          <default>
+            <image src="empty.png" />
+          </default>
+          <pressed>
+            <image src="empty.png" />
+          </pressed>
+        </button>
+      </absolute>
+      <absolute left="278" top="69" width="93" height="50">
+        <button id="1765" name="">
+          <default>
+            <image src="empty.png" />
+          </default>
+          <pressed>
+            <image src="empty.png" />
+          </pressed>
+          <navigate toGroup="1385" toScreen="1781" />
+        </button>
+      </absolute>
+      <absolute left="165" top="338" width="45" height="25">
+        <switch id="1775">
+          <link type="sensor" ref="364346">
+            <state name="on" value="SliderOniPlus.png" />
+            <state name="off" value="SliderOffiPlus.png" />
+          </link>
+        </switch>
+      </absolute>
+      <absolute left="112" top="227" width="150" height="30">
+        <label id="1773" fontSize="17" color="#808080" text="Alarm" />
+      </absolute>
+      <absolute left="47" top="148" width="200" height="50">
+        <label id="1772" fontSize="17" color="#333333" text="Smart - Safety" />
+      </absolute>
+      <absolute left="292" top="161" width="45" height="25">
+        <switch id="1774">
+          <link type="sensor" ref="364347">
+            <state name="on" value="SliderOniPlus.png" />
+            <state name="off" value="SliderOffiPlus.png" />
+          </link>
+        </switch>
+      </absolute>
+      <absolute left="178" top="283" width="19" height="19">
+        <image id="2654" src="Eyesmall.png">
+          <link type="sensor" ref="365673">
+            <state name="on" value="Eyesmall.png" />
+            <state name="off" value="empty.png" />
+          </link>
+        </image>
+      </absolute>
+    </screen>
+    <screen id="1781" name="i6Climate">
+      <background fillScreen="true">
+        <image src="BGi641.jpg" />
+      </background>
+      <absolute left="6" top="3" width="60" height="60">
+        <button id="1782" name="">
+          <default>
+            <image src="empty.png" />
+          </default>
+          <pressed>
+            <image src="empty.png" />
+          </pressed>
+          <navigate toGroup="1386" toScreen="1815" />
+        </button>
+      </absolute>
+      <absolute left="312" top="3" width="60" height="60">
+        <button id="1783" name="">
+          <default>
+            <image src="empty.png" />
+          </default>
+          <pressed>
+            <image src="empty.png" />
+          </pressed>
+          <navigate toGroup="1387" toScreen="2107" />
+        </button>
+      </absolute>
+      <absolute left="7" top="79" width="80" height="30">
+        <label id="1788" fontSize="17" color="#808080" text="Light" />
+      </absolute>
+      <absolute left="193" top="79" width="80" height="30">
+        <label id="1790" fontSize="17" color="#808080" text="Safety" />
+      </absolute>
+      <absolute left="286" top="79" width="80" height="30">
+        <label id="1791" fontSize="17" color="#333333" text="Climate" />
+      </absolute>
+      <absolute left="26" top="8" width="150" height="50">
+        <label id="1792" fontSize="24" color="#FFFFFF" text="Home" />
+      </absolute>
+      <absolute left="248" top="240" width="50" height="20">
+        <label id="1795" fontSize="17" color="#FFFFFF" text="Set" />
+      </absolute>
+      <absolute left="227" top="259" width="130" height="50">
+        <label id="1796" fontSize="36" color="#FFFFFF" text="20.0">
+          <link type="sensor" ref="358494" />
+        </label>
+      </absolute>
+      <absolute left="-11" top="255" width="236" height="80">
+        <label id="1797" fontSize="60" color="#333333" text="18.0">
+          <link type="sensor" ref="358500" />
+        </label>
+      </absolute>
+      <absolute left="221" top="447" width="50" height="20">
+        <label id="1798" fontSize="17" color="#808080" text="21">
+          <link type="sensor" ref="365674" />
+        </label>
+      </absolute>
+      <absolute left="221" top="497" width="50" height="20">
+        <label id="1799" fontSize="17" color="#808080" text="18">
+          <link type="sensor" ref="365675" />
+        </label>
+      </absolute>
+      <absolute left="52" top="447" width="100" height="20">
+        <label id="1800" fontSize="17" color="#333333" text="Day" />
+      </absolute>
+      <absolute left="57" top="497" width="100" height="20">
+        <label id="1801" fontSize="17" color="#333333" text="Night" />
+      </absolute>
+      <absolute left="88" top="401" width="198" height="30">
+        <label id="1804" fontSize="17" color="#808080" text="Heating scenes" />
+      </absolute>
+      <absolute left="112" top="557" width="150" height="30">
+        <label id="1805" fontSize="17" color="#808080" text="Ventilation" />
+      </absolute>
+      <absolute left="221" top="596" width="50" height="20">
+        <label id="1807" fontSize="17" color="#808080" text="Home">
+          <link type="sensor" ref="365676" />
+        </label>
+      </absolute>
+      <absolute left="281" top="621" width="69" height="20">
+        <label id="1808" fontSize="17" color="#333333" text="Smart" />
+      </absolute>
+      <absolute left="6" top="68" width="80" height="50">
+        <button id="1787" name="">
+          <default>
+            <image src="empty.png" />
+          </default>
+          <pressed>
+            <image src="empty.png" />
+          </pressed>
+          <navigate toGroup="1383" toScreen="1703" />
+        </button>
+      </absolute>
+      <absolute left="93" top="69" width="91" height="50">
+        <button id="1784" name="">
+          <default>
+            <image src="empty.png" />
+          </default>
+          <pressed>
+            <image src="empty.png" />
+          </pressed>
+          <navigate toGroup="1370" toScreen="1729" />
+        </button>
+      </absolute>
+      <absolute left="99" top="79" width="80" height="30">
+        <label id="1789" fontSize="17" color="#808080" text="Start" />
+      </absolute>
+      <absolute left="183" top="69" width="94" height="50">
+        <button id="1785" name="">
+          <default>
+            <image src="empty.png" />
+          </default>
+          <pressed>
+            <image src="empty.png" />
+          </pressed>
+          <navigate toGroup="1384" toScreen="1760" />
+        </button>
+      </absolute>
+      <absolute left="278" top="68" width="91" height="50">
+        <button id="1786" name="">
+          <default>
+            <image src="empty.png" />
+          </default>
+          <pressed>
+            <image src="empty.png" />
+          </pressed>
+        </button>
+      </absolute>
+      <absolute left="292" top="161" width="45" height="25">
+        <switch id="1794">
+          <link type="sensor" ref="364348">
+            <state name="on" value="SliderOniPlus.png" />
+            <state name="off" value="SliderOffiPlus.png" />
+          </link>
+        </switch>
+      </absolute>
+      <absolute left="44" top="148" width="215" height="50">
+        <label id="1793" fontSize="17" color="#333333" text="Smart - Climate" />
+      </absolute>
+      <absolute left="207" top="306" width="65" height="57">
+        <button id="1811" name="" hasControlCommand="true" repeat="true">
+          <default>
+            <image src="empty.png" />
+          </default>
+        </button>
+      </absolute>
+      <absolute left="270" top="307" width="72" height="58">
+        <button id="1810" name="" hasControlCommand="true" repeat="true">
+          <default>
+            <image src="empty.png" />
+          </default>
+        </button>
+      </absolute>
+      <absolute left="292" top="445" width="45" height="25">
+        <switch id="1802">
+          <link type="sensor" ref="364349">
+            <state name="on" value="SliderOniPlus.png" />
+            <state name="off" value="SliderOffiPlus.png" />
+          </link>
+        </switch>
+      </absolute>
+      <absolute left="292" top="495" width="45" height="25">
+        <switch id="1803">
+          <link type="sensor" ref="364350">
+            <state name="on" value="SliderOniPlus.png" />
+            <state name="off" value="SliderOffiPlus.png" />
+          </link>
+        </switch>
+      </absolute>
+      <absolute left="292" top="594" width="45" height="25">
+        <switch id="1809">
+          <link type="sensor" ref="364351">
+            <state name="on" value="SliderOniPlus.png" />
+            <state name="off" value="SliderOffiPlus.png" />
+          </link>
+        </switch>
+      </absolute>
+      <absolute left="48" top="596" width="200" height="20">
+        <label id="1806" fontSize="17" color="#333333" text="Auto-ventilation" />
+      </absolute>
+    </screen>
+    <screen id="1815" name="i6Menu">
+      <background fillScreen="true">
+        <image src="BGi65.jpg" />
+      </background>
+      <absolute left="4" top="3" width="60" height="60">
+        <button id="1816" name="">
+          <default>
+            <image src="empty.png" />
+          </default>
+          <pressed>
+            <image src="empty.png" />
+          </pressed>
+          <navigate toGroup="1383" toScreen="1703" />
+        </button>
+      </absolute>
+      <absolute left="311" top="3" width="60" height="60">
+        <button id="1817" name="">
+          <default>
+            <image src="empty.png" />
+          </default>
+          <pressed>
+            <image src="empty.png" />
+          </pressed>
+          <navigate toGroup="1387" toScreen="2107" />
+        </button>
+      </absolute>
+      <absolute left="26" top="8" width="150" height="50">
+        <label id="1818" fontSize="24" color="#FFFFFF" text="Home" />
+      </absolute>
+      <absolute left="1" top="160" width="100" height="20">
+        <label id="1819" fontSize="17" color="#333333" text="Light" />
+      </absolute>
+      <absolute left="-5" top="90" width="150" height="20">
+        <label id="1820" fontSize="17" color="#000000" text="Full Smart " />
+      </absolute>
+      <absolute left="0" top="207" width="100" height="20">
+        <label id="1821" fontSize="17" color="#333333" text="Start" />
+      </absolute>
+      <absolute left="10" top="303" width="100" height="20">
+        <label id="1822" fontSize="17" color="#333333" text="Climate" />
+      </absolute>
+      <absolute left="7" top="255" width="100" height="20">
+        <label id="1823" fontSize="17" color="#333333" text="Safety" />
+      </absolute>
+      <absolute left="13" top="377" width="100" height="20">
+        <label id="1824" fontSize="17" color="#333333" text="Account" />
+      </absolute>
+      <absolute left="11" top="421" width="100" height="20">
+        <label id="1825" fontSize="17" color="#333333" text="Log out" />
+      </absolute>
+      <absolute left="3" top="149" width="284" height="41">
+        <button id="1827" name="">
+          <default>
+            <image src="empty.png" />
+          </default>
+        </button>
+      </absolute>
+      <absolute left="3" top="195" width="284" height="41">
+        <button id="1828" name="">
+          <default>
+            <image src="empty.png" />
+          </default>
+        </button>
+      </absolute>
+      <absolute left="3" top="244" width="284" height="41">
+        <button id="1829" name="">
+          <default>
+            <image src="empty.png" />
+          </default>
+        </button>
+      </absolute>
+      <absolute left="3" top="291" width="284" height="41">
+        <button id="1830" name="">
+          <default>
+            <image src="empty.png" />
+          </default>
+        </button>
+      </absolute>
+      <absolute left="230" top="88" width="45" height="25">
+        <switch id="1826">
+          <link type="sensor" ref="364354">
+            <state name="on" value="SliderOniPlus.png" />
+            <state name="off" value="SliderOffiPlus.png" />
+          </link>
+        </switch>
+      </absolute>
+      <absolute left="296" top="67" width="75" height="595">
+        <button id="2672" name="">
+          <default>
+            <image src="empty.png" />
+          </default>
+          <navigate toGroup="1383" toScreen="1703" />
+        </button>
+      </absolute>
+    </screen>
+    <screen id="2107" name="i6Settings">
+      <background fillScreen="true">
+        <image src="BGi66.jpg" />
+      </background>
+      <grid left="28" top="314" width="319" height="315" rows="7" cols="5">
+        <cell x="1" y="3" rowspan="1" colspan="1">
+          <label id="2123" fontSize="14" color="#333333" text="07:14">
+            <link type="sensor" ref="358447" />
+          </label>
+        </cell>
+        <cell x="2" y="0" rowspan="1" colspan="1">
+          <label id="2124" fontSize="14" color="#C0C0C0" text="08:29">
+            <link type="sensor" ref="358448" />
+          </label>
+        </cell>
+        <cell x="3" y="1" rowspan="1" colspan="1">
+          <label id="2125" fontSize="14" color="#C0C0C0" text="17:33">
+            <link type="sensor" ref="358475" />
+          </label>
+        </cell>
+        <cell x="4" y="2" rowspan="1" colspan="1">
+          <label id="2126" fontSize="14" color="#333333" text="23:39">
+            <link type="sensor" ref="358449" />
+          </label>
+        </cell>
+        <cell x="1" y="5" rowspan="1" colspan="1">
+          <label id="2128" fontSize="14" color="#333333" text="09:02">
+            <link type="sensor" ref="358459" />
+          </label>
+        </cell>
+        <cell x="1" y="4" rowspan="1" colspan="1">
+          <label id="2129" fontSize="14" color="#333333" text="07:09">
+            <link type="sensor" ref="358443" />
+          </label>
+        </cell>
+        <cell x="4" y="3" rowspan="1" colspan="1">
+          <label id="2130" fontSize="14" color="#333333" text="23:48">
+            <link type="sensor" ref="358472" />
+          </label>
+        </cell>
+        <cell x="1" y="2" rowspan="1" colspan="1">
+          <label id="2134" fontSize="14" color="#333333" text="07:01">
+            <link type="sensor" ref="358477" />
+          </label>
+        </cell>
+        <cell x="3" y="2" rowspan="1" colspan="1">
+          <label id="2135" fontSize="14" color="#C0C0C0" text="17:31">
+            <link type="sensor" ref="358449" />
+          </label>
+        </cell>
+        <cell x="3" y="3" rowspan="1" colspan="1">
+          <label id="2136" fontSize="14" color="#C0C0C0" text="17:27">
+            <link type="sensor" ref="358472" />
+          </label>
+        </cell>
+        <cell x="2" y="1" rowspan="1" colspan="1">
+          <label id="2138" fontSize="14" color="#C0C0C0" text="08:17">
+            <link type="sensor" ref="358481" />
+          </label>
+        </cell>
+        <cell x="2" y="2" rowspan="1" colspan="1">
+          <label id="2139" fontSize="14" color="#C0C0C0" text="08:21">
+            <link type="sensor" ref="358477" />
+          </label>
+        </cell>
+        <cell x="2" y="3" rowspan="1" colspan="1">
+          <label id="2140" fontSize="14" color="#C0C0C0" text="08:24">
+            <link type="sensor" ref="358447" />
+          </label>
+        </cell>
+        <cell x="0" y="0" rowspan="1" colspan="1">
+          <label id="2143" fontSize="14" color="#FFFFFF" text="Mon" />
+        </cell>
+        <cell x="0" y="1" rowspan="1" colspan="1">
+          <label id="2144" fontSize="14" color="#FFFFFF" text="Tue" />
+        </cell>
+        <cell x="0" y="2" rowspan="1" colspan="1">
+          <label id="2145" fontSize="14" color="#FFFFFF" text="Wed" />
+        </cell>
+        <cell x="0" y="3" rowspan="1" colspan="1">
+          <label id="2146" fontSize="14" color="#FFFFFF" text="Thu" />
+        </cell>
+        <cell x="0" y="4" rowspan="1" colspan="1">
+          <label id="2147" fontSize="14" color="#FFFFFF" text="Fri" />
+        </cell>
+        <cell x="0" y="5" rowspan="1" colspan="1">
+          <label id="2148" fontSize="14" color="#FFFFFF" text="Sat" />
+        </cell>
+        <cell x="1" y="0" rowspan="1" colspan="1">
+          <label id="2150" fontSize="14" color="#333333" text="07:06">
+            <link type="sensor" ref="358448" />
+          </label>
+        </cell>
+        <cell x="1" y="1" rowspan="1" colspan="1">
+          <label id="2151" fontSize="14" color="#333333" text="07:11">
+            <link type="sensor" ref="358481" />
+          </label>
+        </cell>
+        <cell x="3" y="0" rowspan="1" colspan="1">
+          <label id="2152" fontSize="14" color="#C0C0C0" text="17:18">
+            <link type="sensor" ref="358446" />
+          </label>
+        </cell>
+        <cell x="4" y="0" rowspan="1" colspan="1">
+          <label id="2153" fontSize="14" color="#333333" text="23:42">
+            <link type="sensor" ref="358446" />
+          </label>
+        </cell>
+        <cell x="4" y="1" rowspan="1" colspan="1">
+          <label id="2157" fontSize="14" color="#333333" text="23:52">
+            <link type="sensor" ref="358475" />
+          </label>
+        </cell>
+        <cell x="3" y="4" rowspan="1" colspan="1">
+          <label id="2137" fontSize="14" color="#C0C0C0" text="16:05">
+            <link type="sensor" ref="358479" />
+          </label>
+        </cell>
+        <cell x="4" y="4" rowspan="1" colspan="1">
+          <label id="2131" fontSize="14" color="#333333" text="00:55">
+            <link type="sensor" ref="358479" />
+          </label>
+        </cell>
+        <cell x="2" y="4" rowspan="1" colspan="1">
+          <label id="2141" fontSize="14" color="#C0C0C0" text="08:25">
+            <link type="sensor" ref="358443" />
+          </label>
+        </cell>
+        <cell x="2" y="5" rowspan="1" colspan="1">
+          <label id="2154" fontSize="14" color="#C0C0C0" text="13:52">
+            <link type="sensor" ref="358459" />
+          </label>
+        </cell>
+        <cell x="2" y="6" rowspan="1" colspan="1">
+          <label id="2155" fontSize="14" color="#C0C0C0" text="14:21">
+            <link type="sensor" ref="358463" />
+          </label>
+        </cell>
+        <cell x="1" y="6" rowspan="1" colspan="1">
+          <label id="2127" fontSize="14" color="#333333" text="09:27">
+            <link type="sensor" ref="358463" />
+          </label>
+        </cell>
+        <cell x="0" y="6" rowspan="1" colspan="1">
+          <label id="2149" fontSize="14" color="#FFFFFF" text="Sun" />
+        </cell>
+        <cell x="3" y="6" rowspan="1" colspan="1">
+          <label id="2156" fontSize="14" color="#C0C0C0" text="17:18">
+            <link type="sensor" ref="358442" />
+          </label>
+        </cell>
+        <cell x="4" y="6" rowspan="1" colspan="1">
+          <label id="2133" fontSize="14" color="#333333" text="23:42">
+            <link type="sensor" ref="358442" />
+          </label>
+        </cell>
+        <cell x="4" y="5" rowspan="1" colspan="1">
+          <label id="2132" fontSize="14" color="#333333" text="01:15">
+            <link type="sensor" ref="358471" />
+          </label>
+        </cell>
+        <cell x="3" y="5" rowspan="1" colspan="1">
+          <label id="2142" fontSize="14" color="#C0C0C0" text="17:18">
+            <link type="sensor" ref="358471" />
+          </label>
+        </cell>
+      </grid>
+      <absolute left="2" top="3" width="60" height="60">
+        <button id="2108" name="">
+          <default>
+            <image src="empty.png" />
+          </default>
+          <pressed>
+            <image src="empty.png" />
+          </pressed>
+          <navigate toGroup="1383" toScreen="1703" />
+        </button>
+      </absolute>
+      <absolute left="263" top="3" width="50" height="50">
+        <button id="2109" name="">
+          <default>
+            <image src="empty.png" />
+          </default>
+          <pressed>
+            <image src="empty.png" />
+          </pressed>
+        </button>
+      </absolute>
+      <absolute left="26" top="8" width="150" height="50">
+        <label id="2110" fontSize="24" color="#FFFFFF" text="Home" />
+      </absolute>
+      <absolute left="19" top="254" width="350" height="30">
+        <label id="2111" fontSize="17" color="#808080" text="Current predicted weekschedule:" />
+      </absolute>
+      <absolute left="86" top="89" width="202" height="30">
+        <label id="2112" fontSize="17" color="#808080" text="Vacation Settings" />
+      </absolute>
+      <absolute left="47" top="131" width="200" height="30">
+        <label id="2113" fontSize="17" color="#333333" text="Number of days" />
+      </absolute>
+      <absolute left="258" top="131" width="50" height="30">
+        <label id="2114" fontSize="17" color="#808080" text="0">
+          <link type="sensor" ref="358452" />
+        </label>
+      </absolute>
+      <absolute left="50" top="175" width="220" height="30">
+        <label id="2115" fontSize="17" color="#333333" text="Notification number" />
+      </absolute>
+      <absolute left="237" top="175" width="120" height="30">
+        <label id="2116" fontSize="17" color="#808080" text="0625312689" />
+      </absolute>
+      <absolute left="95" top="291" width="60" height="20">
+        <label id="2117" fontSize="14" color="#FFFFFF" text="Mrng" />
+      </absolute>
+      <absolute left="158" top="291" width="60" height="20">
+        <label id="2118" fontSize="14" color="#FFFFFF" text="Away" />
+      </absolute>
+      <absolute left="221" top="291" width="60" height="20">
+        <label id="2119" fontSize="14" color="#FFFFFF" text="Eve" />
+      </absolute>
+      <absolute left="285" top="291" width="60" height="20">
+        <label id="2120" fontSize="14" color="#FFFFFF" text="Night" />
+      </absolute>
+      <absolute left="218" top="124" width="40" height="40">
+        <button id="2121" name="" hasControlCommand="true" repeat="true">
+          <default>
+            <image src="empty.png" />
+          </default>
+        </button>
+      </absolute>
+      <absolute left="306" top="125" width="40" height="40">
+        <button id="2122" name="" hasControlCommand="true" repeat="true">
+          <default>
+            <image src="empty.png" />
+          </default>
+        </button>
       </absolute>
     </screen>
   </screens>
   <groups>
-    <group id="2481" name="i5Sensors">
-      <include type="screen" ref="2486" />
+    <group id="2589" name="SamsungS6CfgSensors">
+      <include type="screen" ref="2591" />
     </group>
-    <group id="2484" name="i5PID">
-      <include type="screen" ref="2508" />
+    <group id="2612" name="SamsungS6CfgPID">
+      <include type="screen" ref="2614" />
     </group>
     <group id="2267" name="i5Light">
       <include type="screen" ref="2276" />
@@ -4242,24 +4242,6 @@
     </group>
     <group id="2274" name="i5Settings">
       <include type="screen" ref="2407" />
-    </group>
-    <group id="1383" name="i6Light">
-      <include type="screen" ref="1703" />
-    </group>
-    <group id="1370" name="i6Start">
-      <include type="screen" ref="1729" />
-    </group>
-    <group id="1384" name="i6Safety">
-      <include type="screen" ref="1760" />
-    </group>
-    <group id="1385" name="i6Climate">
-      <include type="screen" ref="1781" />
-    </group>
-    <group id="1386" name="i6Menu">
-      <include type="screen" ref="1815" />
-    </group>
-    <group id="1387" name="i6Settings">
-      <include type="screen" ref="2107" />
     </group>
     <group id="1366" name="iPlusLight">
       <include type="screen" ref="1533" />
@@ -4297,11 +4279,29 @@
     <group id="1377" name="Samsung7Settings">
       <include type="screen" ref="1999" />
     </group>
-    <group id="2589" name="SamsungS6CfgSensors">
-      <include type="screen" ref="2591" />
+    <group id="2481" name="i5Sensors">
+      <include type="screen" ref="2486" />
     </group>
-    <group id="2612" name="SamsungS6CfgPID">
-      <include type="screen" ref="2614" />
+    <group id="2484" name="i5PID">
+      <include type="screen" ref="2508" />
+    </group>
+    <group id="1383" name="i6Light">
+      <include type="screen" ref="1703" />
+    </group>
+    <group id="1370" name="i6Start">
+      <include type="screen" ref="1729" />
+    </group>
+    <group id="1384" name="i6Safety">
+      <include type="screen" ref="1760" />
+    </group>
+    <group id="1385" name="i6Climate">
+      <include type="screen" ref="1781" />
+    </group>
+    <group id="1386" name="i6Menu">
+      <include type="screen" ref="1815" />
+    </group>
+    <group id="1387" name="i6Settings">
+      <include type="screen" ref="2107" />
     </group>
   </groups>
 </openremote>

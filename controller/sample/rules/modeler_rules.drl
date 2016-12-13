@@ -92,7 +92,8 @@ function String _ReadFromFile(String fn, String dft){
       fr.close();
     }
   } catch (IOException e) {
-    e.printStackTrace();
+    // e.printStackTrace();
+    log("File read error: "+fn);
   }
   return(result);
 }
@@ -271,7 +272,7 @@ end
 rule "-PSB: VR1.COMFORT inc"
   timer(int:300ms)
 when
-  Event(source == "VR1.COMFORT", $v: value, eval(_GetTemp(value) < 24))
+  Event(source == "VR1.COMFORT", $v: value, eval(_GetTemp(value) < 30))
   Event(source == "VR1.COMFORT.inc" , value == "ON")
 then
   execute.command("VR1.COMFORT.inc","off");
@@ -282,7 +283,7 @@ end
 rule "-PSB: VR1.COMFORT dec"
   timer(int:300ms)
 when
-  Event(source == "VR1.COMFORT", $v: value, eval(_GetTemp(value) > 18))
+  Event(source == "VR1.COMFORT", $v: value, eval(_GetTemp(value) > 10))
   Event(source == "VR1.COMFORT.dec" , value == "ON")
 then
   execute.command("VR1.COMFORT.inc","OFF");
@@ -1752,7 +1753,8 @@ then
   execute.command("Climate.Night.(ON)"); 
 end
 
-rule "-P61: climate day on"
+rule "--P61: climate day on"
+//timer(cron: 1/2 * * * * ?)
 when
   Event(source=="Climate.Day", value=="on")
   Event(source=="Climate.Day.Temp", $v: value)
@@ -1762,7 +1764,8 @@ then
   execute.command("VR1.COMFORT", $v.toString() ); 
 end
 
-rule "-P61: climate night on"
+rule "--P61: climate night on"
+//timer(cron: 0/2 * * * * ?)
 when
   Event(source=="Climate.Night", value=="on")
   Event(source=="Climate.Night.Temp", $v: value)
@@ -1779,6 +1782,28 @@ when
   Event(source == "VR1.COMFORT.dec" , value == "ON")
 then
   execute.command("Climate.Smart.(OFF)");
+end
+
+rule "-P61: temp day manual change"
+when
+  $c: Event(source=="VR1.COMFORT" , $v: value)
+  Event(source=="Climate.Day.Temp", value != $v, this before $c) // comfort changed manually
+  Event(source=="Climate.Smart", value=="off", this before $c)
+  Event(source=="Climate.Day", value=="on", this before $c)
+  Event(source=="Climate.Night", value=="off", this before $c)
+then
+   execute.command("Climate.Day.Temp", $v.toString() ); 
+end
+
+rule "-P61: temp night manual change"
+when
+  $c: Event(source=="VR1.COMFORT" , $v: value)
+  Event(source=="Climate.Night.Temp", value != $v, this before $c) // comfort changed manually
+  Event(source=="Climate.Smart", value=="off", this before $c)
+  Event(source=="Climate.Night", value=="on", this before $c)
+  Event(source=="Climate.Day", value=="off", this before $c)
+then
+   execute.command("Climate.Night.Temp", $v.toString() ); 
 end
 
 rule "--P61: vacation temperature low"
