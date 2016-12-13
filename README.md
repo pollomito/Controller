@@ -4,8 +4,6 @@
 
 `./gradlew clean check`
 
-(Ignore the 44 tests which are currently failing, we are working on fixing them.)
-
 ### Build the application WAR
 
 `./gradlew clean war`
