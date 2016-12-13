@@ -274,6 +274,7 @@ task createDockerfile(type: Dockerfile) {
     
     workingDir "/opt/OpenRemote-Controller/bin"
     entryPoint "/opt/OpenRemote-Controller/bin/openremote.sh"
+    defaultCommand "run"
 }
 
 task buildImage(type: DockerBuildImage) {
