@@ -25,11 +25,13 @@ import io.netty.channel.*;
 import io.netty.handler.codec.http.FullHttpResponse;
 import io.netty.handler.codec.http.websocketx.*;
 import io.netty.util.CharsetUtil;
+import io.netty.util.concurrent.ScheduledFuture;
 import org.openremote.controller.Constants;
 import org.openremote.controller.utils.Logger;
 
 import javax.net.ssl.SSLException;
 import java.net.URISyntaxException;
+import java.util.TimerTask;
 import java.util.concurrent.TimeUnit;
 
 public class WebSocketClientHandler extends SimpleChannelInboundHandler<Object> {
@@ -37,12 +39,17 @@ public class WebSocketClientHandler extends SimpleChannelInboundHandler<Object> 
     private final static Logger log = Logger.getLogger(Constants.BEEHIVE_COMMAND_WEBSOCKET_LOG_CATEGORY);
     private final WebSocketClientHandshaker handshaker;
     private CommandHandler commandHandler;
+    private final int timeout;
+    private final int reconnectDelay;
     private ChannelPromise handshakeFuture;
+    private ScheduledFuture<?> pingPongTaskFuture;
+    private PingPongTask pingPongTask;
 
-
-    public WebSocketClientHandler(WebSocketClientHandshaker handshaker,CommandHandler commandHandler)  {
+    public WebSocketClientHandler(WebSocketClientHandshaker handshaker, CommandHandler commandHandler,int timeout, int reconnectDelay) {
         this.handshaker = handshaker;
         this.commandHandler = commandHandler;
+        this.timeout = timeout;
+        this.reconnectDelay = reconnectDelay;
     }
 
     public ChannelFuture handshakeFuture() {
@@ -55,13 +62,16 @@ public class WebSocketClientHandler extends SimpleChannelInboundHandler<Object> 
     }
 
     @Override
-    public void channelActive(ChannelHandlerContext ctx) {
+    public void channelActive(final ChannelHandlerContext ctx) {
         handshaker.handshake(ctx.channel());
+        pingPongTask = new PingPongTask(ctx.channel());
+        pingPongTaskFuture = ctx.channel().eventLoop().scheduleAtFixedRate(pingPongTask, timeout, timeout, TimeUnit.MILLISECONDS);
     }
 
     @Override
     public void channelInactive(ChannelHandlerContext ctx) {
-       log.info("WebSocket Client disconnected!");
+        pingPongTaskFuture.cancel(true);
+        log.info("WebSocket Client disconnected!");
     }
 
     @Override
@@ -69,7 +79,7 @@ public class WebSocketClientHandler extends SimpleChannelInboundHandler<Object> 
         Channel ch = ctx.channel();
         if (!handshaker.isHandshakeComplete()) {
             handshaker.finishHandshake(ch, (FullHttpResponse) msg);
-           log.info("WebSocket Client connected!");
+            log.info("WebSocket Client connected! With OpenSSL");
             handshakeFuture.setSuccess();
             return;
         }
@@ -87,16 +97,18 @@ public class WebSocketClientHandler extends SimpleChannelInboundHandler<Object> 
             TextWebSocketFrame textFrame = (TextWebSocketFrame) frame;
             commandHandler.handleCommand(textFrame, ctx.channel());
         } else if (frame instanceof PongWebSocketFrame) {
-           log.info("WebSocket Client received pong");
+            log.info("WebSocket Client received pong");
+            pingPongTask.receivedPong();
+
         } else if (frame instanceof CloseWebSocketFrame) {
-           log.info("WebSocket Client received closing");
+            log.info("WebSocket Client received closing");
             ch.close();
         }
     }
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
-        log.error("Exception on WebsocketClientHandler",cause);
+        log.error("Exception on WebsocketClientHandler", cause);
         if (!handshakeFuture.isDone()) {
             handshakeFuture.setFailure(cause);
         }
@@ -106,7 +118,7 @@ public class WebSocketClientHandler extends SimpleChannelInboundHandler<Object> 
     @Override
     public void channelUnregistered(final ChannelHandlerContext ctx) throws Exception {
         if (!ctx.executor().isShuttingDown()) {
-            log.info("Sleeping for: " + WebSocketClient.RECONNECT_DELAY + 's');
+            log.info("Sleeping for: " + reconnectDelay + "ms");
 
             final EventLoop loop = ctx.channel().eventLoop();
             loop.schedule(new Runnable() {
@@ -123,16 +135,39 @@ public class WebSocketClientHandler extends SimpleChannelInboundHandler<Object> 
                         log.error("Error starting WS", e);
                     }
                 }
-            }, WebSocketClient.RECONNECT_DELAY, TimeUnit.SECONDS);
+            }, reconnectDelay, TimeUnit.MILLISECONDS);
         }
     }
 
 
-
-    public void stop()
-    {
+    public void stop() {
         this.handshakeFuture.cancel(true);
     }
 
+    private class PingPongTask extends TimerTask {
+        private final Channel channel;
+        private boolean pongReceived;
 
+        PingPongTask(Channel channel) {
+            this.channel = channel;
+            this.pongReceived = true;
+        }
+
+        @Override
+        public void run() {
+            log.info("Sending Ping to" + channel);
+            if (pongReceived) {
+                pongReceived = false;
+                channel.writeAndFlush(new PingWebSocketFrame());
+            } else {
+                log.info("Ping timeout closing channel:" + channel);
+                channel.disconnect();
+            }
+
+        }
+
+        void receivedPong() {
+            pongReceived = true;
+        }
+    }
 }

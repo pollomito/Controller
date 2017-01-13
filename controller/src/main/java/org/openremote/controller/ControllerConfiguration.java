@@ -149,6 +149,8 @@ public class ControllerConfiguration extends Configuration
    */
   public final static int DEFAULT_REMOTE_COMMAND_RESPONSE_TIMEOUT = 15000;
 
+  public final static int DEFAULT_WS_TIMEOUT = 30000;
+  public final static int DEFAULT_WS_RECONNECT_DELAY = 30000;
 
 
   // Class Members --------------------------------------------------------------------------------
@@ -206,6 +208,8 @@ public class ControllerConfiguration extends Configuration
   private int proxyTimeout;
   private String lagartoBroadcastAddr;
   private SecurityPasswordStorage securityPasswordStorage;
+  private int reconnectionDelay;
+  private int WSTimeout;
   
   /**
    * The set of URIs used to retrieve remote commands. Note that this can contain a comma
@@ -968,4 +972,43 @@ public class ControllerConfiguration extends Configuration
     }
   }
 
+  public void setWSTimeoutAsString(String timeout)
+  {
+    try
+    {
+      this.WSTimeout= timeStringToMillis(timeout);
+    }
+    catch (Exception e)
+    {
+      log.warn(
+              "Unable to parse websocket timeout value ''{0}'', " +
+                      "using default {1} milliseconds...",
+              timeout, DEFAULT_WS_TIMEOUT);
+      this.WSTimeout = DEFAULT_WS_TIMEOUT;
+    }
+  }
+
+    public int getWSTimeout() {
+        return WSTimeout;
+    }
+
+  public void setReconnectionDelayAsString(String reconnectionDelay)
+  {
+    try
+    {
+      this.reconnectionDelay = timeStringToMillis(reconnectionDelay);
+    }
+    catch (Exception e)
+    {
+      log.warn(
+              "Unable to parse websocket reconnection delay value ''{0}'', " +
+                      "using default {1} milliseconds...",
+              reconnectionDelay, DEFAULT_WS_RECONNECT_DELAY);
+      this.reconnectionDelay = DEFAULT_WS_RECONNECT_DELAY;
+    }
+  }
+
+  public int getReconnectionDelay() {
+    return this.reconnectionDelay;
+  }
 }
