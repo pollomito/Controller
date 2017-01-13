@@ -48,8 +48,6 @@ import java.net.URISyntaxException;
 
 public class WebSocketClient {
 
-   public final static int RECONNECT_DELAY = 30;
-
    private final static Logger log = Logger.getLogger(Constants.BEEHIVE_COMMAND_WEBSOCKET_LOG_CATEGORY);
 
 
@@ -66,6 +64,7 @@ public class WebSocketClient {
 
    /* create new EventLoop on first start */
    static Bootstrap configureBootstrap(Bootstrap b, Deployer deployer, ControllerConfiguration config) throws URISyntaxException, SSLException, Deployer.PasswordException {
+
       return configureBootstrap(b, new NioEventLoopGroup(), deployer, config);
    }
 
@@ -105,7 +104,7 @@ public class WebSocketClient {
       final WebSocketClientHandler handler =
             new WebSocketClientHandler(
                   WebSocketClientHandshakerFactory.newHandshaker(
-                        uri, WebSocketVersion.V13, null, true, customHeaders),new CommandHandler(deployer, config));
+                        uri, WebSocketVersion.V13, null, true, customHeaders),new CommandHandler(deployer, config), config.getWSTimeout(), config.getReconnectionDelay());
       b.group(g)
             .channel(NioSocketChannel.class)
             .remoteAddress(host, port)
