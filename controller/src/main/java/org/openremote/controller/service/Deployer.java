@@ -41,10 +41,7 @@ import java.net.URLConnection;
 import java.nio.charset.Charset;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -1075,6 +1072,7 @@ public class Deployer
             && controllerConfig.getRemoteCommandURIs()[0].toString().equals("urn:disabled")) {
             log.info("Beehive command checking service disabled");
         } else {
+            log.info("Beehive command checking service enabled: " + Arrays.toString(controllerConfig.getRemoteCommandURIs()));
             beehiveCommandCheckService = new BeehiveCommandCheckService(controllerConfig);
             beehiveCommandCheckService.start(this);
         }
