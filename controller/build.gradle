@@ -65,6 +65,8 @@ dependencies {
     compile "org.springframework:spring:$springVersion"
     compile "org.springframework.security:spring-security-core:$springSecurityVersion"
 
+    compile "org.openremote:velbus:$velbusVersion"
+    compile "org.openremote:or-zwave:$zwaveVersion"
 
     // These dependencies were in controller
     // but not sure they're still required
