@@ -188,7 +188,20 @@ test {
 
 // Code related to building a controller distribution
 
-task temporaryControllerDirectory(type: Copy, dependsOn: assemble) {
+configurations {
+  webconsole
+}
+
+dependencies {
+  webconsole "org.openremote:webconsole:2.1.5"
+}
+
+task copyWebconsole(type: Copy) {
+  from configurations.webconsole
+  into "${buildDir}/tempController/$project.name/webapps"
+}
+
+task temporaryControllerDirectory(type: Copy, dependsOn: [assemble, copyWebconsole]) {
     destinationDir = file("${buildDir}/tempController")
     from('runtime/apache-tomcat-6.0.18') {
         into project.name
