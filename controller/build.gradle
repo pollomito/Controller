@@ -8,6 +8,8 @@ ext {
 
 configurations {
     staticLibraries
+	
+	compile.exclude module: 'or-controller'
 }
 
 repositories {
