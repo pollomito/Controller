@@ -254,22 +254,25 @@ setBeehiveServiceConfigurations()
 
   # Remote Command Service Variables...
 
-  if [ -z "${BEEHIVE_REMOTE_SERVICE_PATH}" ] ; then
-    BEEHIVE_REMOTE_SERVICE_PATH="ccs/rest/"
+  if [ -z "${BEEHIVE_REMOTE_SERVICE_PATH}" -a -z "${BEEHIVE_REMOTE_SERVICE_URI}" ] ; then
+	  BEEHIVE_REMOTE_SERVICE_URI="urn:disabled"
+  else
+	  if [ -z "${BEEHIVE_REMOTE_SERVICE_PATH}" ] ; then
+	    BEEHIVE_REMOTE_SERVICE_PATH="ccs/rest/"
 
-  elif [ -n "${PRINT_VALUES}" ] ; then
-    printVariable BEEHIVE_REMOTE_SERVICE_PATH
+	  elif [ -n "${PRINT_VALUES}" ] ; then
+	    printVariable BEEHIVE_REMOTE_SERVICE_PATH
 
+	  fi
+
+	  if [ -z "${BEEHIVE_REMOTE_SERVICE_URI}" ] ; then
+	    BEEHIVE_REMOTE_SERVICE_URI="$BEEHIVE_BASE_URI/$BEEHIVE_REMOTE_SERVICE_PATH"
+
+	  elif [ -n "${PRINT_VALUES}" ] ; then
+	    printVariable BEEHIVE_REMOTE_SERVICE_URI
+
+	  fi
   fi
-
-  if [ -z "${BEEHIVE_REMOTE_SERVICE_URI}" ] ; then
-    BEEHIVE_REMOTE_SERVICE_URI="$BEEHIVE_BASE_URI/$BEEHIVE_REMOTE_SERVICE_PATH"
-
-  elif [ -n "${PRINT_VALUES}" ] ; then
-    printVariable BEEHIVE_REMOTE_SERVICE_URI
-
-  fi
-
 
   # Beehive Sync Service Variables...
 
@@ -799,7 +802,7 @@ fi
 #else
 #
 #  echo "Usage: openremote.sh ( commands ... )"
-#  echo "commands:"
+#  echo "comms:"
 #  echo "  debug             Start Catalina in a debugger"
 #  echo "  debug -security   Debug Catalina with a security manager"
 #  echo "  jpda start        Start Catalina under JPDA debugger"
