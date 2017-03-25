@@ -201,6 +201,7 @@ dependencies {
 task copyWebconsole(type: Copy) {
   from configurations.webconsole
   into "${buildDir}/tempController/$project.name/webapps"
+  rename { 'webconsole.war' }
 }
 
 task temporaryControllerDirectory(type: Copy, dependsOn: [assemble, copyWebconsole]) {
