@@ -17,6 +17,22 @@ public class IpInterfaceMonitor extends KNXCommand implements StatusCommand {
    }
 
    @Override
+   public boolean equals(Object o)
+   {
+     if (o == null)
+       return false;
+
+     if (!(o instanceof IpInterfaceMonitor))
+       return false;
+
+     IpInterfaceMonitor im = (IpInterfaceMonitor)o;
+
+     return im.getAddress().equals(this.getAddress()) &&
+            im.getDataPointType().equals(this.getDataPointType());
+   }
+
+
+   @Override
    public String read(EnumSensorType sensorType, Map<String, String> stateMap) {
       Status o = Status.disconnected;
       KNXConnection c = this.connectionManager.getCurrentConnection();

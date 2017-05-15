@@ -160,21 +160,6 @@ public class DSCIT100CommandBuilderTest
   }
 
   /**
-   * Test DSCIT100 command parsing with "PANIC_POLICE" as the command string and
-   * 1.1.1.1:5000 address.
-   */
-  @Test
-  public void testDSCIT100PanicPolice()
-  {
-    Command cmd = getCommand("PANIC_POLICE", "1.1.1.1:5000", "", "");
-
-    assertTrue(cmd instanceof ExecuteCommand);
-    assertTrue(((ExecuteCommand) cmd).getPacket() instanceof Packet);
-    assertEquals("060", ((ExecuteCommand) cmd).getPacket().getCommand());
-    assertEquals("3", ((ExecuteCommand) cmd).getPacket().getData());
-  }
-
-  /**
    * Test DSCIT100 command parsing with "PARTITION_STATE" as the command string
    * and 1.1.1.1:5000 address and partition 1.
    */

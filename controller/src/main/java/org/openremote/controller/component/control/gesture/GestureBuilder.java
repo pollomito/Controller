@@ -29,6 +29,7 @@ import org.openremote.controller.component.Component;
 import org.openremote.controller.component.ComponentBuilder;
 import org.openremote.controller.component.control.Control;
 import org.openremote.controller.exception.InitializationException;
+import org.openremote.controller.exception.XMLParsingException;
 import org.openremote.controller.service.Deployer;
 
 /**
@@ -54,6 +55,18 @@ public class GestureBuilder extends ComponentBuilder
   @Override public Component build(Element componentElement, String commandParam)
       throws InitializationException
   {
+    if (componentElement == null)
+    {
+      throw new IllegalArgumentException("Invalid XML gesture element.");
+    }
+
+    if (!componentElement.getName().toLowerCase().equals(Gesture.GESTURE_XML_ELEMENT_NAME))
+    {
+      throw new XMLParsingException(
+          "Cannot create gesture from <{0}> element.", componentElement.getName()
+      );
+    }
+
     Gesture gesture = new Gesture();
 
     if (!gesture.isValidActionWith(commandParam))

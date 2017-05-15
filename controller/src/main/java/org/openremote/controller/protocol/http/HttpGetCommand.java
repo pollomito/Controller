@@ -140,7 +140,7 @@ public class HttpGetCommand extends ReadCommand implements ExecutableCommand
 
   @Override
   public int getPollingInterval() {
-    return pollingInterval;
+    return pollingInterval != null ? pollingInterval : 0;
   }
 
   // Implements ExecutableCommand

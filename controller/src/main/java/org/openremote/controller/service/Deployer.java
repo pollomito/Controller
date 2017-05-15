@@ -41,14 +41,12 @@ import java.net.URLConnection;
 import java.nio.charset.Charset;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.jdom.Attribute;
 import org.jdom.Element;
 import org.openremote.controller.Constants;
@@ -110,6 +108,7 @@ import flexjson.JSONSerializer;
  *
  * @author <a href="mailto:juha@openremote.org">Juha Lindfors</a>
  * @author <a href="mailto:eric@openremote.org">Eric Bariaux</a>
+ * @author <a href="mailto:rainer@openremote.org">Rainer Hitz</a>
  */
 public class Deployer
 {
@@ -518,9 +517,13 @@ public class Deployer
 
     URI resourceDirURI = new File(controllerConfig.getResourcePath()).toURI();
 
-    unzip(inputStream, resourceDirURI);
-
-    copyLircdConf(resourceDirURI, controllerConfig);
+    try {
+      pause();
+      unzip(inputStream, resourceDirURI);
+      copyLircdConf(resourceDirURI, controllerConfig);
+    } finally {
+      resume();
+    }
   }
 
 
@@ -1136,9 +1139,22 @@ public class Deployer
 
     // TODO - update message below once 3.0 is in place
 
+    File file = null;
+
+    try
+    {
+      file = Version20ModelBuilder.getControllerDefinitionFile(controllerConfig);
+    }
+
+    catch (ConfigurationException e)
+    {
+      throw new ControllerDefinitionNotFoundException(
+          "Could not find a controller definition (for version 2.0).", e
+      );
+    }
+
     throw new ControllerDefinitionNotFoundException(
-        "Could not find a controller definition to load at path ''{0}'' (for version 2.0)",
-        Version20ModelBuilder.getControllerDefinitionFile(controllerConfig)
+          "Could not find a controller definition to load at path ''{0}'' (for version 2.0)", file
     );
   }
 
@@ -1205,12 +1221,7 @@ public class Deployer
           {
             fileOutputStream = new BufferedOutputStream(new FileOutputStream(zippedFile));
 
-            int b;
-
-            while ((b = zipInputStream.read()) != -1)
-            {
-              fileOutputStream.write(b);
-            }
+            IOUtils.copy(zipInputStream, fileOutputStream);
           }
 
           catch (FileNotFoundException e)

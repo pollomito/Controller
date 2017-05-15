@@ -3,10 +3,13 @@ apply plugin: "war"
 ext {
     testWebApplicationFolder = 'build/testcontainer/war'
     testWebServerBase = 'https://designer-test.openremote.com'
+    dockerImageName = "$dockerRepository/controller:$imageVersion".toString()
 }
 
 configurations {
     staticLibraries
+	
+	compile.exclude module: 'or-controller'
 }
 
 repositories {
@@ -65,6 +68,8 @@ dependencies {
     compile "org.springframework:spring:$springVersion"
     compile "org.springframework.security:spring-security-core:$springSecurityVersion"
 
+    compile "org.openremote:velbus:$velbusVersion"
+    compile "org.openremote:or-zwave:$zwaveVersion"
 
     // These dependencies were in controller
     // but not sure they're still required
@@ -195,20 +200,23 @@ test {
     include '**/AllTests.class'
 }
 
-task controller(type: Zip, dependsOn: assemble) {
-    description 'Creates a zip distribution of the controller runtime, including Tomcat'
+// Code related to building a controller distribution
 
-    from('runtime/apache-tomcat-6.0.18') {
-		    into project.name
-		}
- 		into("$project.name/webapps/controller") {
-		    with war
-		}
+configurations {
+  webconsole
 }
 
-// Code related to building Docker image
+dependencies {
+  webconsole "org.openremote:webconsole:2.1.5"
+}
 
-task temporaryControllerDirectory(type: Copy, dependsOn: assemble) {
+task copyWebconsole(type: Copy) {
+  from configurations.webconsole
+  into "${buildDir}/tempController/$project.name/webapps"
+  rename { 'webconsole.war' }
+}
+
+task temporaryControllerDirectory(type: Copy, dependsOn: [assemble, copyWebconsole]) {
     destinationDir = file("${buildDir}/tempController")
     from('runtime/apache-tomcat-6.0.18') {
         into project.name
@@ -217,6 +225,22 @@ task temporaryControllerDirectory(type: Copy, dependsOn: assemble) {
         with war
     }
 }
+
+task controller(type: Zip, dependsOn: temporaryControllerDirectory) 
+
+controller.doFirst {
+    ant.chmod(file:"${buildDir}/tempController/${project.name}/bin/openremote.sh" , perm: "u+x")
+}
+
+controller {
+    description 'Creates a zip distribution of the controller runtime, including Tomcat'
+
+    from("${buildDir}/tempController/$project.name") {
+		    into project.name
+		}
+}
+
+// Code related to building Docker image
 
 task sampleControllerConfig(type: Copy) {
     destinationDir = file("${buildDir}/tempController")
@@ -242,8 +266,6 @@ dockerControllerTar
     destinationDir = file("${buildDir}/install")
     from(file("${buildDir}/tempController"))
 }
-
-ext.dockerImageName = "$dockerRepository/controller:$imageVersion".toString()
 
 apply plugin: 'com.bmuschko.docker-remote-api'
 
@@ -288,14 +310,16 @@ task createDockerfile(type: Dockerfile) {
 
     maintainer 'OpenRemote <support@openremote.org>'
 
+    runCommand 'apt-get update && apt-get -y install netcat'
+
     // We're adding a tar instead of a folder structure,
     // otherwise empty folders (all tomcat logs folders) where not present on image
     addFile project(':OpenRemote-Controller').dockerControllerTar.archiveName, "/opt"
 
     runCommand 'groupadd -r openremote && useradd -r -g openremote openremote && chown -R openremote.openremote /opt/OpenRemote-Controller && chown -R openremote.openremote /opt/or-resources'
-    
+
     exposePort 8688
-    
+
     user 'openremote'
 
     // TODO Weird permission problems with this if you touch any of these files in a sub-image build
@@ -304,6 +328,7 @@ task createDockerfile(type: Dockerfile) {
     
     workingDir "/opt/OpenRemote-Controller/bin"
     entryPoint "/opt/OpenRemote-Controller/bin/openremote.sh"
+    defaultCommand "run"
 }
 
 task buildImage(type: DockerBuildImage) {

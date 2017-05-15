@@ -1125,6 +1125,7 @@ public abstract class EepA510XX implements EepReceive
 
     if(isTeachInTelegram())
     {
+       log.debug("Teach in telegram for device ID {0} with EEP {1}", deviceID, getType());
       return false;
     }
 

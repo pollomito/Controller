@@ -275,7 +275,7 @@ public class Rrd4jDataLogger extends EventProcessor
       catch (IOException e)
       {
          init.error(
-             "I/O error in accessing RRD datafile ''{0}'': {1}", e, rrdFileURI, e.getMessage()
+             "I/O error in accessing RRD datafile ''{0}'' - please make sure your process user has read/write permission: {1}", e, rrdFileURI, e.getMessage()
          );
       }
     }
@@ -410,7 +410,7 @@ public class Rrd4jDataLogger extends EventProcessor
          return rrdDefList;
       } catch (Exception e) {
          e.printStackTrace();
-         throw new InitializationException("Error parsinf rrd4j-config.xml", e);
+         throw new InitializationException("Error parsing rrd4j-config.xml", e);
       }
    }
 

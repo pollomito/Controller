@@ -22,6 +22,7 @@ package org.openremote.controller.rest;
 import java.io.IOException;
 
 import org.apache.log4j.Logger;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.openremote.controller.suite.AllTests;
 import org.openremote.controller.utils.SecurityUtil;
@@ -51,6 +52,7 @@ import junit.framework.Assert;
  * 
  * @author Handy.Wang 2009-10-20
  */
+@Ignore
 public class ControlStatusPollingRESTServletTest {
 
 

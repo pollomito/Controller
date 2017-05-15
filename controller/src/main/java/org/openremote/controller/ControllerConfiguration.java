@@ -52,6 +52,7 @@ import org.openremote.controller.utils.Strings;
  * @author <a href="mailto:juha@openremote.org>Juha Lindfors</a>
  * @author Jerome Velociter
  * @author <a href="mailto:eric@openremote.org">Eric Bariaux</a>
+ * @author <a href="mailto:rainer@openremote.org">Rainer Hitz</a>
  */
 public class ControllerConfiguration extends Configuration
 {
@@ -452,7 +453,12 @@ public class ControllerConfiguration extends Configuration
    * @param resourcePath  system specific filesystem path as a string to a directory containing
    *                      the resource files of a controller
    */
-  public void setResourcePath(String resourcePath) {
+  public void setResourcePath(String resourcePath)
+  {
+    if (resourcePath == null)
+    {
+      throw new IllegalArgumentException("Invalid resource path.");
+    }
 
     // TODO :
     //  could attempt to convert the string to a valid URI to support
@@ -501,7 +507,11 @@ public class ControllerConfiguration extends Configuration
    */
   public void setResourceUploadAllowed(boolean resourceUpload)
   {
-    this.allowResourceUpload = resourceUpload;
+    if ("true".equals(System.getenv("DISABLE_RESOURCE_UPLOAD"))) {
+	this.allowResourceUpload = false;
+    } else {
+	this.allowResourceUpload = resourceUpload;
+    }
   }
 
 

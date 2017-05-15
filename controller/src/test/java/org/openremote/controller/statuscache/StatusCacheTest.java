@@ -123,12 +123,47 @@ public class StatusCacheTest
 
   @Test public void testDuplicateRegistration()
   {
-    Assert.fail("Not Yet Implemented -- see ORCJAVA-204 (http://jira.openremote.org/browse/ORCJAVA-204)");
+    StatusCache cache = new StatusCache();
+
+    DummyCommand cmd1 = new DummyCommand("10");
+
+    Sensor s1 = new RangeSensor("test1", 1, cache, cmd1, 1, -10, 10);
+
+    cache.registerSensor(s1);
+    cache.registerSensor(s1);
+
+    Assert.assertTrue(cache.getSensor(1).equals(s1));
+    Assert.assertTrue(Sensor.isUnknownSensorValue(cache.queryStatus(1)));
+    Assert.assertEquals(new Integer(1), cache.sensorIDFromName("test1"));
+
+    s1.start();
+
+    waitForUpdate();
+
+    Assert.assertTrue(cache.queryStatus(1).equals("10"));
+
+
+    Sensor s2 = new RangeSensor("test2", 1, cache, cmd1, 1, -10, 10);
+
+    cache.registerSensor(s2);
+
+    Assert.assertTrue(cache.getSensor(1).equals(s2));
+    Assert.assertTrue(Sensor.isUnknownSensorValue(cache.queryStatus(1)));
+    Assert.assertEquals(new Integer(1), cache.sensorIDFromName("test2"));
+
+    s2.start();
+
+    waitForUpdate();
+
+    Assert.assertTrue(cache.queryStatus(1).equals("10"));
   }
 
-  @Test public void testNullRegistration()
+  @Test (expected = IllegalArgumentException.class)
+  public void testNullRegistration()
   {
-    Assert.fail("Not Yet Implemented -- see ORCJAVA-204 (http://jira.openremote.org/browse/ORCJAVA-204)");
+    StatusCache cache = new StatusCache();
+
+    cache.registerSensor(null);
   }
 
 
@@ -296,79 +331,31 @@ public class StatusCacheTest
   }
 
 
-
-
-  /**
-   * TODO : query by *NAME*
-   *
-   * @throws Exception if test fails
-   */
-  @Test public void testLevelEventQuery() throws Exception
+  @Test public void testLevelEventQueryByName() throws Exception
   {
     StatusCache cache = new StatusCache();
 
-    Level l1 = new Level(10, "l1", 10);
+    DummyCommand cmd1 = new DummyCommand("9");
 
-    cache.update(l1);
+    Sensor l1 = new LevelSensor("l1", 2, cache, cmd1, 1);
 
-    String currentStatus = cache.queryStatus(10);
+    cache.registerSensor(l1);
 
-    Assert.assertTrue(currentStatus.equals("10"));
+    l1.start();
+
+    waitForUpdate();
+
+
+    Assert.assertTrue(cache.queryStatus(2).equals("9"));
 
     Event currentStatusEvent = cache.queryStatus("l1");
 
-    Assert.assertTrue(currentStatusEvent.isEqual(l1));
-    Assert.assertTrue(currentStatusEvent.getValue().equals(10));
-    Assert.assertTrue(currentStatusEvent.serialize().equals("10"));
-
-
-//
-//    Switch sw2 = new Switch(1, "foo", "off", Switch.State.OFF);
-//
-//    Assert.assertFalse(sw1.isEqual(sw2));
-//    Assert.assertFalse(sw2.isEqual(sw1));
-//
-//    cache.update(sw2);
-//
-//    currentStatus = cache.queryStatus(1);
-//
-//    Assert.assertTrue(
-//        "Expected 'off', got '" + currentStatus + "'",
-//        currentStatus.equals("off")
-//    );
-//
-//
-//
-//    cache.update(sw2);
-//
-//    currentStatus = cache.queryStatus(1);
-//
-//    Assert.assertTrue(
-//        "Expected 'off', got '" + currentStatus + "'",
-//        currentStatus.equals("off")
-//    );
-//
-//    Switch sw3 = new Switch(1, "foo", "closed", Switch.State.OFF);
-//
-//    cache.update(sw3);
-//
-//    currentStatus = cache.queryStatus(1);
-//
-//    Assert.assertTrue(
-//        "Expected 'closed', got '" + currentStatus + "'",
-//        currentStatus.equals("closed")
-//    );
-//
-//
-//
-//    cache.update(sw1);
-//
-//    currentStatus = cache.queryStatus(1);
-//
-//    Assert.assertTrue(currentStatus.equals("on"));    
+    Assert.assertTrue(currentStatusEvent.getClass() == Level.class);
+    Assert.assertTrue(currentStatusEvent.getSourceID().equals(2));
+    Assert.assertTrue(currentStatusEvent.getSource().equals("l1"));
+    Assert.assertTrue(currentStatusEvent.getValue().equals(9));
+    Assert.assertTrue(currentStatusEvent.serialize().equals("9"));
   }
-
-
 
 
   /**

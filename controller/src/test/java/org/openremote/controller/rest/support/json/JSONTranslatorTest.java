@@ -45,7 +45,7 @@ import com.meterware.httpunit.WebResponse;
  * @author handy.wang 2010-06-29
  * @author Tomsky
  */
-public class JSONTranslatorTest extends TestCase
+public class JSONTranslatorTest
 {
 
   // Constants ------------------------------------------------------------------------------------
@@ -71,7 +71,15 @@ public class JSONTranslatorTest extends TestCase
   {
     RESTTests.deleteControllerPanelXML();
   }
-//
+
+  @Test public void dummyTest() throws Exception
+  {
+    // Note : dummy test in order to prevent warnings
+
+    // TODO : add unit tests
+  }
+
+  //
 //  @Test public void testTranslate() throws IOException
 //  {
 //
