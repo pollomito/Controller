@@ -30,6 +30,7 @@ import org.openremote.controller.Constants;
 import org.openremote.controller.ControllerConfiguration;
 import org.openremote.controller.exception.ConfigurationException;
 import org.openremote.controller.exception.ConnectionException;
+import org.openremote.controller.exception.ControllerRESTAPIException;
 import org.openremote.controller.proxy.ControllerProxy;
 import org.openremote.controller.utils.Logger;
 import org.openremote.controllercommand.domain.ControllerCommandDTO;
@@ -38,6 +39,7 @@ import org.openremote.rest.GenericResourceResultWithErrorMessage;
 
 import java.io.IOException;
 import java.net.Socket;
+import java.util.Map;
 
 
 public class CommandHandler {
@@ -45,6 +47,7 @@ public class CommandHandler {
    private final ControllerConfiguration config;
 
    private final static Logger log = Logger.getLogger(Constants.BEEHIVE_COMMAND_CHECKER_LOG_CATEGORY);
+   private CommandService commandService = ServiceContext.getCommandService();
 
    public CommandHandler(Deployer deployer, ControllerConfiguration config) {
       this.deployer = deployer;
@@ -134,6 +137,17 @@ public class CommandHandler {
                ackResponse(controllerCommand.getOid(),"Other Exception", e, channel);
             }
             break;
+         }
+         case EXECUTE_DEVICE_COMMAND:
+         {
+            try {
+               Map<String, String> param = controllerCommand.getCommandParameter();
+               commandService.execute(param.get("deviceName"),param.get("commandName") , param.get("param"));
+               ackResponse(controllerCommand.getOid(), channel);
+            } catch (ControllerRESTAPIException e) {
+               ackResponse(controllerCommand.getOid(),"Other Exception", e, channel);
+            }
+
          }
 
          default:
