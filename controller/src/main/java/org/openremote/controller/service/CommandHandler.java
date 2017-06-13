@@ -147,7 +147,7 @@ public class CommandHandler {
             } catch (ControllerRESTAPIException e) {
                ackResponse(controllerCommand.getOid(),"Other Exception", e, channel);
             }
-
+            break;
          }
 
          default:
