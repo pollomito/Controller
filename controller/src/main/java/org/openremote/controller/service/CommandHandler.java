@@ -142,7 +142,7 @@ public class CommandHandler {
          {
             try {
                Map<String, String> param = controllerCommand.getCommandParameter();
-               commandService.execute(param.get("deviceName"),param.get("commandName") , param.get("param"));
+               commandService.execute(param.get("deviceName"),param.get("commandName") , param.get("parameter"));
                ackResponse(controllerCommand.getOid(), channel);
             } catch (ControllerRESTAPIException e) {
                ackResponse(controllerCommand.getOid(),"Other Exception", e, channel);
