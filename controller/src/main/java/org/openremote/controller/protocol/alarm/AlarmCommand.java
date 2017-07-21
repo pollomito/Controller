@@ -20,6 +20,7 @@
  */
 package org.openremote.controller.protocol.alarm;
 
+import org.apache.commons.lang3.tuple.Pair;
 import org.apache.log4j.Logger;
 import org.openremote.controller.command.ExecutableCommand;
 import org.openremote.controller.model.sensor.Sensor;
@@ -108,5 +109,22 @@ public class AlarmCommand implements ExecutableCommand, EventListener  {
    @Override
    public void stop(Sensor sensor) {
       AlarmManager.removeSensor(this, sensor);
+   }
+
+   static Pair<Integer,Integer> getHoursAndMinsFromArgs(String[] args) {
+      if (args == null || args.length != 2) {
+         return null;
+      }
+
+      String hoursStr = args[0];
+      String minsStr = args[1];
+      try {
+         int hours = Integer.parseInt((hoursStr.charAt(0) == '+') ? hoursStr.substring(1) : hoursStr);
+         int mins = Integer.parseInt((minsStr.charAt(0) == '+') ? minsStr.substring(1) : minsStr);
+         return Pair.of(hours, mins);
+      } catch (NumberFormatException e) {
+         log.error("Invalid command value must be +/-HH:+/-MM e.g. 01:00 or +2:10 or 0:-30", e);
+      }
+      return null;
    }
 }

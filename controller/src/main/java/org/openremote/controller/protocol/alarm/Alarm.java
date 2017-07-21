@@ -28,6 +28,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.apache.commons.lang3.tuple.Pair;
 import org.apache.log4j.Logger;
 import org.openremote.controller.component.LevelSensor;
 import org.openremote.controller.component.RangeSensor;
@@ -84,7 +85,7 @@ class Alarm {
    private int hours;
    private int mins;
    private EnumSet<Day> days = EnumSet.noneOf(Day.class);
-   private Map<String, List<Sensor>> sensorMap = new HashMap<String, List<Sensor>>();
+   private Map<String, List<Pair<AlarmCommand,Sensor>>> sensorMap = new HashMap<String, List<Pair<AlarmCommand,Sensor>>>();
    private Map<String, Object> propMap = new HashMap<String, Object>();
    private boolean initialised = false;
    
@@ -132,29 +133,11 @@ class Alarm {
          hours = this.hours + hours;
       }
       
-      // Sanity check hours and mins      
-      int sign = mins >= 0 ? 1 : -1;
-      mins = Math.abs(mins);
-      int minHours = (int)Math.floor(((double)mins)/60);
-      mins = mins % 60;
-      hours += (minHours * sign);
-
-      
-      if (sign == -1 && mins > 0) {
-         hours--;
-         mins = 60-mins;
-      }
-      
-      if (hours < 0) {
-         hours = 24-hours;
-      }
-      
-      hours = Math.min(23, Math.max(0, hours));
-      mins = Math.min(59, Math.max(0, mins));
+      Pair<Integer,Integer> hoursAndMins = sanitiseHoursAndMins(hours, mins);
       
       // Update the alarm
-      this.hours = hours;
-      this.mins = mins;      
+      this.hours = hoursAndMins.getLeft();
+      this.mins = hoursAndMins.getRight();
       cronExpression[1] = Integer.toString(mins);
       cronExpression[2] = Integer.toString(hours);
       
@@ -203,14 +186,14 @@ class Alarm {
       
       if (propertyName != null) {
          propertyName = propertyName.toUpperCase();
-         List<Sensor> sensors = sensorMap.get(propertyName);
+         List<Pair<AlarmCommand,Sensor>> sensors = sensorMap.get(propertyName);
          
          if (sensors == null) {
-           sensors = new ArrayList<Sensor>();
+           sensors = new ArrayList<Pair<AlarmCommand,Sensor>>();
            sensorMap.put(propertyName, sensors);
          }
          
-         sensors.add(sensor);
+         sensors.add(Pair.of(command, sensor));
          
          // If sensor is anything but enabled status then initialise the time and DOW
          if (!initialised && command.getAction() != AlarmCommand.Action.ENABLED_STATUS) {
@@ -219,17 +202,25 @@ class Alarm {
          
          // Update the value of the sensor with value from cache
          Object currentValue = propMap.get(propertyName);
-         updateSensor(sensor, currentValue != null ? currentValue.toString() : "N/A"); 
+         updateSensor(command, sensor, currentValue != null ? currentValue.toString() : "N/A");
        }
     }
     
    synchronized void removeSensor(AlarmCommand command, Sensor sensor) {
-      for(Entry<String, List<Sensor>> entry : sensorMap.entrySet())
+      for(Entry<String, List<Pair<AlarmCommand,Sensor>>> entry : sensorMap.entrySet())
       {
-        if (entry.getValue().remove(sensor))
-        {
-          break;
-        }
+         Pair<AlarmCommand,Sensor> toRemove = null;
+         for (int i=0; i<entry.getValue().size(); i++) {
+            Pair<AlarmCommand,Sensor> commandSensorPair = entry.getValue().get(i);
+            if (commandSensorPair.getRight() == sensor) {
+               toRemove = commandSensorPair;
+               break;
+            }
+         }
+         if (toRemove != null) {
+            entry.getValue().remove(toRemove);
+            break;
+         }
       }
     }
       
@@ -252,7 +243,11 @@ class Alarm {
    }
 
    private String getTime() {
-      return String.format("%02d:%02d", hours, mins);
+      return getTimeAsString(hours, mins);
+   }
+
+   private static String getTimeAsString(int hours, int mins) {
+       return String.format("%02d:%02d", hours, mins);
    }
    
    private String getAttributeName(AlarmCommand command) {
@@ -280,18 +275,29 @@ class Alarm {
       // Update the prop map
       propMap.put(propName, value);
       
-      List<Sensor> sensors = sensorMap.get(propName);
-      if (sensors != null) {
-         for (Sensor sensor : sensors) {
-            updateSensor(sensor, value);
+      List<Pair<AlarmCommand,Sensor>> commandSensorPairs = sensorMap.get(propName);
+      if (commandSensorPairs != null) {
+         for (Pair<AlarmCommand,Sensor> commandSensorPair : commandSensorPairs) {
+            AlarmCommand command = commandSensorPair.getLeft();
+            Sensor sensor = commandSensorPair.getRight();
+            updateSensor(command, sensor, value);
          }
       }
    }
    
-   private void updateSensor(Sensor sensor, String sensorValue) {
+   private void updateSensor(AlarmCommand command, Sensor sensor, String sensorValue) {
       if (sensor == null) {
         return;
       }
+
+       if (command.getAction() == AlarmCommand.Action.TIME_STATUS) {
+           // Check for offset value
+           Pair<Integer,Integer> hoursAndMins = AlarmCommand.getHoursAndMinsFromArgs(command.getArgs());
+           if (hoursAndMins != null) {
+               hoursAndMins = sanitiseHoursAndMins(this.hours + hoursAndMins.getLeft(), this.mins + hoursAndMins.getRight());
+               sensorValue = getTimeAsString(hoursAndMins.getLeft(), hoursAndMins.getRight());
+           }
+       }
       
       if (sensor instanceof StateSensor) {
         // State sensors are case sensitive and expect lower case
@@ -347,5 +353,28 @@ class Alarm {
       cronExpression[4] = "*";
       cronExpression[5] = getDaysCronExpression();
    }
-   
+
+
+   private static Pair<Integer,Integer> sanitiseHoursAndMins(int hours, int mins) {
+       // Sanity check hours and mins
+       int sign = mins >= 0 ? 1 : -1;
+       mins = Math.abs(mins);
+       int minHours = (int)Math.floor(((double)mins)/60);
+       mins = mins % 60;
+       hours += (minHours * sign);
+
+
+       if (sign == -1 && mins > 0) {
+           hours--;
+           mins = 60-mins;
+       }
+
+       if (hours < 0) {
+           hours = 24-hours;
+       }
+
+       hours = Math.min(23, Math.max(0, hours));
+       mins = Math.min(59, Math.max(0, mins));
+       return Pair.of(hours, mins);
+   }
 }

@@ -33,6 +33,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.commons.lang3.tuple.Pair;
 import org.apache.log4j.Logger;
 import org.openremote.controller.model.sensor.Sensor;
 import org.openremote.controller.protocol.alarm.Alarm.Day;
@@ -295,10 +296,15 @@ class AlarmManager {
             setAlarmTime(command.getAlarmName(), false, Integer.parseInt(command.getArgs()[0]), Integer.parseInt(command.getArgs()[1]));
             break;
          case TIME_RELATIVE:
-            setAlarmTime(command.getAlarmName(), true, Integer.parseInt(command.getArgs()[0]), Integer.parseInt(command.getArgs()[1]));
+            Pair<Integer, Integer> hoursAndMins = AlarmCommand.getHoursAndMinsFromArgs(command.getArgs());
+            if (hoursAndMins != null) {
+               setAlarmTime(command.getAlarmName(), true, hoursAndMins.getLeft(), hoursAndMins.getRight());
+            }
             break;
       }
    }
+
+
    
    static void addSensor(AlarmCommand command, Sensor sensor) {      
       // Ensure command is a read command
