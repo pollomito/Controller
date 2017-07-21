@@ -51,7 +51,7 @@ public class AlarmProtocolCommandTest {
         Assert.assertEquals("16:35", status);
 
         // Deccrement the alarm time by 2:45
-        alarmWriteCommand = new AlarmCommand(AlarmCommand.Action.TIME_RELATIVE, "Test", new String[] {"-2", "-45"});
+        alarmWriteCommand = new AlarmCommand(AlarmCommand.Action.TIME_RELATIVE, "Test", new String[] {"-2", "+45"});
         AlarmManager.sendAlarmCommand(alarmWriteCommand);
 
         status = statusCache.queryStatus(1);

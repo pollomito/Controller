@@ -119,8 +119,12 @@ public class AlarmCommand implements ExecutableCommand, EventListener  {
       String hoursStr = args[0];
       String minsStr = args[1];
       try {
+         boolean isNegative = hoursStr.charAt(0) == '-';
          int hours = Integer.parseInt((hoursStr.charAt(0) == '+') ? hoursStr.substring(1) : hoursStr);
          int mins = Integer.parseInt((minsStr.charAt(0) == '+') ? minsStr.substring(1) : minsStr);
+         if (mins > 0 && isNegative) {
+             mins *= -1;
+         }
          return Pair.of(hours, mins);
       } catch (NumberFormatException e) {
          log.error("Invalid command value must be +/-HH:+/-MM e.g. 01:00 or +2:10 or 0:-30", e);
