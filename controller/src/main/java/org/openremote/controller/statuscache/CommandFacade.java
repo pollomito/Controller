@@ -90,5 +90,16 @@ public class CommandFacade
     command(name, Integer.toString(value));
   }
 
+  public void updateCommands(Set<Command> newCommands) {
+    for (Command cmd : newCommands)
+    {
+      String cmdName = cmd.getProperty(Command.COMMAND_NAME_PROPERTY);
+
+      if (cmdName != null && !cmdName.equals(""))
+      {
+        namedCommands.put(cmdName, cmd);
+      }
+    }
+  }
 }
 

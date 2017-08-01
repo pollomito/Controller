@@ -130,7 +130,18 @@ public class CommandServiceImpl implements CommandService, DeployerCommandListen
    */
   @Override public synchronized void onCommandsDeployed(Set<Command> commands)
   {
-    deviceName2DeviceID2CmdName2CmdMap.clear();
+    deployCommands(commands, true);
+  }
+
+  @Override
+  public void onNewCommandsDeployed(Set<Command> newCommands) {
+    deployCommands(newCommands, false);
+  }
+
+  private void deployCommands(Set<Command> commands, boolean clear) {
+    if (clear) {
+      deviceName2DeviceID2CmdName2CmdMap.clear();
+    }
 
     for (Command curCmd : commands)
     {
@@ -187,4 +198,6 @@ public class CommandServiceImpl implements CommandService, DeployerCommandListen
       cmdList.add(curCmd);
     }
   }
+
+
 }

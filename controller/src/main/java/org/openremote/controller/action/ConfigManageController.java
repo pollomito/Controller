@@ -85,7 +85,7 @@ public class ConfigManageController extends MultiActionController
       //  -- decouple from direct Java reference (and therefore from controller runtime),
       //     and go over HTTP/REST instead. See ORCJAVA-173
 
-      ServiceContext.getDeployer().deployFromZip(zipInput);
+      ServiceContext.getDeployer().deployFromZip(zipInput, true);
 
       response.setStatus(HttpURLConnection.HTTP_OK);
       writer.println("Upload Complete.");
@@ -137,7 +137,7 @@ public class ConfigManageController extends MultiActionController
       //  -- decouple from direct Java reference (and therefore from controller runtime),
       //     and go over HTTP/REST instead. See ORCJAVA-173
 
-      ServiceContext.getDeployer().deployFromOnline(username, password);
+      ServiceContext.getDeployer().deployFromOnline(username, password, true);
 
       response.setStatus(HttpURLConnection.HTTP_OK);
     }

@@ -42,6 +42,7 @@ import java.nio.charset.Charset;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
 import java.util.*;
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -480,6 +481,7 @@ public class Deployer
    * @param inputStream     Input stream to the zip file to deploy. Note that this method will
    *                        attempt to close the input stream on exit.
    *
+   * @param fullDeploy
    * @throws ConfigurationException   If new deployments through admin interface have been disabled,
    *                                  or if the target path to extract the new deployment archive
    *                                  cannot be resolved, or if the target path does not exist
@@ -489,7 +491,7 @@ public class Deployer
    *                                  files from within the deployment archive may be logged as
    *                                  errors or warnings instead of raising an exception.
    */
-  public void deployFromZip(InputStream inputStream) throws ConfigurationException, IOException
+  public void deployFromZip(InputStream inputStream, boolean fullDeploy) throws ConfigurationException, IOException
   {
     // TODO:
     //   May need a proper permissions object -- this would allow specific
@@ -521,6 +523,9 @@ public class Deployer
       pause();
       unzip(inputStream, resourceDirURI);
       copyLircdConf(resourceDirURI, controllerConfig);
+      if (!fullDeploy) {
+        modelBuilder.updateModel();
+      }
     } finally {
       resume();
     }
@@ -532,7 +537,7 @@ public class Deployer
    * A HTTP connection is created to Beehive server and account information is downloaded to
    * this controller using the given user name and credentials.
    *
-   * @see #deployFromZip(java.io.InputStream)
+   * @see #deployFromZip(InputStream, boolean)
    *
    * @param username        user name to download account configuration through Beehive's REST
    *                        interface
@@ -547,7 +552,7 @@ public class Deployer
    * @throws ConnectionException      If connection creation failed, or reading from the connection
    *                                  failed for any reason
    */
-  public void deployFromOnline(String username, String credentials) throws ConfigurationException,
+  public void deployFromOnline(String username, String credentials, boolean fullDeploy) throws ConfigurationException,
                                                                            ConnectionException
   {
     BeehiveConnection connection = new BeehiveConnection(this);
@@ -556,7 +561,7 @@ public class Deployer
 
     try
     {
-      deployFromZip(stream);
+      deployFromZip(stream, fullDeploy);
     }
 
     catch (IOException e)
@@ -787,7 +792,7 @@ public class Deployer
    * @return  user's login name or an empty string if login name was not found or there
    *          was an error reading it
    */
-  protected String getUserName()
+  public String getUserName()
   {
     // TODO :
     //        moved temporarily into public Deployer API to satisfy requirements to Beehive
@@ -853,7 +858,7 @@ public class Deployer
    * @throws PasswordManager.PasswordNotFoundException
    *            if the password for the user was not found in the keystore
    */
-  protected String getPassword(String username) throws PasswordException
+  public String getPassword(String username) throws PasswordException
   {
     // TODO :
     //        moved temporarily into public Deployer API to satisfy requirements to Beehive
@@ -1521,15 +1526,14 @@ public class Deployer
     private volatile boolean running = true;
 
     /**
-     * Indicates the watcher thread should temporarily pause and not trigger any actions
-     * on the deployer.
-     */
-    private volatile boolean paused = false;
-
-    /**
      * The actual thread reference.
      */
     private Thread watcherThread;
+
+    /**
+     *  Lock to put watcher on pause
+     */
+    private ReentrantLock lock = new ReentrantLock(true);
 
 
     // Constructors -------------------------------------------------------------------------------
@@ -1581,7 +1585,7 @@ public class Deployer
      */
     public void pause()
     {
-      paused = true;
+        lock.lock();
     }
 
     /**
@@ -1591,7 +1595,7 @@ public class Deployer
      */
     public void resume()
     {
-      paused = false;
+      lock.unlock();
     }
 
 
@@ -1619,11 +1623,9 @@ public class Deployer
     {
       while (running)
       {
-        if (paused)
-          continue;
-
         try
         {
+          lock.lock();
           deployer.detectVersion();     // will throw an exception if no known schemas are found...
 
 
@@ -1632,48 +1634,36 @@ public class Deployer
             try
             {
               deployer.softRestart();
-            }
-
-            catch (ControllerDefinitionNotFoundException e)
-            {
+            } catch (ControllerDefinitionNotFoundException e) {
               log.error(
-                  "Soft restart cannot complete, controller definition not found : {0}",
-                  e.getMessage()
+                      "Soft restart cannot complete, controller definition not found : {0}",
+                      e.getMessage()
               );
-            }
-
-            catch (Throwable t)
-            {
+            } catch (Throwable t) {
               log.error(
-                  "Controller soft restart failed : {0}",
-                  t, t.getMessage()
+                      "Controller soft restart failed : {0}",
+                      t, t.getMessage()
               );
             }
           }
-        }
-
-        catch (ControllerDefinitionNotFoundException e)
-        {
-          if (deployer.modelBuilder != null)
-          {
+          Thread.sleep(2000);
+        } catch (ControllerDefinitionNotFoundException e) {
+          if (deployer.modelBuilder != null) {
             deployer.softShutdown();
-          }
-
-          else
-          {
+          } else {
             log.trace("Did not locate controller definitions for any known schema...");
           }
         }
 
-        try
-        {
-          Thread.sleep(2000);
-        }
+
         catch (InterruptedException e)
         {
           running = false;
 
           Thread.currentThread().interrupt();
+        }
+        finally {
+         lock.unlock();
         }
       }
 

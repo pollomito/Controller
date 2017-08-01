@@ -112,7 +112,7 @@ public class CommandHandler {
             deployer.unlinkController();
             ackResponse(controllerCommand.getOid(), channel);
             break;
-
+         case UPDATE_CONTROLLER:
          case DOWNLOAD_DESIGN:
          {
             try {
@@ -124,7 +124,7 @@ public class CommandHandler {
                }
 
                String password = deployer.getPassword(username);
-               deployer.deployFromOnline(username, password);
+               deployer.deployFromOnline(username, password, ControllerCommandDTO.Type.DOWNLOAD_DESIGN.equals(controllerCommand.getCommandTypeEnum()));
                ackResponse(controllerCommand.getOid(), channel);
 
             } catch (Deployer.PasswordException e) {

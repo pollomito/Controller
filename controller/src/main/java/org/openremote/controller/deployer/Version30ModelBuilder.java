@@ -102,6 +102,11 @@ public class Version30ModelBuilder extends AbstractModelBuilder
   // Implements ModelBuilder ----------------------------------------------------------------------
 
 
+  @Override
+  public void updateModel() {
+    // nothing here yet...
+  }
+
   @Override public boolean hasControllerDefinitionChanged()
   {
     return false;

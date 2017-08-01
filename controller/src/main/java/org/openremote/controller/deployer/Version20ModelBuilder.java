@@ -454,7 +454,7 @@ public class Version20ModelBuilder extends AbstractModelBuilder
    *
    * @return  map of name,value strings representing configuration properties
    */
-  public Map<String, String> getConfigurationProperties()
+  public Map<String, String> getConfigurationProperties(Document controllerXMLDefinition)
   {
     Element element;
 
@@ -495,6 +495,10 @@ public class Version20ModelBuilder extends AbstractModelBuilder
     return propertyMap;
   }
 
+  public Map<String, String> getConfigurationProperties()
+  {
+   return getConfigurationProperties(controllerXMLDefinition);
+  }
 
   /**
    * Returns a reference to a device state cache associated with this model builder. This is
@@ -532,6 +536,24 @@ public class Version20ModelBuilder extends AbstractModelBuilder
 
 
   // Implements ModelBuilder --------------------------------------------------------------------
+
+
+  @Override
+  public void updateModel() {
+    try {
+      Document doc = readControllerXMLDocument();
+      commandFactory.updateCommandBuilders(getConfigurationProperties(doc), deployer);
+      // TODO : at the moment only contains sensor model and partial command model
+
+
+      updateCommandModel(doc);
+      updateSensorModel(doc);
+
+    } catch (InitializationException e) {
+      e.printStackTrace();
+    }
+  }
+
 
 
   /**
@@ -587,8 +609,7 @@ public class Version20ModelBuilder extends AbstractModelBuilder
    */
   @Override protected void build()
   {
-     commandFactory.updateCommandBuilders(getConfigurationProperties(), deployer);
-     
+     commandFactory.updateCommandBuilders(getConfigurationProperties(controllerXMLDefinition), deployer);
     // TODO : at the moment only contains sensor model and partial command model
 
     buildCommandModel();
@@ -699,10 +720,9 @@ public class Version20ModelBuilder extends AbstractModelBuilder
   protected void buildSensorModel()
   {
     deviceStateCache.start();
-    
     // Build...
 
-    Set<Sensor> sensors = buildSensorObjectModelFromXML();
+    Set<Sensor> sensors = buildSensorObjectModelFromXML(controllerXMLDefinition);
 
     for (DeployerSensorListener curListener : sensorListeners)
     {
@@ -716,6 +736,37 @@ public class Version20ModelBuilder extends AbstractModelBuilder
     for (Sensor sensor : sensors)
     {
       sensor.start();
+    }
+  }
+
+  protected void updateSensorModel(Document doc) {
+    Set<Sensor> oldSensors = buildSensorObjectModelFromXML(controllerXMLDefinition);
+    Set<Sensor> newSensors = buildSensorObjectModelFromXML(doc);
+
+    //determine new sensors
+    newSensors.removeAll(oldSensors);
+
+    for (DeployerSensorListener curListener : sensorListeners)
+    {
+      curListener.onNewSensorsDeployed(newSensors);
+    }
+
+    for (Sensor sensor : newSensors)
+    {
+      sensor.start();
+    }
+
+  }
+
+  protected void updateCommandModel(Document doc) {
+
+    Set<Command> oldCommands = buildCommandObjectModelFromXML(controllerXMLDefinition);
+    Set<Command> newCommands = buildCommandObjectModelFromXML(doc);
+    newCommands.removeAll(oldCommands);
+
+    for (DeployerCommandListener curListener : commandListeners)
+    {
+      curListener.onCommandsDeployed(newCommands);
     }
   }
 
@@ -736,7 +787,7 @@ public class Version20ModelBuilder extends AbstractModelBuilder
 
     // TODO : ORCJAVA-209 -- merge command models
 
-    Set<Command> commands = buildCommandObjectModelFromXML();
+    Set<Command> commands = buildCommandObjectModelFromXML(controllerXMLDefinition);
 
     for (DeployerCommandListener curListener : commandListeners)
     {
@@ -752,8 +803,9 @@ public class Version20ModelBuilder extends AbstractModelBuilder
    *
    * @return  list of command instances that were succesfully built from the controller.xml
    *          document instance
+   * @param doc
    */
-  protected Set<Command> buildCommandObjectModelFromXML()
+  protected Set<Command> buildCommandObjectModelFromXML(Document doc)
   {
     Element commandsElement = null;
 
@@ -761,7 +813,7 @@ public class Version20ModelBuilder extends AbstractModelBuilder
     {
       // Parse <commands> element from the controller.xml...
 
-      commandsElement = XMLSegment.COMMANDS.query(controllerXMLDefinition);
+      commandsElement = XMLSegment.COMMANDS.query(doc);
 
 
       if (commandsElement == null)
@@ -820,7 +872,7 @@ public class Version20ModelBuilder extends AbstractModelBuilder
    * @return  list of sensor instances that were succesfully built from the controller.xml
    *          document instance
    */
-  protected Set<Sensor> buildSensorObjectModelFromXML()
+  protected Set<Sensor> buildSensorObjectModelFromXML(Document controllerXMLDefinition)
   {
     Element sensorsElement = null;
 

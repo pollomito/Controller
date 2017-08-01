@@ -27,4 +27,7 @@ public interface DeployerCommandListener
    * @param commands  commands of the new controller configuration.
    */
   void onCommandsDeployed(Set<Command> commands);
+
+  void onNewCommandsDeployed(Set<Command> newCommands);
+
 }

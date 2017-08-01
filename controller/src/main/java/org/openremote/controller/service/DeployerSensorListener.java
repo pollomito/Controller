@@ -27,4 +27,8 @@ public interface DeployerSensorListener
    * @param sensors  sensors of the new controller configuration.
    */
   void onSensorsDeployed(Set<Sensor> sensors);
+
+  void onNewSensorsDeployed(Set<Sensor> newSensors);
+
+
 }

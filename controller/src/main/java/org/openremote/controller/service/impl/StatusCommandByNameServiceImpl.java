@@ -190,9 +190,9 @@ public class StatusCommandByNameServiceImpl implements StatusCommandByNameServic
    */
   @Override public synchronized void onCommandsDeployed(Set<Command> commands)
   {
-    updateDevice2CommandMap(commands);
+    updateDevice2CommandMap(commands, true);
 
-    updateDevice2SensorMap(this.sensorSet);
+    updateDevice2SensorMap(this.sensorSet, true);
 
     /*
     logDevice2CommandMap();
@@ -202,6 +202,12 @@ public class StatusCommandByNameServiceImpl implements StatusCommandByNameServic
       logDevice2SensorMap();
     }
     */
+  }
+
+  @Override
+  public void onNewCommandsDeployed(Set<Command> newcommands) {
+    updateDevice2CommandMap(newcommands, true);
+
   }
 
 
@@ -215,19 +221,28 @@ public class StatusCommandByNameServiceImpl implements StatusCommandByNameServic
     this.sensorSet.clear();
     this.sensorSet.addAll(sensors);
 
-    updateSensorMap(sensors);
+    updateSensorMap(sensors, true);
 
-    updateDevice2SensorMap(sensors);
+    updateDevice2SensorMap(sensors, true);
 
     //logDevice2SensorMap();
   }
 
+  @Override
+  public void onNewSensorsDeployed(Set<Sensor> newSensors) {
+    this.sensorSet.addAll(newSensors);
+    updateSensorMap(newSensors, false);
+    updateDevice2SensorMap(newSensors, false);
+
+  }
 
   // Private Instance Methods ---------------------------------------------------------------------
 
-  private void updateSensorMap(Set<Sensor> sensors)
+  private void updateSensorMap(Set<Sensor> sensors, boolean clear)
   {
-    sensorMap.clear();
+    if (clear) {
+      sensorMap.clear();
+    }
 
     for (Sensor curSensor : sensors)
     {
@@ -249,9 +264,11 @@ public class StatusCommandByNameServiceImpl implements StatusCommandByNameServic
     }
   }
 
-  private void updateDevice2CommandMap(Set<Command> commands)
+  private void updateDevice2CommandMap(Set<Command> commands, boolean clear)
   {
-    deviceName2DeviceID2CmdID2CmdMap.clear();
+    if(clear) {
+      deviceName2DeviceID2CmdID2CmdMap.clear();
+    }
 
     for (Command curCmd : commands)
     {
@@ -302,9 +319,11 @@ public class StatusCommandByNameServiceImpl implements StatusCommandByNameServic
     }
   }
 
-  private void updateDevice2SensorMap(Set<Sensor> sensors)
+  private void updateDevice2SensorMap(Set<Sensor> sensors, boolean clear)
   {
-    deviceName2DeviceID2SensorName2SensorsMap.clear();
+    if (clear) {
+      deviceName2DeviceID2SensorName2SensorsMap.clear();
+    }
 
     for (Sensor curSensor : sensors)
     {

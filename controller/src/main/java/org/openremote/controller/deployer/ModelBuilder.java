@@ -46,7 +46,7 @@ import org.jdom.Namespace;
 public interface ModelBuilder
 {
 
-  // Enums ----------------------------------------------------------------------------------------
+    // Enums ----------------------------------------------------------------------------------------
 
 
   /**
@@ -155,6 +155,11 @@ public interface ModelBuilder
    */
   void buildModel();
 
+
+  /**
+   * Responsible for update the controller's object model.
+   */
+  void updateModel();
 
   /**
    * Model builder (schema) specific implementation to determine whether the controller

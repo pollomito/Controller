@@ -217,5 +217,8 @@ public class EventProcessorChain
     return commandFacade;
   }
 
+  public void updateCommandFacade(Set<Command> newCommands) {
+    this.commandFacade.updateCommands(newCommands);
+  }
 }
 

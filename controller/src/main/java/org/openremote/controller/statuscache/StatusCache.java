@@ -123,6 +123,12 @@ public class StatusCache implements DeployerCommandListener, DeployerSensorListe
     // from within scripts and rules...
 
     initializeEventContext(commands);
+
+  }
+
+  @Override
+  public void onNewCommandsDeployed(Set<Command> newCommands) {
+    eventProcessorChain.updateCommandFacade(newCommands);
   }
 
 
@@ -137,6 +143,11 @@ public class StatusCache implements DeployerCommandListener, DeployerSensorListe
     {
       registerSensor(sensor);
     }
+  }
+
+  @Override
+  public void onNewSensorsDeployed(Set<Sensor> newSensors) {
+    onSensorsDeployed(newSensors);
   }
 
 
