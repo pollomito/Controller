@@ -97,7 +97,7 @@ public class CommandHandler {
    //
    private void executeCommand(ControllerCommandDTO controllerCommand, Channel channel)
    {
-      switch (controllerCommand.getCommandTypeEnum())
+     switch (controllerCommand.getCommandTypeEnum())
       {
          case INITIATE_PROXY:
             if (initiateProxy(controllerCommand)) {

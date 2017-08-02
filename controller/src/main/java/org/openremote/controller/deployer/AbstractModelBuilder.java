@@ -89,7 +89,9 @@ public abstract class AbstractModelBuilder implements ModelBuilder
   /**
    * Stores a JDOM Document reference to an in-memory node-tree of the controller's XML definition.
    */
-  protected Document controllerXMLDefinition;
+  public abstract Document getControllerXMLDefinition();
+
+  public abstract void setControllerXMLDefinition(Document doc);
   
   /**
    * Reference to the deployer can be used by subclasses, if needed
@@ -119,10 +121,10 @@ public abstract class AbstractModelBuilder implements ModelBuilder
    *            with the same id, or if for any other reason the execution of the XPath query
    *            fails
    */
-  public Element queryElementById(int id) throws InitializationException
+  public Element queryElementById(Document doc, int id) throws InitializationException
   {
 
-    Element element = queryElementFromXML(controllerXMLDefinition, "*[@id='" + id + "']");
+    Element element = queryElementFromXML(doc, "*[@id='" + id + "']");
 
     if (element == null)
     {
@@ -140,7 +142,7 @@ public abstract class AbstractModelBuilder implements ModelBuilder
   /**
    * Provides a default implementation which reads the controller's XML definition into memory
    * (via {@link #readControllerXMLDocument()} method) and stores the XML document node-tree
-   * in {@link #controllerXMLDefinition} field.  <p>
+   * in {@link #getControllerXMLDefinition()} field.  <p>
    *
    * Subclasses can override this method altogether or provide additional implementation via
    * {@link #build} method which this implementation will execute.
@@ -149,7 +151,7 @@ public abstract class AbstractModelBuilder implements ModelBuilder
   {
     try
     {
-      controllerXMLDefinition = readControllerXMLDocument();
+      setControllerXMLDefinition(readControllerXMLDocument());
 
       build();
     }

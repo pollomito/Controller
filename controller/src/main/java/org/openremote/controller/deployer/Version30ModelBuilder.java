@@ -115,6 +115,17 @@ public class Version30ModelBuilder extends AbstractModelBuilder
 
   // Implements AbstractModelBuilder --------------------------------------------------------------
 
+  @Override
+  public Document getControllerXMLDefinition() {
+    // nothing here yet...
+    return null;
+  }
+
+  @Override
+  public void setControllerXMLDefinition(Document doc) {
+    // nothing here yet...
+  }
+
   @Override protected void build()
   {
     // nothing here yet...

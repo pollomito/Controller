@@ -143,7 +143,9 @@ public class Version20ModelBuilder extends AbstractModelBuilder
    * }</pre>
    */
   private final static String XML_CONFIG_PROPERTY_VALUE_ATTR = "value";
+  private Set<Integer> commandIds = new HashSet<Integer>();
 
+  private Document controllerXMLDefinition;
 
 
   // Enums ----------------------------------------------------------------------------------------
@@ -497,7 +499,7 @@ public class Version20ModelBuilder extends AbstractModelBuilder
 
   public Map<String, String> getConfigurationProperties()
   {
-   return getConfigurationProperties(controllerXMLDefinition);
+   return getConfigurationProperties(getControllerXMLDefinition());
   }
 
   /**
@@ -550,7 +552,7 @@ public class Version20ModelBuilder extends AbstractModelBuilder
       updateSensorModel(doc);
 
     } catch (InitializationException e) {
-      e.printStackTrace();
+      log.error("Error parsing xml", e);
     }
   }
 
@@ -603,6 +605,16 @@ public class Version20ModelBuilder extends AbstractModelBuilder
 
   // Implements AbstractModelBuilder --------------------------------------------------------------
 
+
+  @Override
+  public Document getControllerXMLDefinition() {
+    return controllerXMLDefinition;
+  }
+
+  @Override
+  public void setControllerXMLDefinition(Document doc) {
+    this.controllerXMLDefinition = doc;
+  }
 
   /**
    * Sequence of actions to build object model based on the current 2.0 schema.
@@ -740,11 +752,18 @@ public class Version20ModelBuilder extends AbstractModelBuilder
   }
 
   protected void updateSensorModel(Document doc) {
-    Set<Sensor> oldSensors = buildSensorObjectModelFromXML(controllerXMLDefinition);
-    Set<Sensor> newSensors = buildSensorObjectModelFromXML(doc);
+
+    Set<Sensor> allSensors = buildSensorObjectModelFromXML(doc);
 
     //determine new sensors
-    newSensors.removeAll(oldSensors);
+    Set<Sensor> newSensors = new HashSet<Sensor>();
+
+    for (Sensor sensor : allSensors) {
+      if (deviceStateCache.sensorIDFromName(sensor.getName()) == null) {
+        newSensors.add(sensor);
+      }
+    }
+
 
     for (DeployerSensorListener curListener : sensorListeners)
     {
@@ -760,9 +779,17 @@ public class Version20ModelBuilder extends AbstractModelBuilder
 
   protected void updateCommandModel(Document doc) {
 
-    Set<Command> oldCommands = buildCommandObjectModelFromXML(controllerXMLDefinition);
-    Set<Command> newCommands = buildCommandObjectModelFromXML(doc);
-    newCommands.removeAll(oldCommands);
+    Set<Command> commands = buildCommandObjectModelFromXML(doc);
+
+    Set<Command> newCommands = new HashSet<Command>();
+
+    for (Command command : commands) {
+      if (!commandIds.contains(command.getID())) {
+        newCommands.add(command);
+        commandIds.add(command.getID());
+      }
+    }
+
 
     for (DeployerCommandListener curListener : commandListeners)
     {
@@ -788,6 +815,10 @@ public class Version20ModelBuilder extends AbstractModelBuilder
     // TODO : ORCJAVA-209 -- merge command models
 
     Set<Command> commands = buildCommandObjectModelFromXML(controllerXMLDefinition);
+    commandIds.clear();
+    for (Command command : commands) {
+      commandIds.add(command.getID());
+    }
 
     for (DeployerCommandListener curListener : commandListeners)
     {
@@ -911,7 +942,7 @@ public class Version20ModelBuilder extends AbstractModelBuilder
 
       try
       {
-        Sensor sensor = sensorBuilder.build(sensorElement);
+        Sensor sensor = sensorBuilder.build(controllerXMLDefinition, sensorElement);
 
         log.debug(
             "Created object model for sensor ''{0}'' (ID = ''{1}'').",

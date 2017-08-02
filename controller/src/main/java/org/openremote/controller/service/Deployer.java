@@ -42,6 +42,7 @@ import java.nio.charset.Charset;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
@@ -476,7 +477,7 @@ public class Deployer
    * @see org.openremote.controller.ControllerConfiguration#getResourcePath()
    * @see org.openremote.controller.ControllerConfiguration#isResourceUploadAllowed()
    *
-   * @see #deployFromOnline(String, String)
+   * @see #deployFromOnline(String, String, boolean)
    *
    * @param inputStream     Input stream to the zip file to deploy. Note that this method will
    *                        attempt to close the input stream on exit.
@@ -621,7 +622,7 @@ public class Deployer
 
     if (tmp == null)
     {
-      tmp = ((Version20ModelBuilder)modelBuilder).queryElementById(id);
+      tmp = ((Version20ModelBuilder)modelBuilder).queryElementById(((Version20ModelBuilder)modelBuilder).getControllerXMLDefinition(),id);
 
       xmlElementCache.put(id, tmp);
     }
@@ -1061,6 +1062,7 @@ public class Deployer
 
       modelBuilder.buildModel();
 
+
       Map<String, String> props = getConfigurationProperties();
       controllerConfig.setConfigurationProperties(props);
     } finally {
@@ -1076,6 +1078,7 @@ public class Deployer
 
       log.info("Startup complete.");
     }
+
   }
 
 
@@ -1619,20 +1622,20 @@ public class Deployer
      *   (as reported by {@link org.openremote.controller.service.Deployer#detectVersion()})
      *   then undeploy the object model.
      */
-    @Override public void run()
-    {
-      while (running)
-      {
-        try
-        {
-          lock.lock();
+    @Override
+    public void run() {
+      while (running) {
+        try {
+          if (!lock.tryLock(60, TimeUnit.SECONDS)) {
+            log.warn("ControllerDefinitionWatch is paused more than 60s");
+            continue;
+          }
+
           deployer.detectVersion();     // will throw an exception if no known schemas are found...
 
 
-          if (deployer.modelBuilder == null || deployer.modelBuilder.hasControllerDefinitionChanged())
-          {
-            try
-            {
+          if (deployer.modelBuilder == null || deployer.modelBuilder.hasControllerDefinitionChanged()) {
+            try {
               deployer.softRestart();
             } catch (ControllerDefinitionNotFoundException e) {
               log.error(
@@ -1646,24 +1649,25 @@ public class Deployer
               );
             }
           }
-          Thread.sleep(2000);
+
         } catch (ControllerDefinitionNotFoundException e) {
           if (deployer.modelBuilder != null) {
             deployer.softShutdown();
           } else {
             log.trace("Did not locate controller definitions for any known schema...");
           }
-        }
-
-
-        catch (InterruptedException e)
-        {
+        } catch (InterruptedException e) {
           running = false;
-
           Thread.currentThread().interrupt();
+        } finally {
+          lock.unlock();
         }
-        finally {
-         lock.unlock();
+
+        try {
+          Thread.sleep(2000);
+        } catch (InterruptedException e) {
+          running = false;
+          Thread.currentThread().interrupt();
         }
       }
 

@@ -20,6 +20,7 @@
  */
 package org.openremote.controller.deployer;
 
+import org.jdom.Document;
 import org.jdom.Element;
 import org.openremote.controller.exception.InitializationException;
 import org.openremote.controller.model.sensor.Sensor;
@@ -44,7 +45,7 @@ public interface SensorBuilder<T extends ModelBuilder>
    * @throws  InitializationException
    *              if the XML mapping process encounters an irrecovable error
    */
-  Sensor build(Element sensorElement) throws InitializationException;
+  Sensor build(Document doc, Element sensorElement) throws InitializationException;
 
 
   /**

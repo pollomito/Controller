@@ -22,6 +22,7 @@ package org.openremote.controller.model.xml;
 
 import java.util.List;
 
+import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.Namespace;
 import org.openremote.controller.Constants;
@@ -274,7 +275,7 @@ public class Version20SensorBuilder implements SensorBuilder<Version20ModelBuild
    * @return initialized sensor instance -- notice that sensor must be
    *         {@link org.openremote.controller.model.sensor.Sensor#start() started} explicitly.
    */
-  @Override public Sensor build(Element sensorElement) throws InitializationException
+  @Override public Sensor build(Document doc, Element sensorElement) throws InitializationException
   {
     String sensorIDValue = sensorElement.getAttributeValue("id");
     String sensorName = sensorElement.getAttributeValue("name");
@@ -284,7 +285,7 @@ public class Version20SensorBuilder implements SensorBuilder<Version20ModelBuild
     try
     {
       int sensorID = Integer.parseInt(sensorIDValue);
-      EventProducerItem epItem = parseSensorEventProducer(sensorElement);
+      EventProducerItem epItem = parseSensorEventProducer(doc, sensorElement);
       EventProducer ep = epItem.getEventProducer();
       int epID = epItem.getID();
 
@@ -393,7 +394,7 @@ public class Version20SensorBuilder implements SensorBuilder<Version20ModelBuild
    *            if the sensor element does not have a child include element, or if the
    *            referenced command in include element could not be created
    */
-  private EventProducerItem parseSensorEventProducer(Element sensorElement)
+  private EventProducerItem parseSensorEventProducer(Document doc, Element sensorElement)
     throws InitializationException
   {
     List<Element> sensorPropertyElements = AbstractModelBuilder.getChildElements(sensorElement);
@@ -415,7 +416,7 @@ public class Version20SensorBuilder implements SensorBuilder<Version20ModelBuild
           {
             int eventProducerID = Integer.parseInt(eventProducerRefValue);
 
-            Element eventProducerElement = modelBuilder.queryElementById(eventProducerID);
+            Element eventProducerElement = modelBuilder.queryElementById(doc,eventProducerID);
 
 
             // TODO : this should go through deployer API, see ORCJAVA-202 and ORCJAVA-201
