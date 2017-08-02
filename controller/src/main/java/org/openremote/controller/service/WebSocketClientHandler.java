@@ -139,6 +139,11 @@ public class WebSocketClientHandler extends SimpleChannelInboundHandler<Object> 
         }
     }
 
+    @Override
+    public void userEventTriggered(ChannelHandlerContext ctx, Object evt) throws Exception {
+        super.userEventTriggered(ctx, evt);
+        log.info("Websocket Event " + evt);
+    }
 
     public void stop() {
         this.handshakeFuture.cancel(true);
