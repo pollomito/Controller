@@ -112,7 +112,7 @@ public class CommandHandler {
             deployer.unlinkController();
             ackResponse(controllerCommand.getOid(), channel);
             break;
-         case UPDATE_CONTROLLER:
+         case INCREMENTAL_DESIGN_UPDATE:
          case DOWNLOAD_DESIGN:
          {
             try {
