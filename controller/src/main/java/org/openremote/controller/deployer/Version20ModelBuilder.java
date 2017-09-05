@@ -793,7 +793,7 @@ public class Version20ModelBuilder extends AbstractModelBuilder
 
     for (DeployerCommandListener curListener : commandListeners)
     {
-      curListener.onCommandsDeployed(newCommands);
+      curListener.onNewCommandsDeployed(newCommands);
     }
   }
 
