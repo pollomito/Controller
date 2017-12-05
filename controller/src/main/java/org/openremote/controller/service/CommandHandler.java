@@ -23,7 +23,10 @@ package org.openremote.controller.service;
 import flexjson.JSONDeserializer;
 import flexjson.JSONSerializer;
 import io.netty.channel.Channel;
+import io.netty.channel.ChannelFuture;
 import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
+import io.netty.util.concurrent.Future;
+import io.netty.util.concurrent.GenericFutureListener;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.openremote.controller.Constants;
@@ -174,7 +177,16 @@ public class CommandHandler {
       }
       try {
          JSONObject response = new JSONObject(new JSONSerializer().deepSerialize(responseDTO));
-         channel.writeAndFlush(new TextWebSocketFrame(response.toString()));
+         ChannelFuture channelFuture = channel.writeAndFlush(new TextWebSocketFrame(response.toString()));
+         channelFuture.addListener(new GenericFutureListener<Future<? super Void>>() {
+            @Override
+            public void operationComplete(Future<? super Void> future) throws Exception {
+               Throwable cause = future.cause();
+               if (cause != null) {
+                  log.error("Exception :" + cause.getClass().getCanonicalName() + ", Message:" + cause.getMessage());
+               }
+            }
+         });
       } catch (JSONException e1) {
          log.error("Error serialising command json",e1);
       }

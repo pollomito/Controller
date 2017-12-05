@@ -52,14 +52,21 @@ public class WebSocketClient {
 
 
    static void connect(Bootstrap b) {
-      b.connect().addListener(new ChannelFutureListener() {
+
+      b.option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 10000).
+              connect().addListener(new ChannelFutureListener() {
          @Override
          public void operationComplete(ChannelFuture future) throws Exception {
             if (future.cause() != null) {
                log.error("Error connecting to CCS WS:"+ future.cause().getMessage() );
+            } else if (! future.channel().isActive()) {
+               log.error("Error Connect operation done without channel active");
+            } else {
+               log.info("WS Connection established");
             }
          }
       });
+      log.info("WS Connection in progress");
    }
 
    /* create new EventLoop on first start */

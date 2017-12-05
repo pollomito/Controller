@@ -45,7 +45,7 @@ public class WebSocketClientHandler extends SimpleChannelInboundHandler<Object> 
     private ScheduledFuture<?> pingPongTaskFuture;
     private PingPongTask pingPongTask;
 
-    public WebSocketClientHandler(WebSocketClientHandshaker handshaker, CommandHandler commandHandler,int timeout, int reconnectDelay) {
+    public WebSocketClientHandler(WebSocketClientHandshaker handshaker, CommandHandler commandHandler, int timeout, int reconnectDelay) {
         this.handshaker = handshaker;
         this.commandHandler = commandHandler;
         this.timeout = timeout;
@@ -94,8 +94,13 @@ public class WebSocketClientHandler extends SimpleChannelInboundHandler<Object> 
 
         WebSocketFrame frame = (WebSocketFrame) msg;
         if (frame instanceof TextWebSocketFrame) {
+
             TextWebSocketFrame textFrame = (TextWebSocketFrame) frame;
-            commandHandler.handleCommand(textFrame, ctx.channel());
+            try {
+                commandHandler.handleCommand(textFrame, ctx.channel());
+            } catch (Throwable t) {
+                log.error("Error handling command " + t.getMessage());
+            }
         } else if (frame instanceof PongWebSocketFrame) {
             log.info("WebSocket Client received pong");
             pingPongTask.receivedPong();
@@ -108,7 +113,7 @@ public class WebSocketClientHandler extends SimpleChannelInboundHandler<Object> 
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
-        log.error("Exception on WebsocketClientHandler", cause);
+        log.error("Exception on WebsocketClientHandler, class:" + cause.getClass().getCanonicalName()+", message: "+ cause.getMessage() , cause);
         if (!handshakeFuture.isDone()) {
             handshakeFuture.setFailure(cause);
         }
@@ -128,11 +133,11 @@ public class WebSocketClientHandler extends SimpleChannelInboundHandler<Object> 
                     try {
                         WebSocketClient.connect(WebSocketClient.configureBootstrap(new Bootstrap(), loop, commandHandler.getDeployer(), commandHandler.getConfig()));
                     } catch (URISyntaxException e) {
-                        log.error("Error starting WS", e);
+                        log.error("Error starting WS, class: "+e.getClass().getCanonicalName()+", message: "+e.getMessage(), e);
                     } catch (SSLException e) {
-                        log.error("Error starting WS", e);
+                        log.error("Error starting WS, class: "+e.getClass().getCanonicalName()+", message: "+e.getMessage(), e);
                     } catch (Deployer.PasswordException e) {
-                        log.error("Error starting WS", e);
+                        log.error("Error starting WS, class: "+e.getClass().getCanonicalName()+", message: "+e.getMessage(), e);
                     }
                 }
             }, reconnectDelay, TimeUnit.MILLISECONDS);
