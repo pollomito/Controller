@@ -165,12 +165,16 @@ public class CommandHandler {
    private void ackResponse(Long oid, String errorMessage, Channel channel) {
       ackResponse(oid, errorMessage,null, channel);
    }
-
+   
    private void ackResponse(Long oid, String errorMessage, Throwable e, Channel channel) {
       ControllerCommandResponseDTO responseDTO = new ControllerCommandResponseDTO();
       responseDTO.setOid(oid);
       if (errorMessage != null) {
-         log.error(errorMessage, e);
+         String _errorMessage = errorMessage;
+         if (e != null) {
+            _errorMessage = errorMessage + ",class : "+e.getClass().getCanonicalName() +", description :" + e.getMessage();
+         }
+         log.error(_errorMessage, e);
          responseDTO.setCommandTypeEnum(ControllerCommandResponseDTO.Type.ERROR);
       } else {
          responseDTO.setCommandTypeEnum(ControllerCommandResponseDTO.Type.SUCCESS);

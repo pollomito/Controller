@@ -99,7 +99,7 @@ public class WebSocketClientHandler extends SimpleChannelInboundHandler<Object> 
             try {
                 commandHandler.handleCommand(textFrame, ctx.channel());
             } catch (Throwable t) {
-                log.error("Error handling command " + t.getMessage());
+                log.error("Error handling command: "+t.getClass().getCanonicalName()+", "+ t.getMessage(),t);
             }
         } else if (frame instanceof PongWebSocketFrame) {
             log.info("WebSocket Client received pong");
@@ -138,6 +138,8 @@ public class WebSocketClientHandler extends SimpleChannelInboundHandler<Object> 
                         log.error("Error starting WS, class: "+e.getClass().getCanonicalName()+", message: "+e.getMessage(), e);
                     } catch (Deployer.PasswordException e) {
                         log.error("Error starting WS, class: "+e.getClass().getCanonicalName()+", message: "+e.getMessage(), e);
+                    } catch (Throwable t) {
+                        log.error("Error starting WS, class: "+t.getClass().getCanonicalName()+", message: "+t.getMessage(), t);
                     }
                 }
             }, reconnectDelay, TimeUnit.MILLISECONDS);
