@@ -138,8 +138,8 @@ class Alarm {
       // Update the alarm
       this.hours = hoursAndMins.getLeft();
       this.mins = hoursAndMins.getRight();
-      cronExpression[1] = Integer.toString(mins);
-      cronExpression[2] = Integer.toString(hours);
+      cronExpression[1] = Integer.toString(this.mins);
+      cronExpression[2] = Integer.toString(this.hours);
       
       // Get prop name
       String propName = AlarmCommand.Action.TIME.getAttributeName();
@@ -226,9 +226,11 @@ class Alarm {
       
    String toXml() {
       String commandStr = "";
-      
-      for (AlarmCommandRef command : commands) {
-         commandStr += "<commandRef device=\"" + command.deviceName + "\" name=\""+ command.commandName + "\" delay=\"" + command.commandDelay + "\" />\n";
+
+      if (commands != null) {
+         for (AlarmCommandRef command : commands) {
+            commandStr += "<commandRef device=\"" + command.deviceName + "\" name=\"" + command.commandName + "\" delay=\"" + command.commandDelay + "\" />\n";
+         }
       }
       
       String str =   "<alarm name=\"" + name + "\">\n" +
@@ -355,7 +357,7 @@ class Alarm {
    }
 
 
-   private static Pair<Integer,Integer> sanitiseHoursAndMins(int hours, int mins) {
+   static Pair<Integer,Integer> sanitiseHoursAndMins(int hours, int mins) {
        // Sanity check hours and mins
        int sign = mins >= 0 ? 1 : -1;
        mins = Math.abs(mins);

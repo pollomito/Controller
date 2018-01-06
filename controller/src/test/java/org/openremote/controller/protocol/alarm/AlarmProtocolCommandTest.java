@@ -56,6 +56,21 @@ public class AlarmProtocolCommandTest {
 
         status = statusCache.queryStatus(1);
         Assert.assertEquals("13:50", status);
+
+        // Deccrement the alarm time by 0:30
+        alarmWriteCommand = new AlarmCommand(AlarmCommand.Action.TIME_RELATIVE, "Test", new String[] {"0", "-30"});
+        AlarmManager.sendAlarmCommand(alarmWriteCommand);
+
+        status = statusCache.queryStatus(1);
+        Assert.assertEquals("13:20", status);
+
+        // Deccrement the alarm time by 0:30
+        alarmWriteCommand = new AlarmCommand(AlarmCommand.Action.TIME_RELATIVE, "Test", new String[] {"0", "-30"});
+        AlarmManager.sendAlarmCommand(alarmWriteCommand);
+
+        status = statusCache.queryStatus(1);
+        Assert.assertEquals("12:50", status);
+        Assert.assertEquals("0 50 12 ? * SUN,MON,TUE,WED,THU,FRI,SAT", alarm.getCronExpression());
     }
 
     @Test
