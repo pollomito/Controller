@@ -86,7 +86,9 @@ public class JSONFormatter {
             }
          }
       }
-      
+
+
+
       if (requestType != null) {
          try {
             switch (requestType) {
@@ -139,6 +141,14 @@ public class JSONFormatter {
                                     JSONObject label = comp.optJSONObject("label");
                                     if (label != null) {
                                        updateValue(label, "text", label.optString("text"));
+                                       if (label.has("link")) {
+                                          updateValue(label, "link", convertLinkStates(label.optJSONObject("link")));
+                                       }
+                                    } else {
+                                       JSONObject img = comp.optJSONObject("image");
+                                       if (img != null && img.has("link")) {
+                                          updateValue(img, "link", convertLinkStates(img.optJSONObject("link")));
+                                       }
                                     }
                                  }     
                               }
@@ -184,6 +194,14 @@ public class JSONFormatter {
                                              JSONObject label = cell.optJSONObject("label");
                                              if (label != null) {
                                                 updateValue(label, "text", label.optString("text"));
+                                                if (label.has("link")) {
+                                                   updateValue(label, "link", convertLinkStates(label.optJSONObject("link")));
+                                                }
+                                             } else {
+                                                   JSONObject img = cell.optJSONObject("image");
+                                                   if (img != null && img.has("link")) {
+                                                      updateValue(img, "link", convertLinkStates(img.optJSONObject("link")));
+                                                   }
                                              }
                                           }
                                        }
@@ -282,7 +300,32 @@ public class JSONFormatter {
       
       return jsonObj;
    }
-   
+
+   private static JSONObject convertLinkStates(JSONObject link) {
+      if (link == null) {
+         return null;
+      }
+
+      if (!link.has("state")) {
+         return link;
+      }
+
+      updateValue(link, "state", convertToArray(link.opt("state")));
+      JSONArray states = link.optJSONArray("state");
+
+      if (states == null) {
+         return link;
+      }
+
+      for (int j=0; j<states.length(); j++) {
+         JSONObject state = states.optJSONObject(j);
+         updateValue(state, "name", state.optString("name"));
+         updateValue(state, "value", state.optString("value"));
+      }
+
+      return link;
+   }
+
    private static JSONArray convertToArray(Object jsonObj) {
       JSONArray arrayObj = new JSONArray();
       if (jsonObj == null) {
