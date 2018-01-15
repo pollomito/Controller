@@ -26,10 +26,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 import junit.framework.Assert;
+import org.jdom.Document;
 import org.jdom.Element;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.openremote.controller.deployer.Version20ModelBuilder;
 import org.openremote.controller.command.CommandFactory;
 import org.openremote.controller.component.ComponentBuilder;
 import org.openremote.controller.component.ComponentFactory;
@@ -62,6 +64,7 @@ public class Version20SensorBuilderTest
   private Version20SensorBuilder sensorBuilder;
   private ControlCommandService commandService;
   private StatusCache cache;
+  private Document doc;
 
 
   // Test Lifecycle -------------------------------------------------------------------------------
@@ -81,6 +84,7 @@ public class Version20SensorBuilderTest
     CommandFactory cf = DeployerTest.createCommandFactory();
     sensorBuilder = new Version20SensorBuilder();
     cache = new StatusCache();
+    //TODO set document
 
     deployer = DeployerTest.createDeployer(deploymentURI, cf, sensorBuilder, cache);
     
@@ -97,6 +101,7 @@ public class Version20SensorBuilderTest
     commandService = new ControlCommandServiceImpl(deployer, cof);
 
     deployer.softRestart();
+    doc = ((Version20ModelBuilder)sensorBuilder.getModelBuilder()).readControllerXMLDocument();
   }
 
 
@@ -704,13 +709,13 @@ public class Version20SensorBuilderTest
       default:
         break;
     }
-    
-    return sensorBuilder.build(ele);
+
+    return sensorBuilder.build(doc, ele);
   }
 
   private Sensor buildSensor(int id) throws Exception
   {
-    return sensorBuilder.build(deployer.queryElementById(id));
+    return sensorBuilder.build(doc, deployer.queryElementById(id));
   }
 
 
@@ -718,7 +723,7 @@ public class Version20SensorBuilderTest
   {
     Element el = deployer.queryElementById(id);
 
-    return sensorBuilder.build(el);
+    return sensorBuilder.build(doc, el);
   }
 
 

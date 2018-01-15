@@ -24,6 +24,7 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.Namespace;
 import org.junit.Assert;
@@ -31,6 +32,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.openremote.controller.Constants;
 import org.openremote.controller.deployer.ModelBuilder;
+import org.openremote.controller.deployer.Version20ModelBuilder;
 import org.openremote.controller.model.sensor.Sensor;
 import org.openremote.controller.model.sensor.SwitchSensor;
 import org.openremote.controller.model.xml.Version20SensorBuilder;
@@ -51,6 +53,7 @@ public class ComponentBuilderTest
 
   private Version20SensorBuilder sensorBuilder;
   private Deployer deployer;
+  private Document doc;
 
 
   // Test Lifecycle -------------------------------------------------------------------------------
@@ -64,6 +67,8 @@ public class ComponentBuilderTest
     deployer = DeployerTest.createDeployer(deploymentURI, sensorBuilder);
 
     deployer.softRestart();
+
+    doc = ((Version20ModelBuilder)sensorBuilder.getModelBuilder()).readControllerXMLDocument();
   }
 
 
@@ -164,7 +169,7 @@ public class ComponentBuilderTest
 
     // Test...
 
-    Sensor s = sensorBuilder.build(sensor1001);
+    Sensor s = sensorBuilder.build(doc ,sensor1001);
     s.start();
 
     Assert.assertTrue(s.getSensorID() == 1001);
@@ -293,7 +298,7 @@ public class ComponentBuilderTest
 
     // Test...
 
-    RangeSensor s = (RangeSensor)sensorBuilder.build(sensor1008);
+    RangeSensor s = (RangeSensor)sensorBuilder.build(doc, sensor1008);
 
 
     Assert.assertTrue(s.getSensorID() == 1008);

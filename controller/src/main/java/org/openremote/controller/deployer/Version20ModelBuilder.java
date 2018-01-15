@@ -647,7 +647,7 @@ public class Version20ModelBuilder extends AbstractModelBuilder
    *
    * @return a built JDOM document model for controller.xml
    */
-  @Override protected Document readControllerXMLDocument() throws InitializationException
+  @Override public Document readControllerXMLDocument() throws InitializationException
   {
     SAXBuilder builder = new SAXBuilder();
 

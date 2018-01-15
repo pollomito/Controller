@@ -180,7 +180,7 @@ public class Version20SensorBuilder implements SensorBuilder<Version20ModelBuild
    */
   public final static String XML_RANGE_MIN_VALUE_ATTR = "value";
 
-  protected ModelBuilder getModelBuilder() {
+  public ModelBuilder getModelBuilder() {
     return modelBuilder;
   }
 
