@@ -95,7 +95,7 @@ dependencies {
     testCompile "httpunit:httpunit:$httpunitVersion"
     testCompile "org.mortbay.jetty:jetty:$jettyVersion"
     testCompile "junit:junit:$junitVersion"
-		testCompile "org.mockito:mockito-core:$mockitoVersion"
+	testCompile "org.mockito:mockito-core:$mockitoVersion"
 }
 
 task prepareTestFolder(type: Copy, dependsOn: war) {
