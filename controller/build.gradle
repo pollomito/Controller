@@ -1,4 +1,5 @@
 apply plugin: "war"
+apply plugin: "jacoco"
 
 ext {
     testWebApplicationFolder = 'build/testcontainer/war'
@@ -21,16 +22,6 @@ repositories {
     mavenCentral()
 }
 
-sourceSets {
-    main {
-        java {
-            srcDir 'src/main/java'
-            if (project.hasProperty("targetEnv")) {
-                srcDir "src/$targetEnv/java"
-            }
-        }
-    }
-}
 
 dependencies {
     compile "org.openremote:or-commons:0.3.1"
@@ -96,6 +87,8 @@ dependencies {
     testCompile "org.mortbay.jetty:jetty:$jettyVersion"
     testCompile "junit:junit:$junitVersion"
 	testCompile "org.mockito:mockito-core:$mockitoVersion"
+    testCompile "org.powermock:powermock-module-junit4:$powermockVersion"
+    testCompile "org.powermock:powermock-api-mockito2:$powermockVersion"
 }
 
 task prepareTestFolder(type: Copy, dependsOn: war) {
@@ -117,10 +110,16 @@ task prepareTestFolder(type: Copy, dependsOn: war) {
 }
 
 war {
-    if (project.hasProperty("targetEnv")) {
-        into("WEB-INF") {
-            from("src/$targetEnv/webapp/WEB-INF/web.xml")
-        }
+    // Make sure configuration files from sources also make it to war
+    from('src/main/java') {
+        include '**/*.xml'
+        into ('WEB-INF/classes')
+    }
+
+    // Also copy native libraries, getting rid of version information from file names
+    into ('WEB-INF/lib/native') {
+        from configurations.staticLibraries.files
+        rename { it - '-2.2-pre2' }
     }
 }
 
