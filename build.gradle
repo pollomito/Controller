@@ -22,7 +22,7 @@ allprojects {
         maven {
             url "http://m2repo.openremote.com/content/groups/public/"
         }
-        jcenter();
+        jcenter()
         mavenCentral()
     }
 }

@@ -196,9 +196,7 @@ public class CommandHandler {
       }
    }
 
-   //
-   // TODO
-   //
+
    private boolean initiateProxy(ControllerCommandDTO command)
    {
       Long id = command.getOid();
@@ -258,6 +256,7 @@ public class CommandHandler {
          // the server should have closed it, but let's help him to make sure
          isSuccess = false;
       }
+
       return isSuccess;
    }
 
