@@ -662,7 +662,7 @@ public class BeehiveCommandCheckServiceTest
    *
    * @throws Exception  if test fails
    */
-  @Test(timeout=10000)
+  @Test(timeout=70000)
   public void testInitiateProxy() throws Exception
   {
     SecureTCPTestServer s = null;
