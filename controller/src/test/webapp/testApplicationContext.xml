@@ -92,6 +92,8 @@
     <property name = "securityPasswordStorageAsString" value = "${security.passwordStorage}"/>
     
     <property name = "lagartoBroadcastAddr" value = "${lagarto_network.broadcast}"/>
+    <property name = "WSTimeoutAsString" value = "${remote.command.service.ws.timeout}"/>
+    <property name = "reconnectionDelayAsString" value = "${remote.command.service.ws.reconnect.delay}"/>
   </bean>
 
   <!-- round-robin variables -->
