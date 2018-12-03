@@ -80,7 +80,7 @@ public class UDPListenerCommand implements EventListener {
    
    private class UDPListenerThread extends Thread {
 
-      private Map<String, Sensor> regexSensorMap = new HashMap<String, Sensor>();
+      private Map<Sensor, String> regexSensorMap = new HashMap<Sensor, String>();
       
       private int port;
       
@@ -105,29 +105,36 @@ public class UDPListenerCommand implements EventListener {
               dsocket.receive(packet);
               String msg = new String(buffer, 0, packet.getLength());
               logger.debug("Received UDP packet: " + msg);
-              for (Entry<String, Sensor> entry : regexSensorMap.entrySet()) {
-                 String regex = entry.getKey();
-                 Sensor sensor = entry.getValue();
-                 Pattern regexPattern = Pattern.compile(regex);
-                 Matcher matcher = regexPattern.matcher(msg);
-
-                // This is a patch from ORCJAVA-392:
-                //
-                // If a regular expression group is defined and there's a match,
-                // the (first) group is returned as the event value instead of just a simple
-                // timestamp.
-
-                if (matcher.find())
+              for (Entry<Sensor, String> entry : regexSensorMap.entrySet()) {
+                 try{
+                  
+                   String regex = entry.getValue();
+                   Sensor sensor = entry.getKey();
+                   Pattern regexPattern = Pattern.compile(regex);
+                   Matcher matcher = regexPattern.matcher(msg);
+  
+                  // This is a patch from ORCJAVA-392:
+                  //
+                  // If a regular expression group is defined and there's a match,
+                  // the (first) group is returned as the event value instead of just a simple
+                  // timestamp.
+  
+                  if (matcher.find())
+                  {
+                    if (matcher.groupCount() > 0)
+                    {
+                      sensor.update(matcher.group(1));
+                    }
+  
+                    else
+                    {
+                      sensor.update("" + System.currentTimeMillis());
+                    }
+                  }
+                }
+                catch( Exception e)
                 {
-                  if (matcher.groupCount() > 0)
-                  {
-                    sensor.update(matcher.group(1));
-                  }
-
-                  else
-                  {
-                    sensor.update("" + System.currentTimeMillis());
-                  }
+                  logger.error("Error in sensor.update", e);
                 }
               }
 
@@ -140,7 +147,7 @@ public class UDPListenerCommand implements EventListener {
       }
 
       public void add(String regex, Sensor sensor) {
-         regexSensorMap.put(regex, sensor);
+         regexSensorMap.put(sensor, regex);
       }
 
    }

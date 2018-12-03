@@ -354,10 +354,12 @@ public abstract class Sensor
     // pushed into device state cache and event processor chain.
 
     Event evt = processEvent(state);
+    if (!(evt instanceof UnknownEvent))
+    {
+      log.trace("Processed {0}, received {1}", state, evt.getValue());
 
-    log.trace("Processed {0}, received {1}", state, evt.getValue());
-
-    deviceStateCache.update(evt);
+      deviceStateCache.update(evt);
+    }
   }
 
 

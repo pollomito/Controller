@@ -254,6 +254,10 @@ public class StateSensor extends Sensor
 
       else
       {
+        if(!states.getAllStates().isEmpty())
+        {
+          return new UnknownEvent(this);
+        }
         return createEvent(value);
       }
     }

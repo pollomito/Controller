@@ -179,7 +179,7 @@ rem have been set. Otherwise uses default values.
   if "%BEEHIVE_BASE_URI%" == "" set BEEHIVE_BASE_URI=https://designer.openremote.com
 
   rem Remote Command Service Variables...
-  if "%BEEHIVE_REMOTE_SERVICE_PATH%" == "" set BEEHIVE_REMOTE_SERVICE_PATH=ccs/rest/
+  if "%BEEHIVE_REMOTE_SERVICE_PATH%" == "" set BEEHIVE_REMOTE_SERVICE_PATH=ccs/rest
   if "%BEEHIVE_REMOTE_SERVICE_URI%" == "" set BEEHIVE_REMOTE_SERVICE_URI=%BEEHIVE_BASE_URI%/%BEEHIVE_REMOTE_SERVICE_PATH%
 
   rem Beehive Sync Service Variables...
